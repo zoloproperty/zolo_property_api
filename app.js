@@ -3,9 +3,14 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const morgan = require('morgan');
-const helmet = require('helmet');
+const morgan = require("morgan");
+const helmet = require("helmet");
+const {configDotenv} = require("dotenv");
 const app = express();
+
+if (process.env.NODE_ENV !== "Development") {
+  configDotenv({ path: ".env" });
+}
 
 // DB CONNECTION
 require("./config/database/connection.js");
@@ -24,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(helmet());
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 require("./routes/_index")(app);
 

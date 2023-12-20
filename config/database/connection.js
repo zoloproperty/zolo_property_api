@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const { DB_NAME, DB_HOST, DB_PORT, PORT, DB_USERNAME, DB_PASSWORD } =
-  process.env;
+const { DB_USERNAME, DB_PASSWORD } = process.env;
 
-const URL = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
-// const URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+const URL = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.z4sn1bj.mongodb.net/`;
+
+console.log(URL);
 
 const connectDB = async () => {
   try {
@@ -12,10 +12,9 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-
-    console.log(`Connected\nDB: ${DB_NAME}\nPORT: ${PORT}`);
+    console.log(`Connected\nDB: ${DB_USERNAME}`);
   } catch (err) {
-    console.log('Failed to connect to MongoDB', err);
+    console.log("Failed to connect to MongoDB", err);
   }
 };
 
