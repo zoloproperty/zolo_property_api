@@ -7,6 +7,7 @@ const { extractRequestData } = require("../helper/static/request-response");
 exports.login = async (req, res) => {
     try {
       const postData = extractRequestData(req);
+      console.log(postData ,"postData")
       const response = await userModel.login(postData);
       return res.status(response.status).json(response);
     } catch (error) {
@@ -16,8 +17,7 @@ exports.login = async (req, res) => {
   
   exports.saveUser = async (req, res) => {
     try {
-      const postData = extractUser(req);
-      console.log(postData ,"postDatapostData")
+      const postData = (req.body);
       const response = await userModel.saveUser(postData);
       return res.status(response.status).json(response);
     } catch (error) {

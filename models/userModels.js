@@ -1,5 +1,5 @@
 const User = require("../Schema/userSchema")
-//const { compareHash, hashAndSalt } = require("../helper/Bcrypt/bcrypt");
+const { compareHash, hashAndSalt } = require("../helper/Bcrypt/bcrypt");
 const { authHandler } = require("../helper/static/messages");
 const Response = require("../helper/static/Response");
 const { signJwt, isValidHttpUrl } = require("../helper/middleware/authentication");
@@ -11,6 +11,7 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
 
 exports.login = async (postData) => {
+  console.log(postData ,"postData")
     try {
       let { email } = postData;
       let picture, name;
@@ -91,13 +92,12 @@ exports.login = async (postData) => {
   };
   
 exports.saveUser = async (postData) => {
-  console.log(postData ,"postData")
   try {
     if (postData?.oldImage) {
       // Handle file deletion if needed
     }
     const { error, value } = signupValidationSchema.validate(postData);
-
+    console.log(value ,"value")
     if (error) {
       return handleError(400, error.details[0].message);
     }

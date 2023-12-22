@@ -31,7 +31,12 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-require("./routes/_index")(app);
+
+const userRouter = require("./routes/userRoutes");
+
+app.use("/user", userRouter);
+
+
 
 app.get("*", (req, res) => {
   res.status(404).json({
