@@ -17,6 +17,7 @@ exports.login = async (req, res) => {
   exports.saveUser = async (req, res) => {
     try {
       const postData = extractUser(req);
+      console.log(postData ,"postDatapostData")
       const response = await userModel.saveUser(postData);
       return res.status(response.status).json(response);
     } catch (error) {

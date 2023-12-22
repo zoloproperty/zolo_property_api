@@ -1,94 +1,148 @@
 const User = require("../Schema/userSchema")
-
+//const { compareHash, hashAndSalt } = require("../helper/Bcrypt/bcrypt");
 const { authHandler } = require("../helper/static/messages");
 const Response = require("../helper/static/Response");
+const { signJwt, isValidHttpUrl } = require("../helper/middleware/authentication");
+const {
+  loginValidationSchema,
+  signupValidationSchema
+} = require("../validation-schema/userValidation");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client();
 
 exports.login = async (postData) => {
-    // try {
-    //   let { email } = postData;
-    //   let picture, name;
-    //   const { password, authorization } = postData;
-    //   let loggedInWith = "";
+    try {
+      let { email } = postData;
+      let picture, name;
+      const { password, authorization } = postData;
+      let loggedInWith = "";
   
-    //   if (authorization) {
-    //     try {
-    //       const token = authorization.split(" ")[1];
-    //       const ticket = await client.verifyIdToken({
-    //         idToken: token,
-    //         audience: process.env.GOOGLE_CLIENT_ID,
-    //       });
+      if (authorization) {
+        try {
+          const token = authorization.split(" ")[1];
+          const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+          });
   
-    //       ({ email } = ticket.getPayload());
-    //       ({ picture, name } = ticket.getPayload());
+          ({ email } = ticket.getPayload());
+          ({ picture, name } = ticket.getPayload());
   
-    //       loggedInWith = "google";
-    //     } catch (error) {
-    //       return new Response(400, "F").custom(error.message);
-    //     }
-    //   } else {
-    //     const { error } = loginValidationSchema.validate({ email, password });
+          loggedInWith = "google";
+        } catch (error) {
+          return new Response(400, "F").custom(error.message);
+        }
+      } else {
+        const { error } = loginValidationSchema.validate({ email, password });
   
-    //     if (error) {
-    //       return new Response(400, "F").custom(error.details[0].message);
-    //     }
-    //     loggedInWith = "username-password";
-    //   }
+        if (error) {
+          return new Response(400, "F").custom(error.details[0].message);
+        }
+        loggedInWith = "username-password";
+      }
   
-    //   try {
-    //     const findUser = await knex("ims_users").where({ email }).first();
-    //     if (!findUser || findUser.is_active !== 1 || findUser.is_deleted !== 1) {
-    //       let errorMessage = "WRONG";
+      try {
+        const findUser = await User.findOne({ email })
+        if (!findUser || findUser.is_active !== 1 || findUser.is_deleted !== 1) {
+          let errorMessage = "WRONG";
   
-    //       if (!findUser) {
-    //         errorMessage = "EMAIL_NOT_EXISTS";
-    //       } else if (findUser.is_active !== 1) {
-    //         errorMessage = "INACTIVE_ACCOUNT";
-    //       } else if (findUser.is_deleted !== 1) {
-    //         errorMessage = "DELETED_ACCOUNT";
-    //       }
+          if (!findUser) {
+            errorMessage = "EMAIL_NOT_EXISTS";
+          } else if (findUser.is_active !== 1) {
+            errorMessage = "INACTIVE_ACCOUNT";
+          } else if (findUser.is_deleted !== 1) {
+            errorMessage = "DELETED_ACCOUNT";
+          }
   
-    //       return new Response(400, "F").custom(authHandler(errorMessage));
-    //     }
+          return new Response(400, "F").custom(authHandler(errorMessage));
+        }
   
-    //     if (loggedInWith === "username-password") {
-    //       const comparePassword = await compareHash(password, findUser.password);
+        if (loggedInWith === "username-password") {
+          const comparePassword = await compareHash(password, findUser.password);
   
-    //       if (!comparePassword) {
-    //         return new Response(400, "F").custom(authHandler("WRONG_PASS"));
-    //       }
-    //     } else if (loggedInWith === "google") {
-    //       try {
-    //         // const updateResult = await knex('ims_category').update({image : picture, firstname : name}).where({user_id : findUser.user_id});
-    //       } catch (error) {
-    //         return new Response(400, "F").custom(error.message);
-    //       }
-    //     }
+          if (!comparePassword) {
+            return new Response(400, "F").custom(authHandler("WRONG_PASS"));
+          }
+        } else if (loggedInWith === "google") {
+          try {
+          } catch (error) {
+            return new Response(400, "F").custom(error.message);
+          }
+        }
   
-    //     const payLoad = {
-    //       user_id: findUser.user_id,
-    //       email: findUser.email,
-    //       phone: findUser.phone,
-    //       role: findUser.role,
-    //       roleText:
-    //         findUser.role === 1
-    //           ? "Admin"
-    //           : findUser.role === 2
-    //             ? "Customer"
-    //             : "Supplier",
-    //       image: findUser.image ? isValidHttpUrl(findUser.image) ? findUser.image : `http://${postData.host}/profile/${findUser.image}` : null,
-    //       loggedInWith: loggedInWith,
-    //     };
+        const payLoad = {
+          user_id: findUser.user_id,
+          email: findUser.email,
+          image: findUser.image ? isValidHttpUrl(findUser.image) ? findUser.image : `http://${postData.host}/profile/${findUser.image}` : null,
+          loggedInWith: loggedInWith,
+        };
   
-    //     const jwtToken = await signJwt(payLoad);
+        const jwtToken = await signJwt(payLoad);
   
-    //     return new Response(200, "T", jwtToken).custom(
-    //       authHandler("AUTH_SUCCESS")
-    //     );
-    //   } catch (error) {
-    //     return new Response(400, "F").custom(error.message);
-    //   }
-    // } catch (error) {
-    //   return new Response(500, "F").custom(error.message);
-    // }
+        return new Response(200, "T", jwtToken).custom(
+          authHandler("AUTH_SUCCESS")
+        );
+      } catch (error) {
+        return new Response(400, "F").custom(error.message);
+      }
+    } catch (error) {
+      return new Response(500, "F").custom(error.message);
+    }
   };
+  
+exports.saveUser = async (postData) => {
+  console.log(postData ,"postData")
+  try {
+    if (postData?.oldImage) {
+      // Handle file deletion if needed
+    }
+    const { error, value } = signupValidationSchema.validate(postData);
+
+    if (error) {
+      return handleError(400, error.details[0].message);
+    }
+
+    if (value.password) {
+      const { hash } = await hashAndSalt(value.password);
+      value.password = hash;
+    }
+
+    delete value.user_id;
+    delete value.oldImage;
+
+    if (postData?.user_id) {
+      const findUser = await User.findOne({ user_id: postData?.user_id });
+
+      if (!findUser) {
+        return handleError(400, 'USER_NOT_EXISTS');
+      }
+
+      // Update user fields
+      // ...
+
+      // Save the updated user
+      const result = await findUser.save();
+
+      return new Response(result ? 200 : 400, result ? 'T' : 'F').custom(authHandler(result ? 'USER_UPDATED' : 'USER_UPDATED_FAILED'));
+    } else {
+      const findUser = await User.findOne({ email: value.email, is_deleted: 1 });
+
+      if (findUser) {
+        return handleError(400, 'DUPLICATE_EMAIL');
+      }
+
+      // Create a new user
+      const newUser = new User(value);
+      const result = await newUser.save();
+
+      return new Response(result ? 200 : 500, result ? 'T' : 'F').custom(authHandler(result ? 'SIGNUP' : 'SIGNUP_FAILED'));
+    }
+  } catch (error) {
+    return handleError(500, error.message);
+  }
+};
+
+function handleError(statusCode, message) {
+  return new Response(statusCode, 'F').custom(authHandler(message));
+}
   

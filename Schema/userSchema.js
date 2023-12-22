@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const userSchema = new Schema({
  
   email: { type: String, unique: true },
-  
+  password: { type: String },
   is_active: { type: String, enum: ['ACTIVE', 'INACTIVE'] },
   auth_token: { type: String },
   created_at: { type: Schema.Types.Date, default: new Date().getTime() },
