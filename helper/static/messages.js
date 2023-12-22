@@ -117,17 +117,17 @@ function authHandler(typeProp) {
     PRODUCT_ACTIVATED : "Product activated successfully.",
     PRODUCT_INACTIVE : "Product deactivated successfully.",
 
-    //Tax
-    DUPLICATE_TAX_EXISTS : "Tax value already exists, please try another value.",
-    TAX_NOT_EXISTS : "Tax value not exists, please try again.",
-    TAX_UPD : "Tax value updated successfully.",
-    TAX_ACTIVATED : "Tax category activated successfully.",
-    TAX_DEACTIVATED : "Tax category deactivated successfully.",
-    TAX_UPD_FAILED : "Failed to update tax value.",
-    TAX_ADDED : "Tax value added successfully.",
-    TAX_ADD_FAILED : "Something went wrong when adding tax.",
-    TAX_DELETED : "Tax deleted successfully.",
-    FAILED_DELETE_TAX : "Something went wrong when deleting the tax.",
+    //EMI
+    DUPLICATE_EMI_EXISTS : "EMI value already exists, please try another value.",
+    EMI_NOT_EXISTS : "EMI value not exists, please try again.",
+    EMI_UPD : "EMI value updated successfully.",
+    EMI_ACTIVATED : "EMI category activated successfully.",
+    EMI_DEACTIVATED : "EMI category deactivated successfully.",
+    EMI_UPD_FAILED : "Failed to update tax value.",
+    EMI_ADDED : "EMI value added successfully.",
+    EMI_ADD_FAILED : "Something went wrong when adding tax.",
+    EMI_DELETED : "EMI deleted successfully.",
+    FAILED_DELETE_EMI : "Something went wrong when deleting the tax.",
 
     // Image
     NO_FILE: 'No file uploaded.',

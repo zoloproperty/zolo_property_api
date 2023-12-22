@@ -9,7 +9,15 @@ const emiSchema = new Schema({
     type: String,
     required: [true, "emi is required"],
   },
-});
+  created_at: {
+    type: Schema.Types.Date,
+    default: new Date().getTime(),
+  },
+  updated_at: {
+    type: Schema.Types.Date,
+  },
+},
+{ timestamps: true });
 
 const Emi = model("emi", emiSchema);
 module.exports = Emi;

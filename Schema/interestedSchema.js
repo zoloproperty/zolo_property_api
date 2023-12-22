@@ -15,7 +15,15 @@ const interestedSchema = new Schema({
     type: [Number],
     index: "2dsphere",
   },
-});
+  created_at: {
+    type: Schema.Types.Date,
+    default: new Date().getTime(),
+  },
+  updated_at: {
+    type: Schema.Types.Date,
+  },
+},
+{ timestamps: true });
 
 const Interested = model("interested", interestedSchema);
 module.exports = Interested;
