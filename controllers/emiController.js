@@ -30,7 +30,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await model_update(postData);
     return res.status(response.status).json(response);
   } catch (error) {
@@ -40,7 +40,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await model_delete(postData);
     return res.status(response.status).json(response);
   } catch (error) {

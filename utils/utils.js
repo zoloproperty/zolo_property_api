@@ -2,7 +2,7 @@ const Response = require("../helper/static/Response");
 const { authHandler } = require("../helper/static/messages");
 
 exports.handleError = (statusCode, message) => {
-  return new Response(statusCode, "F").custom(authHandler(message));
+  return new Response(statusCode, "F").custom(message);
 };
 
 exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
@@ -27,11 +27,15 @@ exports.DeleteRecordById = async (model, id, MessageKey) => {
   try {
     const existingRecord = await model.findById(id);
 
+    console.log(existingRecord);
+
     if (!existingRecord) {
       return new Response(400, "F").custom(authHandler(EMI_NOT_EXISTS));
     }
 
-    if (await existingRecord.remove()) {
+    const deletionResult = await existingRecord.deleteOne();
+
+    if (deletionResult.deletedCount > 0) {
       return new Response(200, "T").custom(
         authHandler(`${MessageKey}_DELETED`)
       );

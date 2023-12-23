@@ -5,7 +5,7 @@ const { middleware } = require("../helper/middleware/authentication");
 
 router.post("/list", emiController.list);
 router.post("/add", emiController.add);
-router.put("/update", emiController.update);
-router.delete("/delete", emiController.delete);
+router.put("/update/:id", emiController.update);
+router.delete("/delete/:id", emiController.delete);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const emiSchema = new Schema({
     required: [true, "Emi limit is required"],
   },
   emi: {
-    type: String,
+    type: Number,
     required: [true, "emi is required"],
   },
   created_at: {
