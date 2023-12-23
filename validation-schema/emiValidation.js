@@ -1,15 +1,18 @@
 const Joi = require("joi");
-exports.emiValidationSchema = Joi.object({
+exports.listValidation = Joi.object({
   limit: Joi.number().default(5),
   offset: Joi.number().default(0),
+  startDate: Joi.date(),
+  endDate: Joi.date(),
+  orderBy: Joi.string(),
 });
 
-exports.addEmiValidationSchema = Joi.object({
+exports.addValidation = Joi.object({
   limit: Joi.number().required(),
   emi: Joi.number().required(),
 });
 
-exports.updateEmiValidationSchema = Joi.object({
+exports.updateValidation = Joi.object({
   limit: Joi.number().required(),
   emi: Joi.number().required(),
   id: Joi.string().required(),

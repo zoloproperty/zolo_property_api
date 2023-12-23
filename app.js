@@ -32,11 +32,13 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 
-const userRouter = require("./routes/userRoutes.js");
-const emiRouter = require("./routes/emiRoutes.js");
+const userRouter = require("./routes/emi.routes.js");
+const emiRouter = require("./routes/emi.routes.js");
+const phoneRouter = require("./routes/phone.routes.js");
 
 app.use("/user", userRouter);
 app.use("/emi", emiRouter);
+app.use("/phone", phoneRouter);
 
 
 

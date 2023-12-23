@@ -1,31 +1,26 @@
-const Emi = require("../Schema/emiSchema");
+const Phone = require("../Schema/phoneSchema");
 const Response = require("../helper/static/Response");
 const { authHandler } = require("../helper/static/messages");
-const {
-  handleError,
-  buildDynamicQuery,
-  DeleteRecordById,
-  UpdateRecordById,
-  AddRecord,
-} = require("../utils/utils");
+const { DeleteRecordById, UpdateRecordById, buildDynamicQuery } = require("../utils/utils");
+const {filterMapValidation} = require("../validation-schema/filterValidation");
 const {
   updateValidation,
   addValidation,
-} = require("../validation-schema/emiValidation");
-const { filterValidation } = require("../validation-schema/filterValidation");
+} = require("../validation-schema/phoneValidation");
 
 // ################################################
-// #               Emi list                       #
+// #               Phone list                     #
 // ################################################
 
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["emi", "limit"];
+  const searchFields = ["name", "number"];
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
+
   try {
-    const { error, value } = filterValidation.validate(postData);
+    const { error, value } = filterMapValidation.validate(postData);
     if (error) {
       return handleError(400, error.details[0].message);
     }
@@ -36,9 +31,19 @@ exports.model_list = async (postData) => {
     );
     if (orderBy) sortOptions["limit"] = orderBy; // 1 for ascending, -1 for descending
 
-    const total = await Emi.countDocuments(query);
+    if (value.radius && value.coordinates) {
+      query.coordinates = {
+        $near: {
+          $geometry: {
+            coordinates: value.coordinates,
+          },
+          $maxDistance: value.radius,
+        },
+      };
+    }
+
     const list =
-      (await Emi.find(query)
+      (await Phone.find(query)
         .limit(limit)
         .skip(offset)
         .sort(sortOptions)
@@ -47,7 +52,7 @@ exports.model_list = async (postData) => {
     const pegination = {
       limit,
       offset,
-      total,
+      total: Math.ceil(list.length / limit),
     };
     return new Response(200, "T", { list, pegination }).custom("Tax list");
   } catch (error) {
@@ -56,44 +61,43 @@ exports.model_list = async (postData) => {
 };
 
 // ################################################
-// #               Emi Add                        #
+// #               phone Add                      #
 // ################################################
 
 exports.model_add = async (postData) => {
   try {
+    // Check for duplicate records
     const query = {
-      $or: [
-        { limit: postData.limit },
-        // , { emi: value.emi }
-      ],
+      $or: [{ name: value.name }, { number: value.number }],
     };
-    return AddRecord(Emi, postData, query, addValidation, "EMI");
+
+    return AddRecord(Phone, postData, query, addValidation, "PHONE");
   } catch (error) {
     return new Response(400, "F").custom(error.message);
   }
 };
 
 // ################################################
-// #               Emi Update                     #
+// #               Phone Update                   #
 // ################################################
 
 exports.model_update = async (postData) => {
   try {
     const removeKey = ["host"];
     removeKey.map((key) => delete postData[key]);
-    return UpdateRecordById(Emi, postData, updateValidation, "EMI");
+    return UpdateRecordById(Phone, postData, updateValidation, "PHONE");
   } catch (error) {
     return new Response(400, "F").custom(error.message);
   }
 };
 
-// ################################################
-// #               Emi delete                     #
-// ################################################
+// // ################################################
+// // #               Phone delete                     #
+// // ################################################
 
 exports.model_delete = async (postData) => {
   try {
-    return DeleteRecordById(Emi, postData.id, "EMI");
+    return DeleteRecordById(Phone, postData.id, "PHONE");
   } catch (error) {
     return new Response(400, "F").custom(error.message);
   }
