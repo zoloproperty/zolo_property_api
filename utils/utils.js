@@ -9,9 +9,9 @@ exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
   const dynamicQuery = {};
 
   if (start && end) {
-    query.created_at = { $gte: start, $lte: end };
+    query.createdAt = { $gte: start, $lte: end };
   } else if (start) {
-    query.created_at = { $gte: start };
+    query.createdAt = { $gte: start };
   }
 
   if (searchString) {
@@ -23,12 +23,68 @@ exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
   return dynamicQuery;
 };
 
+exports.ListRecordByFilter = async (
+  Model,
+  postData,
+  query,
+  sortOptions,
+  searchFields,
+  Validation,
+  Message,
+  extraData
+) => {
+  try {
+    const { error, value } = Validation.validate(postData);
+    if (error) {
+      return new Response(400, "F").custom(error.details[0].message);
+    }
+
+    const { limit, offset, startDate, endDate, search, orderBy } = value;
+    Object.assign(
+      query,
+      this.buildDynamicQuery(searchFields, search, startDate, endDate)
+    );
+
+    if (value.radius && value.coordinates) {
+      query.coordinates = {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: value.coordinates,
+          },
+          $maxDistance: value.radius,
+        },
+      };
+    }
+
+    const list =
+      (await Model.find(query)
+        .limit(limit)
+        .skip(offset)
+        .sort(sortOptions)
+        .exec()) || [];
+
+    const total = await Model.find(query);
+    const pagination = {
+      limit,
+      offset,
+      total: total.length,
+    };
+
+    return new Response(200, "T", { list, pagination, ...extraData }).custom(
+      Message || "list get successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
 exports.DeleteRecordById = async (Model, id, MessageKey) => {
   try {
     const existingRecord = await Model.findById(id);
 
     if (!existingRecord) {
-      return new Response(400, "F").custom(authHandler(EMI_NOT_EXISTS));
+      return new Response(400, "F").custom(authHandler(`${MessageKey}_NOT_EXISTS`));
     }
 
     const deletionResult = await existingRecord.deleteOne();
@@ -55,7 +111,7 @@ exports.UpdateRecordById = async (
 ) => {
   try {
     const { error, value } = updateValidation.validate(postData);
-    if (error) return handleError(400, error.details[0].message);
+    if (error) return this.handleError(400, error.details[0].message);
     const existing = await Model.findById(value.id);
     if (!existing)
       return new Response(404, "F").custom(

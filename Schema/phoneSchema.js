@@ -8,18 +8,15 @@ const phoneSchema = new Schema(
     },
     number: {
       type: String,
-      required: [true, "number image is required"],
+      required: [true, "number is required"],
+    },
+    city: {
+      type: String,
+      required: [true, "city is required"],
     },
     coordinates: {
       type: [Number],
       index: "2dsphere",
-    },
-    created_at: {
-      type: Schema.Types.Date,
-      default: new Date().getTime(),
-    },
-    updated_at: {
-      type: Schema.Types.Date,
     },
   },
   { timestamps: true }

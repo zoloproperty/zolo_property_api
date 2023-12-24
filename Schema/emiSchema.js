@@ -9,13 +9,6 @@ const emiSchema = new Schema({
     type: Number,
     required: [true, "emi is required"],
   },
-  created_at: {
-    type: Schema.Types.Date,
-    default: new Date().getTime(),
-  },
-  updated_at: {
-    type: Schema.Types.Date,
-  },
 },
 { timestamps: true });
 

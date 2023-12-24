@@ -109,6 +109,7 @@ function authHandler(typeProp) {
     //products
     PHONE_ADDED : "Phone added successfully.",
     PHONE_UPD : "Phone updated successfully.",
+    PHONE_NOT_EXISTS : "Phone value not exists, please try again.",
     PHONE_ADD_FAILED : "Phone added failed.",
     PHONE_DELETED : "Phone deleted successfully.",
     FAILED_DELETE_PHONE : "Phone deleted failed.",

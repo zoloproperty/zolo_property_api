@@ -51,13 +51,6 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    created_at: {
-      type: Schema.Types.Date,
-      default: new Date().getTime(),
-    },
-    updated_at: {
-      type: Schema.Types.Date,
-    },
     email_verify_tokan: String,
     reset_pass_tokan: String,
     reset_pass_expiry: String,
