@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const {configDotenv} = require("dotenv");
+const { configDotenv } = require("dotenv");
 const app = express();
 
 if (process.env.NODE_ENV !== "Development") {
@@ -31,16 +31,21 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-
-const userRouter = require("./routes/emi.routes.js");
+const brandRouter = require("./routes/brand.routes.js");
 const emiRouter = require("./routes/emi.routes.js");
+const interestedRouter = require("./routes/interested.routes.js");
+const modalRouter = require("./routes/modal.routes.js");
 const phoneRouter = require("./routes/phone.routes.js");
+const vehicleRouter = require("./routes/vehicle.routes.js");
+const userRouter = require("./routes/user.routes.js");
 
-app.use("/user", userRouter);
+app.use("/brand", brandRouter);
 app.use("/emi", emiRouter);
+app.use("/interested", interestedRouter);
+app.use("/modal", modalRouter);
 app.use("/phone", phoneRouter);
-
-
+app.use("/vehicle", vehicleRouter);
+app.use("/user", userRouter);
 
 app.get("*", (req, res) => {
   res.status(404).json({
