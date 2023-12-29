@@ -6,12 +6,12 @@ exports.handleError = (statusCode, message) => {
 };
 
 exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
-  const dynamicQuery = {};
+  const dynamicQuery = { $or: [] };
 
   if (start && end) {
-    query.createdAt = { $gte: start, $lte: end };
+    dynamicQuery.createdAt = { $gte: start, $lte: end };
   } else if (start) {
-    query.createdAt = { $gte: start };
+    dynamicQuery.createdAt = { $gte: start };
   }
 
   if (searchString) {
@@ -39,11 +39,16 @@ exports.ListRecordByFilter = async (
       return new Response(400, "F").custom(error.details[0].message);
     }
 
-    const { limit, offset, startDate, endDate, search, orderBy } = value;
-    Object.assign(
-      query,
-      this.buildDynamicQuery(searchFields, search, startDate, endDate)
+    const { limit, offset, startDate, endDate, search } = value;
+    let searchFieldsQuery = this.buildDynamicQuery(
+      searchFields,
+      search,
+      startDate,
+      endDate
     );
+    // merge additional search or Query
+    searchFieldsQuery.$or = searchFieldsQuery.$or.push(query.$or);
+    Object.assign(query, searchFieldsQuery);
 
     if (value.radius && value.coordinates) {
       query.coordinates = {
@@ -81,10 +86,15 @@ exports.ListRecordByFilter = async (
 
 exports.DeleteRecordById = async (Model, id, MessageKey) => {
   try {
+    if (!id) {
+      return new Response(400, "F").custom(`${MessageKey} id is required.`);
+    }
     const existingRecord = await Model.findById(id);
 
     if (!existingRecord) {
-      return new Response(400, "F").custom(authHandler(`${MessageKey}_NOT_EXISTS`));
+      return new Response(400, "F").custom(
+        authHandler(`${MessageKey}_NOT_EXISTS`)
+      );
     }
 
     const deletionResult = await existingRecord.deleteOne();

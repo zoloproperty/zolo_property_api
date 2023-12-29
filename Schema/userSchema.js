@@ -51,6 +51,14 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
     email_verify_tokan: String,
     reset_pass_tokan: String,
     reset_pass_expiry: String,

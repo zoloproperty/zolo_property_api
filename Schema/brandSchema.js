@@ -13,6 +13,14 @@ const brandSchema = new Schema({
     type: String,
     required: [true, "Brand description is required"],
   },
+  isActive:{
+    type: Boolean,
+    default: true,
+  },
+  isDeleted:{
+    type: Boolean,
+    default: false,
+  },
 },
 { timestamps: true });
 

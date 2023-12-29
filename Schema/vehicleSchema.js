@@ -13,12 +13,14 @@ const vehicleSchema = new Schema(
       enum: ["car", "bike"],
     },
     brand: {
-      type: String,
-      required: [true, "Brand is required"],
+      type: Schema.Types.ObjectId,
+      ref: "brand",
+      required: true,
     },
     modal: {
-      type: String,
-      required: [true, "Modal is required"],
+      type: Schema.Types.ObjectId,
+      ref: "modal",
+      required: true,
     },
     purchase_year: {
       type: String,
@@ -68,12 +70,24 @@ const vehicleSchema = new Schema(
       type: String,
       required: [true, "State is required"],
     },
-    city: {
-      type: String,
-      required: [true, "city is required"],
-    },
     address: {
       type: String,
+    },
+    status: {
+      type: Number,
+      enum: [1, 2, 3],
+    },
+    showVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
