@@ -58,7 +58,7 @@ const ValidationObj = {
   facing_road_width: Joi.string().default(null),
   facing_road_width_in: Joi.string().valid("Feet", "Meters").default(null),
   image: Joi.string().default(null),
-  images: Joi.string().default(null),
+  images: Joi.array().items(Joi.string()).default([]),
   video: Joi.string().default(null),
   room_data: Joi.string().default(null),
   bedrooms: Joi.string().default(null),

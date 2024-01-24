@@ -36,14 +36,25 @@ exports.model_list = async (postData) => {
 };
 
 // ################################################
-// #               Property Add                      #
+// #               Property Add                    #
 // ################################################
 
 exports.model_add = async (postData) => {
   // Check for duplicate records
   const query = {
-    // $or: [{brand: postData.name }],
+    $or: [{ property: "null" }],
   };
+
+  let updateData = postData;
+  console.log(updateData);
+  if (postData?.files) {
+    const images = postData?.files?.map((item) => {
+      console.log(item);
+      return item.path;
+    });
+    updateData = { ...postData, images };
+    delete updateData.files;
+  }
   return await AddRecord(Property, postData, query, addValidation, "PROPERTY");
 };
 

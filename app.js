@@ -38,7 +38,7 @@ const emiRouter = require("./routes/emi.routes.js");
 const interestedRouter = require("./routes/interested.routes.js");
 const modalRouter = require("./routes/modal.routes.js");
 const phoneRouter = require("./routes/phone.routes.js");
-const propertyRouter = require("./routes/vehicle.routes.js");
+const propertyRouter = require("./routes/property.routes.js");
 const userRouter = require("./routes/user.routes.js");
 
 app.use("/brand", brandRouter);
