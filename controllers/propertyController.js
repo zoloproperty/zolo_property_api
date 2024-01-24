@@ -4,7 +4,7 @@ const {
   model_update,
   model_delete,
   model_add,
-} = require("../models/vehicleModal");
+} = require("../models/propertyModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
 

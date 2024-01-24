@@ -45,13 +45,19 @@ exports.filterValidation = Joi.object({
     "number.base": "Offset must be a number.",
     "number.default": "Default value for offset is 0.",
   }),
-  startDate: Joi.date().messages({
-    "date.base": "Start date must be a valid date.",
+  startDate: Joi.date().allow("", null).messages({
+    "date.base": "Start date must be a valid date or empty string.",
   }),
-  endDate: Joi.date().messages({
-    "date.base": "End date must be a valid date.",
+  search: Joi.string().allow("", null).messages({
+    "string.base": "Search must be a string.",
   }),
-  orderBy: Joi.string().messages({
-    "string.base": "OrderBy must be a string.",
+  order: Joi.string().allow("", null).messages({
+    "string.base": "order must be a string.",
+  }),
+  endDate: Joi.date().allow("", null).messages({
+    "date.base": "End date must be a valid date or empty string.",
+  }),
+  orderBy: Joi.string().allow("").optional().messages({
+    "string.base": "OrderBy must be a string or empty string.",
   }),
 });

@@ -20,7 +20,7 @@ exports.list = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await model_add(postData);
     return res.status(response.status).json(response);
   } catch (error) {

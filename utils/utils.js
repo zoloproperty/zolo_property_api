@@ -6,7 +6,7 @@ exports.handleError = (statusCode, message) => {
 };
 
 exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
-  const dynamicQuery = { $or: [] };
+  const dynamicQuery = {};
 
   if (start && end) {
     dynamicQuery.createdAt = { $gte: start, $lte: end };
@@ -31,7 +31,8 @@ exports.ListRecordByFilter = async (
   searchFields,
   Validation,
   Message,
-  extraData
+  extraData,
+  populate
 ) => {
   try {
     const { error, value } = Validation.validate(postData);
@@ -46,8 +47,6 @@ exports.ListRecordByFilter = async (
       startDate,
       endDate
     );
-    // merge additional search or Query
-    searchFieldsQuery.$or = searchFieldsQuery.$or.push(query.$or);
     Object.assign(query, searchFieldsQuery);
 
     if (value.radius && value.coordinates) {
@@ -62,12 +61,17 @@ exports.ListRecordByFilter = async (
       };
     }
 
-    const list =
-      (await Model.find(query)
-        .limit(limit)
-        .skip(offset)
-        .sort(sortOptions)
-        .exec()) || [];
+    let queryBuilder = Model.find(query)
+      .limit(limit)
+      .skip(offset)
+      .sort(sortOptions).populate(populate);
+
+    // Conditionally add populate
+    // if (populate) {
+    //   queryBuilder = queryBuilder;
+    // }
+
+    const list = (await queryBuilder.exec()) || [];
 
     const total = await Model.find(query);
     const pagination = {
@@ -121,6 +125,7 @@ exports.UpdateRecordById = async (
 ) => {
   try {
     const { error, value } = updateValidation.validate(postData);
+    console.log(postData);
     if (error) return this.handleError(400, error.details[0].message);
     const existing = await Model.findById(value.id);
     if (!existing)
@@ -152,7 +157,7 @@ exports.AddRecord = async (
   try {
     // Validate the request body
     const { error, value } = addValidation.validate(postData);
-    if (error) return handleError(400, error.details[0].message);
+    if (error) return this.handleError(400, error.details[0].message);
 
     // Check for duplicate records
     const existingEmi = await Model.findOne(FindQuery);

@@ -4,6 +4,7 @@ const {
   model_update,
   model_delete,
   model_add,
+  listOfBrand,
 } = require("../models/brandModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
@@ -20,7 +21,7 @@ exports.list = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await model_add(postData);
     return res.status(response.status).json(response);
   } catch (error) {
@@ -42,6 +43,15 @@ exports.delete = async (req, res) => {
   try {
     const postData = extractRequestData(req);
     const response = await model_delete(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+
+exports.brands = async (req, res) => {
+  try {
+    const response = await listOfBrand();
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));

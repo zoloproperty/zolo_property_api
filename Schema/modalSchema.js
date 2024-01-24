@@ -19,6 +19,14 @@ const modalSchema = new Schema(
       type: String,
       required: [true, "Modal description is required"],
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

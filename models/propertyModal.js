@@ -1,4 +1,4 @@
-const Brand = require("../Schema/vehicleSchema");
+const Property = require("../Schema/propertySchema");
 const {
   DeleteRecordById,
   UpdateRecordById,
@@ -9,64 +9,63 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 const {
   updateValidation,
   addValidation,
-} = require("../validation-schema/vehicleValidation");
+} = require("../validation-schema/propertyValidation");
 
 // ################################################
-// #               Brand list                     #
+// #               Property list                     #
 // ################################################
 
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = [
-    "user",
-    "description",
-    "purchase_year",
-    "fuel_type",
-    "onnership",
-    "price",
-    "city",
-    "state",
-  ];
+  const searchFields = ["price", "city", "state"];
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
-  if (postData.orderBy) sortOptions["vehicle"] = postData.orderBy;
+  if (postData.orderBy) sortOptions["property"] = postData.orderBy;
 
   return await ListRecordByFilter(
-    Brand,
+    Property,
     postData,
     query,
     sortOptions,
     searchFields,
     filterValidation,
-    "VEHICHE",
+    "PROPERTY",
     {}
   );
 };
 
 // ################################################
-// #               Brand Add                      #
+// #               Property Add                      #
 // ################################################
 
 exports.model_add = async (postData) => {
   // Check for duplicate records
-  return await AddRecord(Brand, postData, query, addValidation, "VEHICHE");
+  const query = {
+    // $or: [{brand: postData.name }],
+  };
+  return await AddRecord(Property, postData, query, addValidation, "PROPERTY");
 };
 
 // ################################################
-// #               Brand Update                   #
+// #               Property Update                   #
 // ################################################
 
 exports.model_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
-  return await UpdateRecordById(Brand, postData, updateValidation, "VEHICHE");
+  return await UpdateRecordById(
+    Property,
+    postData,
+    updateValidation,
+    "PROPERTY"
+  );
 };
 
 // // ################################################
-// // #               Brand delete                   #
+// // #               Property delete                   #
 // // ################################################
 
 exports.model_delete = async (postData) => {
-  return await DeleteRecordById(Brand, postData.id, "VEHICHE");
+  return await DeleteRecordById(Property, postData.id, "PROPERTY");
 };
