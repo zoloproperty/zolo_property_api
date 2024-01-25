@@ -21,7 +21,7 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 exports.contact_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["emi", "limit"];
+  const searchFields = ["contact", "limit"];
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
 

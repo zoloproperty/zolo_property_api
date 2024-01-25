@@ -2,9 +2,8 @@ const Joi = require('joi');
 
 // Define Joi schema for contact fields
 const ValidationObj = {
-  property_id: Joi.number().required().messages({
+  property_id: Joi.string().required().messages({
     'any.required': 'Property ID is required',
-    'number.base': 'Property ID must be a number',
   }),
   name: Joi.string().required().messages({
     'any.required': 'Name is required',

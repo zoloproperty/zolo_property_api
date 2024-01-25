@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const contactSchema = new Schema(
   {
     property_id: {
-      type: Number,
+      type: String,
       required: [true, "Property ID is required"],
     },
     name: {
