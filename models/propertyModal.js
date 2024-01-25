@@ -46,16 +46,15 @@ exports.model_add = async (postData) => {
   };
 
   let updateData = postData;
-  console.log(updateData);
+
   if (postData?.files) {
     const images = postData?.files?.map((item) => {
-      console.log(item);
       return item.path;
     });
     updateData = { ...postData, images };
     delete updateData.files;
   }
-  return await AddRecord(Property, postData, query, addValidation, "PROPERTY");
+  return await AddRecord(Property, updateData, query, addValidation, "PROPERTY");
 };
 
 // ################################################
