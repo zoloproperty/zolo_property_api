@@ -125,7 +125,6 @@ exports.UpdateRecordById = async (
 ) => {
   try {
     const { error, value } = updateValidation.validate(postData);
-    console.log(postData);
     if (error) return this.handleError(400, error.details[0].message);
     const existing = await Model.findById(value.id);
     if (!existing)

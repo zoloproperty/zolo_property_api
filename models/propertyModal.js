@@ -19,7 +19,7 @@ exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["price", "city", "state"];
-  const removeKey = ["host"];
+  const removeKey = ["host", "Authorization"];
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["property"] = postData.orderBy;
 
