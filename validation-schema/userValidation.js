@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const { Schema, model } = require("mongoose");
 
 exports.signupValidationSchema = Joi.object({
   first_name: Joi.string().required().messages({

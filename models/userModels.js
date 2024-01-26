@@ -9,6 +9,7 @@ const {
 const {
   loginValidationSchema,
   signupValidationSchema,
+  updateValidation
 } = require("../validation-schema/userValidation");
 const {
   handleError,
@@ -27,7 +28,7 @@ exports.user_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["user", "limit"];
-  const removeKey = ["host" ,"Authorization"];
+  const removeKey = ["host" ,"authorization"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(
@@ -182,6 +183,13 @@ exports.saveUser = async (postData) => {
     return handleError(500, error.message);
   }
 };
+exports.user_update = async (postData) => {
+  const removeKey = ["host"];
+  removeKey.map((key) => delete postData[key]);
+  return await UpdateRecordById(Contact, postData, updateValidation, "USER");
+};
+
+
 exports.user_delete = async (postData) => {
   return await DeleteRecordById(User, postData.id, "USER");
 };
