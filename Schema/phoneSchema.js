@@ -11,7 +11,7 @@ const phoneSchema = new Schema(
       type: String,
       required: [true, "name is required"],
     },
-    number: {
+    contact_number: {
       type: String,
       required: [true, "number is required"],
     },

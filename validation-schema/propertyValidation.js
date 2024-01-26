@@ -1,16 +1,35 @@
 const Joi = require("joi");
 
 const ValidationObj = {
-  state: Joi.string()
-    .required()
-    .messages({ "any.required": "State is required" }),
+  user: Joi.string().required().messages({
+    "any.required": "User ID is required",
+  }),
+  state: Joi.string().required().messages({
+    "any.required": "State is required",
+  }),
+  zip_code: Joi.number().required().messages({
+    "any.required": "Zip code is required",
+  }),
   address: Joi.string(),
   status: Joi.number().valid(1, 2, 3),
-  showVerified: Joi.boolean().default(false),
+  show_verified: Joi.boolean().default(false),
   added_by: Joi.number().default(null),
   property_for: Joi.string().valid("sell", "rent", "sold").default(null),
-  coordinates: Joi.array().items(Joi.number()).length(2),
-  location: Joi.string().required(),
+  coordinates: Joi.array()
+    .items(Joi.number())
+    .min(2)
+    .max(2)
+    .required()
+    .messages({
+      "any.required": "Coordinates are required.",
+      "array.base": "Coordinates must be an array of numbers.",
+      "array.min": "Coordinates must have at least two values.",
+      "array.max": "Coordinates must have at most two values.",
+      "number.base": "Each coordinate value must be a number.",
+    }),
+  location: Joi.string().required().messages({
+    "any.required": "Location is required",
+  }),
   property_type: Joi.string()
     .valid(
       "Shop",
@@ -57,8 +76,7 @@ const ValidationObj = {
     .default(null),
   facing_road_width: Joi.string().default(null),
   facing_road_width_in: Joi.string().valid("Feet", "Meters").default(null),
-  image: Joi.string().default(null),
-  images: Joi.array().items(Joi.string()).default([]),
+  images: Joi.array().items(Joi.string().default(null)),
   video: Joi.string().default(null),
   room_data: Joi.string().default(null),
   bedrooms: Joi.string().default(null),
@@ -89,7 +107,7 @@ const ValidationObj = {
   floor: Joi.number().default(null),
   total_floor: Joi.number().default(null),
   overlooking: Joi.string().default(null),
-  ownershiptype: Joi.string()
+  ownership_type: Joi.string()
     .valid("Freehold", "Power_of_attorney", "leasehold", "Co_Operative_Society")
     .default(null),
   living_room: Joi.string().default(null),
@@ -106,8 +124,15 @@ const ValidationObj = {
   expected_duration_of_stay: Joi.string().default(null),
   special_requirement: Joi.string().default(null),
   added_by_type: Joi.string().valid("Owner", "Broker", "Admin").default(null),
-  views: Joi.string().required(),
-  admin_status: Joi.string().valid("Pending", "Reject", "Approved").required(),
+  views: Joi.number().default(1),
+  admin_status: Joi.string()
+    .valid("Pending", "Reject", "Approved")
+    .required()
+    .messages({
+      "any.required": "Admin status is required",
+    }),
+  is_active: Joi.boolean().default(true),
+  is_deleted: Joi.boolean().default(false),
 };
 
 exports.addValidation = Joi.object(ValidationObj).options({

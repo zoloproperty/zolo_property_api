@@ -19,11 +19,18 @@ exports.signupValidationSchema = Joi.object({
     "string.max": "Password cannot be more than 20 characters long.",
   }),
   role: Joi.string().valid("user", "admin", "editor").default("user"),
-  coordinates: Joi.array().items(Joi.number()).ordered(2).default([]).messages({
-    "array.base": "Coordinates must be an array of two numbers.",
-    "array.ordered": "Coordinates must be an array of two numbers.",
-    "number.base": "Coordinates must be numbers.",
-  }),
+  coordinates: Joi.array()
+    .items(Joi.number())
+    .min(2)
+    .max(2)
+    .required()
+    .messages({
+      "any.required": "Coordinates are required.",
+      "array.base": "Coordinates must be an array of numbers.",
+      "array.min": "Coordinates must have at least two values.",
+      "array.max": "Coordinates must have at most two values.",
+      "number.base": "Each coordinate value must be a number.",
+    }),
   state: Joi.string().required().messages({
     "any.required": "State is required.",
   }),
@@ -33,21 +40,14 @@ exports.signupValidationSchema = Joi.object({
   city: Joi.string().required().messages({
     "any.required": "City is required.",
   }),
-  address: Joi.string().allow("", null).optional(),
+  address: Joi.string(),
+  login_type: Joi.string().valid("google", "credential"),
   is_email_verified: Joi.boolean().default(false),
-  email_verify_token: Joi.string().allow("", null).optional(),
-  reset_pass_token: Joi.string().allow("", null).optional(),
-  reset_pass_expiry: Joi.date().allow(null).optional(),
-  isActive: Joi.boolean().default(true).messages({
-    "boolean.base": "isActive must be a boolean.",
-    "any.default": "Default value for isActive is true.",
-    "boolean.required": "isActive is required.",
-  }),
-  isDeleted: Joi.boolean().default(false).messages({
-    "boolean.base": "isDeleted must be a boolean.",
-    "any.default": "Default value for isDeleted is false.",
-    "boolean.required": "isDeleted is required.",
-  }),
+  is_active: Joi.boolean().default(true),
+  is_deleted: Joi.boolean().default(false),
+  email_verify_tokan: Joi.string(),
+  reset_pass_tokan: Joi.string(),
+  reset_pass_expiry: Joi.string(),
 });
 exports.loginValidationSchema = Joi.object({
   email: Joi.string().email().required(),

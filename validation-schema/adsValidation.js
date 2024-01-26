@@ -1,12 +1,22 @@
 const Joi = require("joi");
 
+// Define Joi schema for contact fields
 const ValidationObj = {
-  user: Joi.string().required().messages({
-    "any.required": "User ID is required",
+  ads_name: Joi.string().required().messages({
+    "any.required": "Ads name is required",
   }),
-  name: Joi.string().required().messages({
-    "any.required": "Name is required",
+  title: Joi.string().required().messages({
+    "any.required": "Title is required",
   }),
+  description: Joi.string().required().messages({
+    "any.required": "Description is required",
+  }),
+  image: Joi.string().required().messages({
+    "any.required": "Ads main Image is required",
+  }),
+  gallery: Joi.array().items(Joi.string().default(null)),
+  show_number: Joi.boolean().default(true),
+  show_map: Joi.boolean().default(true),
   number: Joi.string().required().messages({
     "any.required": "Number is required",
   }),
@@ -30,14 +40,17 @@ const ValidationObj = {
     }),
   is_active: Joi.boolean().default(true),
   is_deleted: Joi.boolean().default(false),
+  expiry_date: Joi.date().default(() => {
+    const currentDate = new Date();
+    const next30Days = new Date(currentDate);
+    next30Days.setDate(currentDate.getDate() + 30);
+    return next30Days;
+  }),
 };
-
 exports.addValidation = Joi.object(ValidationObj);
 
 exports.updateValidation = Joi.object({
   ...ValidationObj,
-  id: Joi.string().required().messages({
-    "any.required": "Phone id is required.",
-    "string.base": "Phone id must be a string.",
-  }),
+  id: Joi.string().required(),
+  property_id: Joi.string().optional(),
 });
