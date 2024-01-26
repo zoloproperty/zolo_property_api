@@ -11,7 +11,7 @@ const ValidationObj = {
   address: Joi.string().required().messages({
     "any.required": "Address is required",
   }),
-  contact_number: Joi.string().required().unique().messages({
+  contact_number: Joi.string().required().messages({
     "any.required": "Contact number is required",
     "string.unique": "Contact value already exists, please try another value.",
   }),

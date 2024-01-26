@@ -9,15 +9,18 @@ exports.signupValidationSchema = Joi.object({
     "any.required": "Number is required.",
     "number.base": "Number must be a valid number.",
   }),
-  email: Joi.string().email().required().messages({
-    "any.required": "Email is required.",
-    "string.email": "Email must be a valid email address.",
-  }),
-  password: Joi.string().min(8).max(20).required().messages({
-    "any.required": "Password is required.",
-    "string.min": "Password must be at least 8 characters long.",
-    "string.max": "Password cannot be more than 20 characters long.",
-  }),
+  email: Joi.string().email().optional(),
+
+  // .required().messages({
+  //   "any.required": "Email is required.",
+  //   "string.email": "Email must be a valid email address.",
+  // }),
+  password: Joi.string().min(8).max(20).optional(),
+  // .required().messages({
+  //   "any.required": "Password is required.",
+  //   "string.min": "Password must be at least 8 characters long.",
+  //   "string.max": "Password cannot be more than 20 characters long.",
+  // }),
   role: Joi.string().valid("user", "admin", "editor").default("user"),
   coordinates: Joi.array()
     .items(Joi.number())
