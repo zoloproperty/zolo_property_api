@@ -43,6 +43,7 @@ exports.user_list = async (postData) => {
 };
 
 exports.login = async (postData) => {
+  console.log(postData ,"postData1111111111")
   try {
     let { email } = postData;
     let picture, name;
@@ -72,7 +73,6 @@ exports.login = async (postData) => {
       }
       loggedInWith = "username-password";
     }
-
     try {
       const findUser = await User.findOne({ email });
       if (!findUser || !findUser.is_active || findUser.is_deleted) {
@@ -111,8 +111,8 @@ exports.login = async (postData) => {
             : `http://${postData.host}/profile/${findUser.image}`
           : null,
         loggedInWith: loggedInWith,
+        role : findUser.role
       };
-
       const jwtToken = await signJwt(payLoad);
 
       return new Response(200, "T", jwtToken).custom(
@@ -188,8 +188,15 @@ exports.saveUser = async (postData) => {
   }
 };
 exports.user_update = async (postData) => {
-  const removeKey = ["host"];
+  const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
+   let updateData = postData;
+
+    if (postData?.file) {
+      const image = postData?.file?.path;
+      updateData = { ...postData, image };
+      delete updateData.files;
+    }
   return await UpdateRecordById(User, postData, updateValidation, "USER");
 };
 

@@ -37,8 +37,7 @@ const ValidationObj = {
   state: Joi.string().required().messages({
     "any.required": "State is required.",
   }),
-  zip_code: Joi.number().min(6)
-  .max(6).required().messages({
+  zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),
   city: Joi.string().required().messages({

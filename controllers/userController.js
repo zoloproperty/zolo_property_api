@@ -15,7 +15,6 @@ exports.list = async (req, res) => {
 exports.login = async (req, res) => {
     try {
       const postData = extractRequestData(req);
-      console.log(postData ,"postData")
       const response = await login(postData);
       return res.status(response.status).json(response);
     } catch (error) {
