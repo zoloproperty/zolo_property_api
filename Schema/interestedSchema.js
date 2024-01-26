@@ -28,19 +28,32 @@ const interestedSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    is_fake: {
+      type: Boolean,
+      default: false,
+    },
+    email_sent: {
+      type: Boolean,
+      default: false,
+    },
     description: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "description is required"],
     },
     type: {
       type: String,
       enum: ["ads", "property"],
     },
-    isActive: {
+    status: {
+      type: String,
+      default: "interested",
+      enum: ["contacted", "interested", "follow-up", "not-interested"],
+    },
+    is_active: {
       type: Boolean,
       default: true,
     },
-    isDeleted: {
+    is_deleted: {
       type: Boolean,
       default: false,
     },

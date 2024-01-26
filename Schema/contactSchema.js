@@ -32,18 +32,22 @@ const contactSchema = new Schema(
       default: "interested",
       enum: ["contacted", "interested", "follow-up", "not-interested"],
     },
-    isFake: {
+    is_fake: {
       type: Boolean,
       default: false,
     },
-    emailSent: {
+    email_sent: {
       type: Boolean,
       default: false,
     },
-    isDeleted: {
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
+    is_deleted: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );

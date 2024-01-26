@@ -43,11 +43,11 @@ const adsSchema = new Schema(
       type: [Number],
       index: "2dsphere",
     },
-    isActive: {
+    is_active: {
       type: Boolean,
       default: true,
     },
-    isDeleted: {
+    is_deleted: {
       type: Boolean,
       default: false,
     },

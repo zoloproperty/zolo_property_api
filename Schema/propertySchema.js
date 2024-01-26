@@ -158,7 +158,7 @@ const propertySchema = new Schema(
       enum: ["Owner", "Broker", "Admin"],
       default: null,
     },
-    views: { type: String, required: true },
+    views: { type: Number, default: 1 },
     admin_status: {
       type: String,
       enum: ["Pending", "Reject", "Approved"],
