@@ -2,37 +2,39 @@ const Joi = require("joi");
 
 const ValidationObj = {
   user: Joi.string().required().messages({
-    "any.required": "User is required.",
+    "any.required": "User ID is required",
   }),
-  vehicle: Joi.string().required().messages({
-    "any.required": "Vehicle is required.",
+  property: Joi.string().required().messages({
+    "any.required": "Property ID is required",
   }),
-  coordinates: Joi.array().items(Joi.number()).length(2).messages({
-    "array.base": "Coordinates must be an array of two numbers.",
-    "array.length": "Coordinates must be an array of two numbers.",
-    "number.base": "Coordinates must be numbers.",
+  coordinates: Joi.array()
+    .items(Joi.number())
+    .min(2)
+    .max(2)
+    .required()
+    .messages({
+      "any.required": "Coordinates are required.",
+      "array.base": "Coordinates must be an array of numbers.",
+      "array.min": "Coordinates must have at least two values.",
+      "array.max": "Coordinates must have at most two values.",
+      "number.base": "Each coordinate value must be a number.",
+    }),
+  zip_code: Joi.number().required().messages({
+    "any.required": "Zip code is required",
   }),
-  call: Joi.boolean().default(false).messages({
-    "boolean.base": "Call must be a boolean.",
-    "any.default": "Default value for Call is false.",
+  call: Joi.boolean().default(false),
+  leads: Joi.boolean().default(false),
+  is_fake: Joi.boolean().default(false),
+  email_sent: Joi.boolean().default(false),
+  description: Joi.string().required().messages({
+    "any.required": "Description is required",
   }),
-  leads: Joi.boolean().default(false).messages({
-    "boolean.base": "Leads must be a boolean.",
-    "any.default": "Default value for Leads is false.",
-  }),
-  note: Joi.string().allow("").optional().messages({
-    "string.base": "Note must be a string.",
-  }),
-  isActive: Joi.boolean().default(true).messages({
-    "boolean.base": "isActive must be a boolean.",
-    "any.default": "Default value for isActive is true.",
-    "boolean.required": "isActive is required.",
-  }),
-  isDeleted: Joi.boolean().default(false).messages({
-    "boolean.base": "isDeleted must be a boolean.",
-    "any.default": "Default value for isDeleted is false.",
-    "boolean.required": "isDeleted is required.",
-  }),
+  type: Joi.string().valid("ads", "property"),
+  status: Joi.string()
+    .valid("contacted", "interested", "follow-up", "not-interested")
+    .default("interested"),
+  is_active: Joi.boolean().default(true),
+  is_deleted: Joi.boolean().default(false),
 };
 
 exports.addValidation = Joi.object(ValidationObj).options({
