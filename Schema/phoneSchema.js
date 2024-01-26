@@ -27,6 +27,14 @@ const phoneSchema = new Schema(
       type: [Number],
       index: "2dsphere",
     },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
