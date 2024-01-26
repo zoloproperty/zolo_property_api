@@ -10,7 +10,6 @@ exports.signupValidationSchema = Joi.object({
     "number.base": "Number must be a valid number.",
   }),
   email: Joi.string().email().optional(),
-
   // .required().messages({
   //   "any.required": "Email is required.",
   //   "string.email": "Email must be a valid email address.",
