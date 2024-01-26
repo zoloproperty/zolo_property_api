@@ -8,7 +8,7 @@ const ValidationObj = {
     "any.required": "State is required",
   }),
   zip_code: Joi.number().required().messages({
-    "any.required": "Zip code is required",
+    "any.required": "zip code is required.",
   }),
   address: Joi.string(),
   status: Joi.number().valid(1, 2, 3),

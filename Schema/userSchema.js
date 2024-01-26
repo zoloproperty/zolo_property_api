@@ -44,6 +44,11 @@ const userSchema = new Schema(
       type: Number,
       required: [true, "Zip code is required"],
     },
+    local_area: [{ type: Number }],
+    area: {
+      type: Number,
+      required: [true, "Zip code is required"],
+    },
     address: {
       type: String,
     },

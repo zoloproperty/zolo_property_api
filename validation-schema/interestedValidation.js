@@ -19,8 +19,7 @@ const ValidationObj = {
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
     }),
-    zip_code: Joi.number().min(6)
-    .max(6).required().messages({
+    zip_code: Joi.number().required().messages({
       "any.required": "zip code is required.",
     }),
   call: Joi.boolean().default(false),

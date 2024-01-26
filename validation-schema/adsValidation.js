@@ -23,7 +23,7 @@ const ValidationObj = {
   city: Joi.string().required().messages({
     "any.required": "City is required",
   }),
-  zip_code: Joi.number().min(6).max(6).required().messages({
+  zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),
   coordinates: Joi.array()

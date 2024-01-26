@@ -40,6 +40,7 @@ const ValidationObj = {
   zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),
+  local_area: Joi.array().items(Joi.number().default(480001)),
   city: Joi.string().required().messages({
     "any.required": "City is required.",
   }),
