@@ -141,16 +141,27 @@ function authHandler(typeProp) {
 
 
 
-    DUPLICATE_PROPERTY_EXISTS : "PROPERTY value already exists, please try another value.",
-    PROPERTY_NOT_EXISTS : "PROPERTY value not exists, please try again.",
-    PROPERTY_UPD : "PROPERTY value updated successfully.",
-    PROPERTY_ACTIVATED : "PROPERTY activated successfully.",
-    PROPERTY_DEACTIVATED : "PROPERTY deactivated successfully.",
+    DUPLICATE_PROPERTY_EXISTS : "Property value already exists, please try another value.",
+    PROPERTY_NOT_EXISTS : "Property value not exists, please try again.",
+    PROPERTY_UPD : "Property value updated successfully.",
+    PROPERTY_ACTIVATED : "Property activated successfully.",
+    PROPERTY_DEACTIVATED : "Property deactivated successfully.",
     PROPERTY_UPD_FAILED : "Failed to update property value.",
-    PROPERTY_ADDED : "PROPERTY value added successfully.",
+    PROPERTY_ADDED : "Property value added successfully.",
     PROPERTY_ADD_FAILED : "Something went wrong when adding property.",
-    PROPERTY_DELETED : "PROPERTY deleted successfully.",
+    PROPERTY_DELETED : "Property deleted successfully.",
     FAILED_DELETE_PROPERTY : "Something went wrong when deleting the property.",
+   
+    DUPLICATE_CONTACT_EXISTS : "Contact value already exists, please try another value.",
+    CONTACT_NOT_EXISTS : "Contact value not exists, please try again.",
+    CONTACT_UPD : "Contact value updated successfully.",
+    CONTACT_ACTIVATED : "Contact activated successfully.",
+    CONTACT_DEACTIVATED : "Contact deactivated successfully.",
+    CONTACT_UPD_FAILED : "Failed to update Contact value.",
+    CONTACT_ADDED : "Contact value added successfully.",
+    CONTACT_ADD_FAILED : "Something went wrong when adding Contact.",
+    CONTACT_DELETED : "Contact deleted successfully.",
+    FAILED_DELETE_CONTACT : "Something went wrong when deleting the Contact.",
 
     // Image
     NO_FILE: 'No file uploaded.',

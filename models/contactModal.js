@@ -22,7 +22,7 @@ exports.contact_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["contact", "limit"];
-  const removeKey = ["host"];
+  const removeKey = ["host" ,"Authorization"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(
@@ -42,13 +42,10 @@ exports.contact_list = async (postData) => {
 // ################################################
 
 exports.contact_add = async (postData) => {
-  const query = {
-    $or: [
-      { limit: postData.limit },
-      // , { emi: value.emi }
-    ],
-  };
-  return await AddRecord(Contact, postData, query, addValidation, "Contact");
+    const query = {
+        $or: [{ contact_number: postData.contact_number }],
+      };
+  return await AddRecord(Contact, postData, query, addValidation, "CONTACT");
 };
 
 // ################################################
@@ -58,7 +55,7 @@ exports.contact_add = async (postData) => {
 exports.contact_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
-  return await UpdateRecordById(Contact, postData, updateValidation, "Contact");
+  return await UpdateRecordById(Contact, postData, updateValidation, "CONTACT");
 };
 
 // ################################################
@@ -66,5 +63,5 @@ exports.contact_update = async (postData) => {
 // ################################################
 
 exports.contact_delete = async (postData) => {
-  return await DeleteRecordById(Contact, postData.id, "Contact");
+  return await DeleteRecordById(Contact, postData.id, "CONTACT");
 };
