@@ -59,7 +59,7 @@ exports.signupValidationSchema = Joi.object(ValidationObj).options({
   allowUnknown: true,
 });
 
-ValidationObj.password = Joi.string();
+delete ValidationObj.password;
 
 exports.updateValidation = Joi.object({
   ...ValidationObj,

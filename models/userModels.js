@@ -9,7 +9,7 @@ const {
 const {
   loginValidationSchema,
   signupValidationSchema,
-  updateValidation
+  updateValidation,
 } = require("../validation-schema/userValidation");
 const {
   handleError,
@@ -23,12 +23,11 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
 
-
 exports.user_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["user", "limit"];
-  const removeKey = ["host" ,"authorization"];
+  const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(
@@ -132,9 +131,14 @@ exports.saveUser = async (postData) => {
     if (postData?.oldImage) {
       // Handle file deletion if needed
     }
-    
+    let updateData = postData;
 
-    const { error, value } = signupValidationSchema.validate(postData);
+    if (postData?.file) {
+      const image = postData?.file?.path;
+      updateData = { ...postData, image };
+      delete updateData.files;
+    }
+    const { error, value } = signupValidationSchema.validate(updateData);
     if (error) {
       return handleError(400, error.details[0].message);
     }
@@ -188,7 +192,6 @@ exports.user_update = async (postData) => {
   removeKey.map((key) => delete postData[key]);
   return await UpdateRecordById(User, postData, updateValidation, "USER");
 };
-
 
 exports.user_delete = async (postData) => {
   return await DeleteRecordById(User, postData.id, "USER");

@@ -25,7 +25,7 @@ exports.login = async (req, res) => {
   
   exports.saveUser = async (req, res) => {
     try {
-      const postData = (req.body);
+      const postData = extractRequestData(req);
       const response = await saveUser(postData);
       return res.status(response.status).json(response);
     } catch (error) {
