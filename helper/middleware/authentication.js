@@ -60,9 +60,6 @@ const isRoleIsValid =
   (...role) =>
   (req, res, next) => {
     if (!role.includes(req.authData.role)) {
-      // return next(
-      //   new ErrorHandler(403, `${req.authData.role} role is not allowed`)
-      // );
       return res.status(200).json({
         status: 401,
         success: false,

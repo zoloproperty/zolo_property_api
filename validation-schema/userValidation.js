@@ -21,7 +21,7 @@ const ValidationObj = {
   //   "string.min": "Password must be at least 8 characters long.",
   //   "string.max": "Password cannot be more than 20 characters long.",
   // }),
-  role: Joi.string().valid("user", "admin", "editor").default("user"),
+  role: Joi.string().valid("user", "admin", "editor" , "broker").default("user"),
   coordinates: Joi.array()
     .items(Joi.number())
     .min(2)
@@ -38,9 +38,10 @@ const ValidationObj = {
     "any.required": "State is required.",
   }),
   zip_code: Joi.number().required().messages({
-    "any.required": "zip code is required.",
-  }),
-  local_area: Joi.array().items(Joi.number().default(480001)),
+    "any.required": "Zip code is required.",
+    "number.base": "Zip code must be a number."
+}),
+  local_area: Joi.array().optional(),
   city: Joi.string().required().messages({
     "any.required": "City is required.",
   }),

@@ -9,7 +9,7 @@ const {
 const { middleware } = require("../helper/middleware/authentication");
 const { uploadFiles } = require("../helper/third-party/multipart");
 
-router.post("/list", list);
+router.post("/list", middleware ,list);
 router.post("/add", uploadFiles("public/property").array("images", 10), add);
 router.put(
   "/update/:id",

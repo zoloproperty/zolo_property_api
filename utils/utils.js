@@ -1,6 +1,6 @@
 const Response = require("../helper/static/Response");
 const { authHandler } = require("../helper/static/messages");
-
+const {brokerControl} = require("../utils/brokerControl")
 exports.handleError = (statusCode, message) => {
   return new Response(statusCode, "F").custom(message);
 };
@@ -15,9 +15,12 @@ exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
   }
 
   if (searchString) {
-    dynamicQuery.$or = searchFields.map((field) => ({
-      [field]: { $regex: new RegExp(searchString, "i") },
-    }));
+    dynamicQuery.$or = [
+      ...dynamicQuery.$or,
+      ...searchFields.map((field) => ({
+        [field]: { $regex: new RegExp(searchString, "i") },
+      })),
+    ];
   }
 
   return dynamicQuery;
@@ -35,6 +38,12 @@ exports.ListRecordByFilter = async (
   populate
 ) => {
   try {
+    const userData = postData.authData;
+    if (userData) {
+      brokerControl(query, userData.role, userData.local_area);
+      delete postData.authData;
+    }
+
     const { error, value } = Validation.validate(postData);
     if (error) {
       return new Response(400, "F").custom(error.details[0].message);
@@ -64,7 +73,8 @@ exports.ListRecordByFilter = async (
     let queryBuilder = Model.find(query)
       .limit(limit)
       .skip(offset)
-      .sort(sortOptions).populate(populate);
+      .sort(sortOptions)
+      .populate(populate);
 
     // Conditionally add populate
     // if (populate) {
