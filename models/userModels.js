@@ -10,6 +10,15 @@ const {
   loginValidationSchema,
   signupValidationSchema,
 } = require("../validation-schema/userValidation");
+const {
+  handleError,
+  buildDynamicQuery,
+  DeleteRecordById,
+  UpdateRecordById,
+  AddRecord,
+  ListRecordByFilter,
+} = require("../utils/utils");
+const { filterValidation } = require("../validation-schema/filterValidation");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
 
@@ -176,7 +185,3 @@ exports.saveUser = async (postData) => {
 exports.user_delete = async (postData) => {
   return await DeleteRecordById(User, postData.id, "USER");
 };
-
-function handleError(statusCode, message) {
-  return new Response(statusCode, "F").custom(authHandler(message));
-}
