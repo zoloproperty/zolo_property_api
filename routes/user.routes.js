@@ -8,7 +8,6 @@ const {uploadFiles} = require("../helper/third-party/multipart");
 router.post("/list", list);
 router.post(
   "/login",
-  uploadFiles("public/profile").single("image"),
   login
 );
 router.post(
