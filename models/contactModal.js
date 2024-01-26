@@ -22,7 +22,7 @@ exports.contact_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["contact", "limit"];
-  const removeKey = ["host", "authorization"];
+  const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(
