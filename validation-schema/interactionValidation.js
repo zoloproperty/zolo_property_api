@@ -8,8 +8,9 @@ const ValidationObj = {
   property: Joi.string().required().messages({
     "any.required": "Property ID is required",
   }),
-  zip_code: Joi.number().required().messages({
-    "any.required": "Zip code is required",
+  zip_code: Joi.number().min(6)
+  .max(6).required().messages({
+    "any.required": "zip code is required.",
   }),
   coordinates: Joi.array().items(Joi.number()).index("2dsphere"),
   type: Joi.string().valid("like", "view").messages({
