@@ -13,6 +13,26 @@ const {
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
 
+
+exports.user_list = async (postData) => {
+  const query = {};
+  const sortOptions = { limit: 1 };
+  const searchFields = ["user", "limit"];
+  const removeKey = ["host" ,"Authorization"];
+  removeKey.map((key) => delete postData[key]);
+
+  return await ListRecordByFilter(
+    User,
+    postData,
+    query,
+    sortOptions,
+    searchFields,
+    filterValidation,
+    "user list",
+    {}
+  );
+};
+
 exports.login = async (postData) => {
   try {
     let { email } = postData;
@@ -152,6 +172,9 @@ exports.saveUser = async (postData) => {
   } catch (error) {
     return handleError(500, error.message);
   }
+};
+exports.user_delete = async (postData) => {
+  return await DeleteRecordById(User, postData.id, "USER");
 };
 
 function handleError(statusCode, message) {

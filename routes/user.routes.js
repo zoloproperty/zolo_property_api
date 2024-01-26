@@ -1,18 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/userController");
+const {login , saveUser ,list, delete:deleteController} = require("../controllers/userController");
 const { middleware } = require("../helper/middleware/authentication");
 const {uploadFiles} = require("../helper/third-party/multipart");
 
+
+router.post("/list", list);
 router.post(
   "/login",
   uploadFiles("public/profile").single("image"),
-  userController.login
+  login
 );
 router.post(
   "/signUp",
   uploadFiles("public/profile").single("image"),
-  userController.saveUser
+ saveUser
 );
-
+router.delete("/delete/:id", deleteController);
 module.exports = router;
