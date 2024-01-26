@@ -1,10 +1,11 @@
 const Joi = require("joi");
 
-exports.signupValidationSchema = Joi.object({
+const ValidationObj = {
   first_name: Joi.string().required().messages({
     "any.required": "Name is required.",
   }),
   last_name: Joi.string().allow("", null).optional(),
+  image: Joi.string(),
   contact_number: Joi.number().required().messages({
     "any.required": "Number is required.",
     "number.base": "Number must be a valid number.",
@@ -36,7 +37,7 @@ exports.signupValidationSchema = Joi.object({
   state: Joi.string().required().messages({
     "any.required": "State is required.",
   }),
-  zip_code: Joi.string().required().messages({
+  zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),
   city: Joi.string().required().messages({
@@ -50,7 +51,23 @@ exports.signupValidationSchema = Joi.object({
   email_verify_tokan: Joi.string(),
   reset_pass_tokan: Joi.string(),
   reset_pass_expiry: Joi.string(),
+};
+
+exports.signupValidationSchema = Joi.object(ValidationObj).options({
+  abortEarly: false,
+  allowUnknown: true,
 });
+
+ValidationObj.password = Joi.string();
+
+exports.updateValidation = Joi.object({
+  ...ValidationObj,
+  id: Joi.string().required().messages({
+    "any.required": "Modal id is required.",
+    "string.base": "Modal id must be a string.",
+  }),
+}).options({ abortEarly: false, allowUnknown: true });
+
 exports.loginValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).max(20).required(),

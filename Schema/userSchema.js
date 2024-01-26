@@ -27,6 +27,7 @@ const userSchema = new Schema(
       default: "user",
       enum: ["user", "admin", "editor"],
     },
+    image: { type: String },
     coordinates: {
       type: [Number],
       index: "2dsphere",

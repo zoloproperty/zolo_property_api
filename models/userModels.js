@@ -132,6 +132,7 @@ exports.saveUser = async (postData) => {
     if (postData?.oldImage) {
       // Handle file deletion if needed
     }
+    
 
     const { error, value } = signupValidationSchema.validate(postData);
     if (error) {
@@ -147,7 +148,6 @@ exports.saveUser = async (postData) => {
 
     if (postData?.user_id) {
       const findUser = await User.findOne({ user_id: postData?.user_id });
-      console.log(findUser, "value");
       if (!findUser) {
         return handleError(400, "USER_NOT_EXISTS");
       }
@@ -186,7 +186,7 @@ exports.saveUser = async (postData) => {
 exports.user_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
-  return await UpdateRecordById(Contact, postData, updateValidation, "USER");
+  return await UpdateRecordById(User, postData, updateValidation, "USER");
 };
 
 
