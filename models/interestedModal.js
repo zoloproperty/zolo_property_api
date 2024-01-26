@@ -31,7 +31,7 @@ exports.model_list = async (postData) => {
     "vehicle.brand.brand",
     "vehicle.modal.modal",
   ];
-  const removeKey = ["host"];
+  const removeKey = ["host" , "authorization"];
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 

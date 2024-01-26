@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {login , saveUser ,list, delete:deleteController} = require("../controllers/userController");
+const {login , saveUser ,list,update, delete:deleteController} = require("../controllers/userController");
 const { middleware } = require("../helper/middleware/authentication");
 const {uploadFiles} = require("../helper/third-party/multipart");
 
@@ -16,5 +16,6 @@ router.post(
   uploadFiles("public/profile").single("image"),
  saveUser
 );
+router.put("/update/:id", update);
 router.delete("/delete/:id", deleteController);
 module.exports = router;

@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-exports.signupValidationSchema = Joi.object({
+const ValidationObj = {
   first_name: Joi.string().required().messages({
     "any.required": "Name is required.",
   }),
@@ -48,7 +48,24 @@ exports.signupValidationSchema = Joi.object({
     "any.default": "Default value for isDeleted is false.",
     "boolean.required": "isDeleted is required.",
   }),
+};
+exports.signupValidationSchema = Joi.object(ValidationObj);
+
+exports.updateValidation = Joi.object({
+  ...ValidationObj,
+  id: Joi.string().required(),
+  email: Joi.string().email().optional().messages({
+    "any.required": "Email is required.",
+    "string.email": "Email must be a valid email address.",
+  }),
+  password: Joi.string().min(8).max(20).optional().messages({
+    "any.required": "Password is required.",
+    "string.min": "Password must be at least 8 characters long.",
+    "string.max": "Password cannot be more than 20 characters long.",
+  }),
 });
+
+
 exports.loginValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).max(20).required(),

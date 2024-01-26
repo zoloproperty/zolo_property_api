@@ -1,5 +1,5 @@
 const Response = require("../helper/static/Response");
-const {login , saveUser ,user_list, user_delete} = require("../models/userModels");
+const {login , saveUser ,user_update ,user_list, user_delete} = require("../models/userModels");
 
 const { extractRequestData } = require("../helper/static/request-response");
 
@@ -27,6 +27,15 @@ exports.login = async (req, res) => {
     try {
       const postData = (req.body);
       const response = await saveUser(postData);
+      return res.status(response.status).json(response);
+    } catch (error) {
+      return res.json(new Response(500, "F").custom(error.message));
+    }
+  };
+  exports.update = async (req, res) => {
+    try {
+      const postData = extractRequestData(req);
+      const response = await user_update(postData);
       return res.status(response.status).json(response);
     } catch (error) {
       return res.json(new Response(500, "F").custom(error.message));
