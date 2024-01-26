@@ -19,7 +19,7 @@ exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["price", "city", "state"];
-  const removeKey = ["host"];
+  const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["property"] = postData.orderBy;
 
@@ -54,7 +54,13 @@ exports.model_add = async (postData) => {
     updateData = { ...postData, images };
     delete updateData.files;
   }
-  return await AddRecord(Property, updateData, query, addValidation, "PROPERTY");
+  return await AddRecord(
+    Property,
+    updateData,
+    query,
+    addValidation,
+    "PROPERTY"
+  );
 };
 
 // ################################################

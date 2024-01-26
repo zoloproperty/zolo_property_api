@@ -7,14 +7,18 @@ const interestedSchema = new Schema(
       ref: "user",
       required: true,
     },
-    vehicle: {
+    property: {
       type: Schema.Types.ObjectId,
-      ref: "vehicle",
+      ref: "property",
       required: true,
     },
     coordinates: {
       type: [Number],
       index: "2dsphere",
+    },
+    zip_code: {
+      type: Number,
+      required: [true, "Zip code is required"],
     },
     call: {
       type: Boolean,
@@ -23,6 +27,14 @@ const interestedSchema = new Schema(
     leads: {
       type: Boolean,
       default: false,
+    },
+    description: {
+      type: String,
+      required: [true, "name is required"],
+    },
+    type: {
+      type: String,
+      enum: ["ads", "property"],
     },
     isActive: {
       type: Boolean,

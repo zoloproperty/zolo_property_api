@@ -2,14 +2,14 @@ const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    name: {
+    first_name: {
       type: String,
       required: [true, "Name is required"],
     },
     last_name: {
       type: String,
     },
-    number: {
+    contact_number: {
       type: Number,
       required: [true, "Number is required"],
     },
@@ -27,11 +27,6 @@ const userSchema = new Schema(
       default: "user",
       enum: ["user", "admin", "editor"],
     },
-    interest: {
-      type: String,
-      default: "car",
-      enum: ["car", "bike"],
-    },
     coordinates: {
       type: [Number],
       index: "2dsphere",
@@ -44,18 +39,26 @@ const userSchema = new Schema(
       type: String,
       required: [true, "city is required"],
     },
+    zip_code: {
+      type: Number,
+      required: [true, "Zip code is required"],
+    },
     address: {
       type: String,
+    },
+    login_type: {
+      type: String,
+      enum: ["google", "credential"],
     },
     is_email_verified: {
       type: Boolean,
       default: false,
     },
-    isActive: {
+    is_active: {
       type: Boolean,
       default: true,
     },
-    isDeleted: {
+    is_deleted: {
       type: Boolean,
       default: false,
     },

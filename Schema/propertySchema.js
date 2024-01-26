@@ -2,9 +2,18 @@ const { Schema, model } = require("mongoose");
 
 const propertySchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
     state: {
       type: String,
       required: [true, "State is required"],
+    },
+    zip_code:{
+      type:Number,
+      required: [true, "Zip code is required"],
     },
     address: {
       type: String,
@@ -154,6 +163,14 @@ const propertySchema = new Schema(
       type: String,
       enum: ["Pending", "Reject", "Approved"],
       required: true,
+    },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
