@@ -64,5 +64,5 @@ const adsSchema = new Schema(
   { timestamps: true }
 );
 
-const Phone = model("ads", adsSchema);
-module.exports = Phone;
+const Ads = model("ads", adsSchema);
+module.exports = Ads;

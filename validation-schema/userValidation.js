@@ -1,11 +1,11 @@
 const Joi = require("joi");
 
 exports.signupValidationSchema = Joi.object({
-  name: Joi.string().required().messages({
+  first_name: Joi.string().required().messages({
     "any.required": "Name is required.",
   }),
   last_name: Joi.string().allow("", null).optional(),
-  number: Joi.number().required().messages({
+  contact_number: Joi.number().required().messages({
     "any.required": "Number is required.",
     "number.base": "Number must be a valid number.",
   }),
@@ -19,7 +19,6 @@ exports.signupValidationSchema = Joi.object({
     "string.max": "Password cannot be more than 20 characters long.",
   }),
   role: Joi.string().valid("user", "admin", "editor").default("user"),
-  interest: Joi.string().valid("car", "bike").default("car"),
   coordinates: Joi.array().items(Joi.number()).ordered(2).default([]).messages({
     "array.base": "Coordinates must be an array of two numbers.",
     "array.ordered": "Coordinates must be an array of two numbers.",
@@ -27,6 +26,9 @@ exports.signupValidationSchema = Joi.object({
   }),
   state: Joi.string().required().messages({
     "any.required": "State is required.",
+  }),
+  zip_code: Joi.string().required().messages({
+    "any.required": "zip code is required.",
   }),
   city: Joi.string().required().messages({
     "any.required": "City is required.",
