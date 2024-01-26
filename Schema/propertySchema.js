@@ -22,7 +22,7 @@ const propertySchema = new Schema(
       type: Number,
       enum: [1, 2, 3],
     },
-    showVerified: {
+    show_verified: {
       type: Boolean,
       default: false,
     },
@@ -130,7 +130,7 @@ const propertySchema = new Schema(
     floor: { type: Number, default: null },
     total_floor: { type: Number, default: null },
     overlooking: { type: String, default: null },
-    ownershiptype: {
+    ownership_type: {
       type: String,
       enum: [
         "Freehold",
