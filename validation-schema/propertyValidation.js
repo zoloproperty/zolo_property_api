@@ -143,7 +143,7 @@ exports.addValidation = Joi.object(ValidationObj).options({
 exports.updateValidation = Joi.object({
   ...ValidationObj,
   id: Joi.string().required().messages({
-    "any.required": "Modal id is required.",
-    "string.base": "Modal id must be a string.",
+    "any.required": "Property id is required.",
+    "string.base": "Property id must be a string.",
   }),
 }).options({ abortEarly: false, allowUnknown: true });
