@@ -19,6 +19,7 @@ const {
   AddRecord,
   ListRecordByFilter,
 } = require("../utils/utils");
+const { brokerControl } = require("../utils/brokerControl");
 const { filterValidation } = require("../validation-schema/filterValidation");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
@@ -27,7 +28,14 @@ exports.user_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = ["user", "limit"];
-  const removeKey = ["host", "authorization"];
+
+  const userData = postData.authData;
+  if (userData) {
+    brokerControl(query, userData.role, userData.local_area);
+  }
+
+
+  const removeKey = ["host", "authData"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(
@@ -43,7 +51,7 @@ exports.user_list = async (postData) => {
 };
 
 exports.login = async (postData) => {
-  console.log(postData ,"postData1111111111")
+  console.log(postData, "postData1111111111");
   try {
     let { email } = postData;
     let picture, name;
@@ -111,7 +119,8 @@ exports.login = async (postData) => {
             : `http://${postData.host}/profile/${findUser.image}`
           : null,
         loggedInWith: loggedInWith,
-        role : findUser.role
+        role: findUser.role,
+        local_area: findUser.local_area,
       };
       const jwtToken = await signJwt(payLoad);
 
@@ -190,13 +199,13 @@ exports.saveUser = async (postData) => {
 exports.user_update = async (postData) => {
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
-   let updateData = postData;
+  let updateData = postData;
 
-    if (postData?.file) {
-      const image = postData?.file?.path;
-      updateData = { ...postData, image };
-      delete updateData.files;
-    }
+  if (postData?.file) {
+    const image = postData?.file?.path;
+    updateData = { ...postData, image };
+    delete updateData.files;
+  }
   return await UpdateRecordById(User, postData, updateValidation, "USER");
 };
 

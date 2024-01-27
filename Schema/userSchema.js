@@ -25,7 +25,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "user",
-      enum: ["user", "admin", "editor"],
+      enum: ["user", "admin", "editor" , "broker"],
     },
     image: { type: String },
     coordinates: {
@@ -45,10 +45,6 @@ const userSchema = new Schema(
       required: [true, "Zip code is required"],
     },
     local_area: [{ type: Number }],
-    area: {
-      type: Number,
-      required: [true, "Zip code is required"],
-    },
     address: {
       type: String,
     },
