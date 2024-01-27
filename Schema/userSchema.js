@@ -26,7 +26,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "user",
-      enum: ["user", "admin", "editor"],
+      enum: ["user", "admin", "editor","broker"],
     },
     image: { type: String },
     coordinates: {

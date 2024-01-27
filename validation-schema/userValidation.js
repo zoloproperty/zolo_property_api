@@ -26,7 +26,7 @@ const ValidationObj = {
     .items(Joi.number())
     .min(2)
     .max(2)
-    .required()
+    // .required()
     .messages({
       "any.required": "Coordinates are required.",
       "array.base": "Coordinates must be an array of numbers.",
