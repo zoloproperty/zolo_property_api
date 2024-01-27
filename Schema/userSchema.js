@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const path = require("path");
 
 const userSchema = new Schema(
   {
@@ -25,7 +26,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       default: "user",
-      enum: ["user", "admin", "editor" , "broker"],
+      enum: ["user", "admin", "editor"],
     },
     image: { type: String },
     coordinates: {
@@ -46,7 +47,7 @@ const userSchema = new Schema(
     },
     local_area: [{ type: Number }],
     address: {
-      type: String,
+      type: String,                               
     },
     login_type: {
       type: String,
@@ -70,6 +71,18 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+userSchema.virtual("url").get(function () {
+  if (this.image) {
+    const hostUrl = process.env.HostURL;
+    const newPath = path.relative("public", this.image);
+    return path.join(hostUrl, newPath);
+  }
+  return "http:\\localhost:5000\\default\\profile.png";
+});
+
+// Use toJSON option to include virtuals when converting the document to JSON
+userSchema.set("toJSON", { virtuals: true });
 
 const User = model("user", userSchema);
 module.exports = User;
