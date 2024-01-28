@@ -26,14 +26,19 @@ const client = new OAuth2Client();
 
 exports.user_list = async (postData) => {
   const query = {};
-  const sortOptions = { limit: 1 };
-  const searchFields = ["user", "limit"];
+  const sortOptions = {};
+  const searchFields = [
+    "first_name",
+    "last_name",
+    "contact_number",
+    "email",
+    "role",
+    "state",
+    "city",
+    "zip_code",
+  ];
 
   const userData = postData.authData;
-  if (userData) {
-    brokerControl(query, userData.role, userData.local_area);
-  }
-
 
   const removeKey = ["host", "authData"];
   removeKey.map((key) => delete postData[key]);
@@ -45,7 +50,7 @@ exports.user_list = async (postData) => {
     sortOptions,
     searchFields,
     filterValidation,
-    "user list",
+    "USER",
     {}
   );
 };

@@ -1,6 +1,6 @@
 const Response = require("../helper/static/Response");
 const { authHandler } = require("../helper/static/messages");
-const {brokerControl} = require("../utils/brokerControl")
+const { brokerControl } = require("../utils/brokerControl");
 exports.handleError = (statusCode, message) => {
   return new Response(statusCode, "F").custom(message);
 };
@@ -16,7 +16,7 @@ exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
 
   if (searchString) {
     dynamicQuery.$or = [
-      ...dynamicQuery.$or,
+      ...(dynamicQuery.$or || []),
       ...searchFields.map((field) => ({
         [field]: { $regex: new RegExp(searchString, "i") },
       })),
@@ -41,15 +41,32 @@ exports.ListRecordByFilter = async (
     const userData = postData.authData;
     if (userData) {
       brokerControl(query, userData.role, userData.local_area);
-      delete postData.authData;
     }
+    delete postData.authData;
 
     const { error, value } = Validation.validate(postData);
     if (error) {
       return new Response(400, "F").custom(error.details[0].message);
     }
 
-    const { limit, offset, startDate, endDate, search } = value;
+    const { limit, offset, startDate, endDate, search, order, orderBy } = value;
+
+    if (sortOptions) {
+      if (!orderBy) {
+        if (order == "DESC") {
+          sortOptions = { createdAt: 1 };
+        } else {
+          sortOptions = { createdAt: -1 };
+        }
+      } else {
+        if (order == "DESC") {
+          sortOptions = { [orderBy]: -1 };
+        } else {
+          sortOptions = { [orderBy]: 1 };
+        }
+      }
+    }
+
     let searchFieldsQuery = this.buildDynamicQuery(
       searchFields,
       search,
@@ -134,6 +151,7 @@ exports.UpdateRecordById = async (
   MessageKey
 ) => {
   try {
+    delete postData.authData;
     const { error, value } = updateValidation.validate(postData);
     if (error) return this.handleError(400, error.details[0].message);
     const existing = await Model.findById(value.id);
@@ -164,6 +182,8 @@ exports.AddRecord = async (
   MessageKey
 ) => {
   try {
+
+    delete postData.authData;
     // Validate the request body
     const { error, value } = addValidation.validate(postData);
     if (error) return this.handleError(400, error.details[0].message);

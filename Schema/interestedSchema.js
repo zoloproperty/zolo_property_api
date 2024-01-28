@@ -12,6 +12,11 @@ const interestedSchema = new Schema(
       ref: "property",
       required: true,
     },
+    ads: {
+      type: Schema.Types.ObjectId,
+      ref: "ads",
+      required: true,
+    },
     coordinates: {
       type: [Number],
       index: "2dsphere",
