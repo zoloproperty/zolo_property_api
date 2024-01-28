@@ -33,14 +33,17 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static("profile"));
 
 
+const adsRouter = require("./routes/ads.routes.js")
 const interestedRouter = require("./routes/interested.routes.js");
 const phoneRouter = require("./routes/phone.routes.js");
 const propertyRouter = require("./routes/property.routes.js");
 const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
+const interactionRouter = require("./routes/interested.routes.js")
 
-// app.use("/ads" , adsRouter)
+app.use("/ads" , adsRouter)
 app.use("/interested", interestedRouter);
+app.use("/interaction", interactionRouter )
 app.use("/phone", phoneRouter);
 app.use("/contact", contactRouter);
 app.use("/property", propertyRouter);

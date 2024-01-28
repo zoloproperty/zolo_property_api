@@ -17,7 +17,7 @@ const {
 // #               Interested list                     #
 // ################################################
 
-exports.model_list = async (postData) => {
+exports.interested_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = [
@@ -51,8 +51,11 @@ exports.model_list = async (postData) => {
 // #               Interested Add                      #
 // ################################################
 
-exports.model_add = async (postData) => {
-  // Check for duplicate records
+exports.interested_add = async (postData) => {
+  const query = {
+    // $or: [{ user: postData.user }],
+  };
+
   return await AddRecord(
     Interested,
     postData,
@@ -66,7 +69,7 @@ exports.model_add = async (postData) => {
 // #               Interested Update                   #
 // ################################################
 
-exports.model_update = async (postData) => {
+exports.interested_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
   return await UpdateRecordById(
@@ -81,6 +84,6 @@ exports.model_update = async (postData) => {
 // // #               Interested delete                   #
 // // ################################################
 
-exports.model_delete = async (postData) => {
+exports.interested_delete = async (postData) => {
   return await DeleteRecordById(Interested, postData.id, "INTERESTED");
 };

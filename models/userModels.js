@@ -51,7 +51,6 @@ exports.user_list = async (postData) => {
 };
 
 exports.login = async (postData) => {
-  console.log(postData, "postData1111111111");
   try {
     let { email } = postData;
     let picture, name;

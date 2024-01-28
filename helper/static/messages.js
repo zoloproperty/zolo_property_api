@@ -93,16 +93,16 @@ function authHandler(typeProp) {
     BRAND_ACTIVATED : "Phone activated successfully.",
     BRAND_INACTIVE : "Phone deactivated successfully.",
 
-    INTERESTED_ADDED : "Phone added successfully.",
-    INTERESTED_UPD : "Phone updated successfully.",
-    INTERESTED_NOT_EXISTS : "Phone value not exists, please try again.",
-    INTERESTED_ADD_FAILED : "Phone added failed.",
-    INTERESTED_DELETED : "Phone deleted successfully.",
-    FAILED_DELETE_INTERESTED : "Phone deleted failed.",
-    DUPLICATE_INTERESTED_EXISTS : "Phone already exists.",
-    INTERESTED_UPD_FAILED : "Phone update failed.",
-    INTERESTED_ACTIVATED : "Phone activated successfully.",
-    INTERESTED_INACTIVE : "Phone deactivated successfully.",
+    INTERESTED_ADDED : "Interested added successfully.",
+    INTERESTED_UPD : "Interested updated successfully.",
+    INTERESTED_NOT_EXISTS : "Interested value not exists, please try again.",
+    INTERESTED_ADD_FAILED : "Interested added failed.",
+    INTERESTED_DELETED : "Interested deleted successfully.",
+    FAILED_DELETE_INTERESTED : "Interested deleted failed.",
+    DUPLICATE_INTERESTED_EXISTS : "Interested already exists.",
+    INTERESTED_UPD_FAILED : "Interested update failed.",
+    INTERESTED_ACTIVATED : "Interested activated successfully.",
+    INTERESTED_INACTIVE : "Interested deactivated successfully.",
 
     MODAL_ADDED : "Phone added successfully.",
     MODAL_UPD : "Phone updated successfully.",
@@ -167,11 +167,24 @@ function authHandler(typeProp) {
     NO_FILE: 'No file uploaded.',
 
     // User
+    DUPLICATE_USER_EXISTS : "User value already exists, please try another value.",
     USER_UPDATED: 'User updated successfully.',
     USER_UPDATED_FAILED: 'User update failed.',
     USER_DELETED: 'User deleted successfully.',
     USER_ACTIVATED: 'User activated successfully.',
     USER_DEACTIVATED: 'User deactivated successfully.',
+
+  // ads
+    DUPLICATE_ADS_EXISTS : "Ads value already exists, please try another value.",
+    ADS_NOT_EXISTS : "Ads value not exists, please try again.",
+    ADS_UPD : "Ads value updated successfully.",
+    ADS_ACTIVATED : "Ads activated successfully.",
+    ADS_DEACTIVATED : "Ads deactivated successfully.",
+    ADS_UPD_FAILED : "Failed to update Ads value.",
+    ADS_ADDED : "Ads value added successfully.",
+    ADS_ADD_FAILED : "Something went wrong when adding Ads.",
+    ADS_DELETED : "Ads deleted successfully.",
+    FAILED_DELETE_ADS : "Something went wrong when deleting the Ads.",
   };
 
   return authObj[typeProp];

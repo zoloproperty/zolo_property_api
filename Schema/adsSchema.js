@@ -14,7 +14,7 @@ const adsSchema = new Schema(
       type: String,
       required: [true, "name is required"],
     },
-    image: {
+    banner: {
       type: String,
       required: [true, "Ads main Image is required"],
     },

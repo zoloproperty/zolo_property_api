@@ -6,11 +6,24 @@ const {
   update,
   delete: deleteController,
 } = require("../controllers/interestedController");
-const { middleware } = require("../helper/middleware/authentication");
+const {
+  middleware,
+  isRoleIsValid,
+} = require("../helper/middleware/authentication");
 
-router.post("/list", list);
-router.post("/add", add);
-router.put("/update/:id", update);
-router.delete("/delete/:id", deleteController);
+router.post("/list", middleware, isRoleIsValid(["admin", "briker"]), list);
+router.post("/add", middleware, add);
+router.put(
+  "/update/:id",
+  middleware,
+  isRoleIsValid(["admin", "briker"]),
+  update
+);
+router.delete(
+  "/delete/:id",
+  middleware,
+  isRoleIsValid(["admin", "briker"]),
+  deleteController
+);
 
 module.exports = router;
