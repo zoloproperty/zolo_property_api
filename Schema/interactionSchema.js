@@ -11,6 +11,11 @@ const interactionSchema = new mongoose.Schema(
       ref: "property",
       required: true,
     },
+    ads: {
+      type: Schema.Types.ObjectId,
+      ref: "ads",
+      required: true,
+    },
     zip_code: {
       type: Number,
       required: [true, "Zip code is required"],
