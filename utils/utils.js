@@ -41,8 +41,8 @@ exports.ListRecordByFilter = async (
     const userData = postData.authData;
     if (userData) {
       brokerControl(query, userData.role, userData.local_area);
-      delete postData.authData;
     }
+    delete postData.authData;
 
     const { error, value } = Validation.validate(postData);
     if (error) {
@@ -151,6 +151,7 @@ exports.UpdateRecordById = async (
   MessageKey
 ) => {
   try {
+    delete postData.authData;
     const { error, value } = updateValidation.validate(postData);
     if (error) return this.handleError(400, error.details[0].message);
     const existing = await Model.findById(value.id);
@@ -181,6 +182,8 @@ exports.AddRecord = async (
   MessageKey
 ) => {
   try {
+
+    delete postData.authData;
     // Validate the request body
     const { error, value } = addValidation.validate(postData);
     if (error) return this.handleError(400, error.details[0].message);
