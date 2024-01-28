@@ -5,9 +5,9 @@ const ValidationObj = {
   user: Joi.string().required().messages({
     "any.required": "User ID is required",
   }),
-  property: Joi.string().required().messages({
-    "any.required": "Property ID is required",
-  }),
+  property: Joi.string().optional(),
+  ads: Joi.string().optional(),
+
   zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),

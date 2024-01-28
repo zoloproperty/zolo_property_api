@@ -39,7 +39,7 @@ const phoneRouter = require("./routes/phone.routes.js");
 const propertyRouter = require("./routes/property.routes.js");
 const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
-const interactionRouter = require("./routes/interested.routes.js")
+const interactionRouter = require("./routes/interaction.routes.js")
 
 app.use("/ads" , adsRouter)
 app.use("/interested", interestedRouter);
