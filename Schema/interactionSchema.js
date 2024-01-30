@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const Schema = mongoose.Schema;
 const interactionSchema = new mongoose.Schema(
   {
     user: {
@@ -9,12 +9,10 @@ const interactionSchema = new mongoose.Schema(
     property: {
       type: Schema.Types.ObjectId,
       ref: "property",
-      required: true,
     },
     ads: {
       type: Schema.Types.ObjectId,
       ref: "ads",
-      required: true,
     },
     zip_code: {
       type: Number,

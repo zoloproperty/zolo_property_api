@@ -10,12 +10,10 @@ const interestedSchema = new Schema(
     property: {
       type: Schema.Types.ObjectId,
       ref: "property",
-      required: true,
     },
     ads: {
       type: Schema.Types.ObjectId,
       ref: "ads",
-      required: true,
     },
     coordinates: {
       type: [Number],

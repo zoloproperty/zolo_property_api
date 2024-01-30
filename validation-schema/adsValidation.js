@@ -11,7 +11,7 @@ const ValidationObj = {
   description: Joi.string().required().messages({
     "any.required": "Description is required",
   }),
-  image: Joi.string().required().messages({
+  banner: Joi.string().required().messages({
     "any.required": "Ads main Image is required",
   }),
   gallery: Joi.array().items(Joi.string().default(null)),

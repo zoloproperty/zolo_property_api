@@ -1,17 +1,17 @@
 const Response = require("../helper/static/Response");
 const {
-  interested_list,
-  interested_update,
-  interested_delete,
-  interested_add,
-} = require("../models/interestedModal");
+  interaction_list,
+  interaction_update,
+  interaction_delete,
+  interaction_add,
+} = require("../models/interactionModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
 
 exports.list = async (req, res) => {
   try {
     const postData = extractRequestData(req);
-    const response = await interested_list(postData);
+    const response = await interaction_list(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));
@@ -21,7 +21,7 @@ exports.list = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const postData = req.body;
-    const response = await interested_add(postData);
+    const response = await interaction_add(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));
@@ -31,7 +31,7 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const postData = extractRequestData(req);
-    const response = await interested_update(postData);
+    const response = await interaction_update(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));
@@ -41,7 +41,7 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const postData = extractRequestData(req);
-    const response = await interested_delete(postData);
+    const response = await interaction_delete(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));

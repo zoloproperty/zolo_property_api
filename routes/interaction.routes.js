@@ -5,7 +5,7 @@ const {
   add,
   update,
   delete: deleteController,
-} = require("../controllers/interestedController");
+} = require("../controllers/interactionController");
 const {
   middleware,
   isRoleIsValid,

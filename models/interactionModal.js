@@ -1,4 +1,4 @@
-const Interested = require("../Schema/interestedSchema");
+const Interaction = require("../Schema/interactionSchema");
 const {
   DeleteRecordById,
   UpdateRecordById,
@@ -14,10 +14,10 @@ const {
 } = require("../validation-schema/interestedValidation");
 
 // ################################################
-// #               Interested list                     #
+// #               Interaction list                     #
 // ################################################
 
-exports.interested_list = async (postData) => {
+exports.interaction_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = [
@@ -31,37 +31,37 @@ exports.interested_list = async (postData) => {
     "vehicle.brand.brand",
     "vehicle.modal.modal",
   ];
-  const removeKey = ["host" , "authorization"];
+  const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 
   return await ListRecordByFilter(
-    Interested,
+    Interaction,
     postData,
     query,
     sortOptions,
     searchFields,
     filterMapValidation,
-    "INTERESTED",
+    "INTERACTION",
     {}
   );
 };
 
 // ################################################
-// #               Interested Add                      #
+// #               Interaction Add                      #
 // ################################################
 
-exports.interested_add = async (postData) => {
+exports.interaction_add = async (postData) => {
   const query = {
     // $or: [{ user: postData.user }],
   };
 
   return await AddRecord(
-    Interested,
+    Interaction,
     postData,
     query,
     addValidation,
-    "INTERESTED"
+    "INTERACTION"
   );
 };
 
@@ -69,14 +69,14 @@ exports.interested_add = async (postData) => {
 // #               Interested Update                   #
 // ################################################
 
-exports.interested_update = async (postData) => {
+exports.interaction_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
   return await UpdateRecordById(
-    Interested,
+    Interaction,
     postData,
     updateValidation,
-    "INTERESTED"
+    "INTERACTION"
   );
 };
 
@@ -84,6 +84,6 @@ exports.interested_update = async (postData) => {
 // // #               Interested delete                   #
 // // ################################################
 
-exports.interested_delete = async (postData) => {
-  return await DeleteRecordById(Interested, postData.id, "INTERESTED");
+exports.interaction_delete = async (postData) => {
+  return await DeleteRecordById(Interaction, postData.id, "INTERACTION");
 };
