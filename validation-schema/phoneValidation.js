@@ -7,7 +7,7 @@ const ValidationObj = {
   name: Joi.string().required().messages({
     "any.required": "Name is required",
   }),
-  number: Joi.string().required().messages({
+  contact_number: Joi.string().required().messages({
     "any.required": "Number is required",
   }),
   city: Joi.string().required().messages({

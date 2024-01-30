@@ -116,7 +116,7 @@ exports.login = async (postData) => {
       }
 
       const payLoad = {
-        user_id: findUser.user_id,
+        user_id: findUser._id,
         email: findUser.email,
         image: findUser.image
           ? isValidHttpUrl(findUser.image)

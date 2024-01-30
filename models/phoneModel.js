@@ -20,8 +20,8 @@ const {
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["name", "city", "number"];
-  const removeKey = ["host" , "authorization"];
+  const searchFields = ["name", "contact_number", "city", "number", "zip_code"];
+  const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["city"] = postData.orderBy;
 
@@ -43,6 +43,9 @@ exports.model_list = async (postData) => {
 
 exports.model_add = async (postData) => {
   // Check for duplicate records
+  const removeKey = ["host"];
+  removeKey.map((key) => delete postData[key]);
+  postData.user = postData.authData.user_id;
   const query = {
     $or: [{ name: postData.name }, { number: postData.number }],
   };
@@ -57,6 +60,7 @@ exports.model_add = async (postData) => {
 exports.model_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
+  postData.user = postData.authData.user_id;
   return await UpdateRecordById(Phone, postData, updateValidation, "PHONE");
 };
 
