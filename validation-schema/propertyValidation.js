@@ -58,7 +58,7 @@ const ValidationObj = {
   booking_price: Joi.number().default(null),
   monthly_rent: Joi.number().default(null),
   security_deposit: Joi.string().default(null),
-  maintance_charge: Joi.string().default(null),
+  maintance_charge: Joi.number().default(null),
   available_from: Joi.date().default(null),
   property_description: Joi.string().default(null),
   open_side: Joi.string().valid("1", "2", "3", "4").default(null),
