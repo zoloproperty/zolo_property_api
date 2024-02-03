@@ -11,7 +11,7 @@ const {
   isRoleIsValid,
 } = require("../helper/middleware/authentication");
 
-router.post("/list", middleware, isRoleIsValid(["admin", "briker"]), list);
+router.post("/list", middleware, list);
 router.post("/add", middleware, add);
 router.put(
   "/update/:id",

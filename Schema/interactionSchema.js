@@ -6,6 +6,18 @@ const interactionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    number: {
+      type: String,
+      require: [true, "number is required"],
+    },
+    name: {
+      type: String,
+      require: [true, "name is required"],
+    },
+    city: {
+      type: String,
+      require: [true, "city is required"],
+    },
     property: {
       type: Schema.Types.ObjectId,
       ref: "property",

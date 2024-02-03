@@ -7,6 +7,14 @@ const interestedSchema = new Schema(
       ref: "user",
       required: true,
     },
+    name: {
+      type: String,
+      required: [true, "name is required"],
+    },
+    number: {
+      type: String,
+      required: [true, "number is required"],
+    },
     property: {
       type: Schema.Types.ObjectId,
       ref: "property",
@@ -18,6 +26,10 @@ const interestedSchema = new Schema(
     coordinates: {
       type: [Number],
       index: "2dsphere",
+    },
+    city: {
+      type: String,
+      required: [true, "city is required"],
     },
     zip_code: {
       type: Number,

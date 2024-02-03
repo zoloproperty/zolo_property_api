@@ -6,6 +6,9 @@ const ValidationObj = {
   }),
   property: Joi.string().optional(),
   ads: Joi.string().optional(),
+  name: Joi.string().optional(),
+  city: Joi.string().optional(),
+  number: Joi.string().optional(),
   coordinates: Joi.array()
     .items(Joi.number())
     .min(2)
@@ -18,9 +21,9 @@ const ValidationObj = {
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
     }),
-    zip_code: Joi.number().required().messages({
-      "any.required": "zip code is required.",
-    }),
+  zip_code: Joi.number().required().messages({
+    "any.required": "zip code is required.",
+  }),
   call: Joi.boolean().default(false),
   leads: Joi.boolean().default(false),
   is_fake: Joi.boolean().default(false),
