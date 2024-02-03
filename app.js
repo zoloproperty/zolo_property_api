@@ -15,14 +15,19 @@ if (process.env.NODE_ENV !== "Development") {
 // DB CONNECTION
 require("./config/database/connection.js");
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000" , "http://localhost:5000"];
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 };
 
 app.use(cors(corsOptions));
-
 // MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,7 +35,6 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static("profile"));
 
 
 const adsRouter = require("./routes/ads.routes.js")

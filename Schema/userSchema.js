@@ -74,11 +74,11 @@ const userSchema = new Schema(
 
 userSchema.virtual("url").get(function () {
   if (this.image) {
-    const hostUrl = process.env.HostURL;
-    const newPath = path.relative("public", this.image);
-    return path.join(hostUrl, newPath);
+    const hostUrl = process.env.HostURL.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+    const newPath = this.image.replace(/\\/g, "/").replace(/^public\//, ''); // Remove "public" segment from the path
+    return `${hostUrl}/${newPath}`; // Combine hostUrl and newPath using forward slashes
   }
-  return "http:\\localhost:5000\\default\\profile.png";
+  return "http://localhost:5000/default/profile.png";
 });
 
 // Use toJSON option to include virtuals when converting the document to JSON
