@@ -65,6 +65,8 @@ exports.ListRecordByFilter = async (
           sortOptions = { [orderBy]: 1 };
         }
       }
+    } else {
+      sortOptions = { createdAt: 1 };
     }
 
     let searchFieldsQuery = this.buildDynamicQuery(
@@ -182,7 +184,6 @@ exports.AddRecord = async (
   MessageKey
 ) => {
   try {
-
     delete postData.authData;
     // Validate the request body
     const { error, value } = addValidation.validate(postData);

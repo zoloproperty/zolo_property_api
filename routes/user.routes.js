@@ -13,19 +13,20 @@ const {
 } = require("../helper/middleware/authentication");
 const { uploadFiles } = require("../helper/third-party/multipart");
 
-router.post("/list", middleware, list);
+router.post("/list", middleware, isRoleIsValid("admin", "broker"), list);
 router.post("/login", login);
 router.post("/signUp", uploadFiles("public/profile").single("image"), saveUser);
 router.put(
   "/update/:id",
   middleware,
+  isRoleIsValid("admin", "broker"),
   uploadFiles("public/profile").single("image"),
   update
 );
 router.delete(
   "/delete/:id",
   middleware,
-  isRoleIsValid("user"),
+  isRoleIsValid("admin", "broker"),
   deleteController
 );
 module.exports = router;

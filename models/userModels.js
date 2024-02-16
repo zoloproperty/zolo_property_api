@@ -39,8 +39,11 @@ exports.user_list = async (postData) => {
   ];
 
   const userData = postData.authData;
+  if (userData.role == "broker") {
+    query.role = { $nin: ["admin", "broker"] };
+  }
 
-  const removeKey = ["host", "authData"];
+  const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
 
   return await ListRecordByFilter(

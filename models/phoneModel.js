@@ -47,7 +47,7 @@ exports.model_add = async (postData) => {
   removeKey.map((key) => delete postData[key]);
   postData.user = postData.authData.user_id;
   const query = {
-    $or: [{ name: postData.name }, { number: postData.number }],
+    $or: [{ number: postData.contact_number }, { is_deleted: 1 }],
   };
 
   return await AddRecord(Phone, postData, query, addValidation, "PHONE");
