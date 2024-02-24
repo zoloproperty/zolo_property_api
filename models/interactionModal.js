@@ -11,41 +11,111 @@ const {
 const {
   updateValidation,
   addValidation,
-} = require("../validation-schema/interestedValidation");
+} = require("../validation-schema/interactionValidation");
 
 // ################################################
 // #               Interaction list                     #
 // ################################################
 
 exports.interaction_list = async (postData) => {
-  const query = {};
-  const sortOptions = { limit: 1 };
-  const searchFields = [
-    "user.name",
-    "user.last_name",
-    "user.city",
-    "user.state",
-    "user.address",
-    "user.number",
-    "vehicle.product_type",
-    "vehicle.brand.brand",
-    "vehicle.modal.modal",
-  ];
-  const removeKey = ["host", "authorization"];
-  removeKey.map((key) => delete postData[key]);
-  if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
+  try {
+    const query = {};
+    const sortOptions = { limit: 1 };
+    const searchFields = [
+      "user.name",
+      "user.last_name",
+      "user.city",
+      "user.state",
+      "user.address",
+      "user.number",
+      "vehicle.product_type",
+      "vehicle.brand.brand",
+      "vehicle.modal.modal",
+    ];
+    const removeKey = ["host", "authorization"];
+    removeKey.forEach((key) => delete postData[key]);
+    if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 
-  return await ListRecordByFilter(
-    Interaction,
-    postData,
-    query,
-    sortOptions,
-    searchFields,
-    filterMapValidation,
-    "INTERACTION",
-    {}
-  );
+    const { limit, offset, search, order, orderBy } = postData;
+    const searchQuery = search; 
+    let finalSortOptions = {};
+    if (orderBy) {
+      finalSortOptions[orderBy] = order === "DESC" ? -1 : 1;
+    } else {
+      finalSortOptions = { createdAt: order === "DESC" ? -1 : 1 };
+    }
+
+    // Construct search query
+    let searchCriteria = {};
+    if (searchFields && searchQuery) {
+      const regex = new RegExp(searchQuery, "i"); 
+      searchCriteria = {
+        $or: searchFields.map(field => ({ [field]: regex }))
+      };
+    }
+
+    Object.assign(query, searchCriteria);
+
+    const options = {
+      limit: limit || 10, 
+      skip: offset || 0 
+    };
+
+    const aggregatedInteractions = await Interaction.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: "$user",
+          name: { $first: "$name" },
+          city: { $first: "$city" },
+          number: { $first: "$number" },
+          interaction: {
+            $push: {
+              ads: "$ads",
+              property: "$property",
+              type: "$type"
+            },
+          },
+        },
+      },
+      { $sort: finalSortOptions },
+      { $limit: options.limit },
+      { $skip: options.skip }
+    ]);
+
+    const formattedInteractions = aggregatedInteractions.map(({ name, city, number, interaction }) => ({
+      name,
+      city,
+      number,
+      interaction,
+    }));
+
+    const total = await Interaction.countDocuments(query);
+
+    const response = {
+      status: 200,
+      success: true,
+      info: "Success",
+      message: "Interactions retrieved successfully",
+      data: {
+        list: formattedInteractions,
+        pagination: { total },
+      },
+    };
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    return {
+      status: 400,
+      success: false,
+      info: "Bad Request",
+      message: error.message || "Failed to retrieve interactions",
+    };
+  }
 };
+
+
 
 // ################################################
 // #               Interaction Add                      #
