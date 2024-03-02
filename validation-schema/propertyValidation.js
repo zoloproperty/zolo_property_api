@@ -127,10 +127,7 @@ const ValidationObj = {
   views: Joi.number().default(1),
   admin_status: Joi.string()
     .valid("Pending", "Reject", "Approved")
-    .required()
-    .messages({
-      "any.required": "Admin status is required",
-    }),
+    .default("Pending"),
   is_active: Joi.boolean().default(true),
   is_deleted: Joi.boolean().default(false),
 };
@@ -142,6 +139,13 @@ exports.addValidation = Joi.object(ValidationObj).options({
 
 exports.updateValidation = Joi.object({
   ...ValidationObj,
+  id: Joi.string().required().messages({
+    "any.required": "Property id is required.",
+    "string.base": "Property id must be a string.",
+  }),
+}).options({ abortEarly: false, allowUnknown: true });
+
+exports.OneValidation = Joi.object({
   id: Joi.string().required().messages({
     "any.required": "Property id is required.",
     "string.base": "Property id must be a string.",

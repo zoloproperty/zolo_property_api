@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const interactionSchema = new mongoose.Schema(
   {
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
     user: {
       type: String,
       required: true,

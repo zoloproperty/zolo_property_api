@@ -5,11 +5,13 @@ const {
   add,
   update,
   delete: deleteController,
+  one,
 } = require("../controllers/propertyController");
 const { middleware } = require("../helper/middleware/authentication");
 const { uploadFiles } = require("../helper/third-party/multipart");
 
-router.post("/list", middleware ,list);
+router.post("/list", middleware, list);
+router.get("/:id", middleware, one);
 router.post("/add", uploadFiles("public/property").array("images", 10), add);
 router.put(
   "/update/:id",
@@ -19,7 +21,3 @@ router.put(
 router.delete("/delete/:id", deleteController);
 
 module.exports = router;
-
-
-
-

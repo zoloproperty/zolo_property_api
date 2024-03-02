@@ -1,4 +1,5 @@
 const Property = require("../Schema/propertySchema");
+const Response = require("../helper/static/Response");
 const {
   DeleteRecordById,
   UpdateRecordById,
@@ -9,6 +10,7 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 const {
   updateValidation,
   addValidation,
+  OneValidation,
 } = require("../validation-schema/propertyValidation");
 
 // ################################################
@@ -35,6 +37,28 @@ exports.model_list = async (postData) => {
   );
 };
 
+// ################################################
+// #               One Property                   #
+// ################################################
+
+exports.model_one = async (postData) => {
+  try {
+    const { error, value } = OneValidation.validate(postData);
+    if (error) {
+      return new Response(400, "F").custom(error.details[0]?.message);
+    }
+
+    let queryBuilder = Property.findById(postData.id);
+
+    const property = (await queryBuilder.exec()) || {};
+
+    return new Response(200, "T", { property }).custom(
+      "Property get successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
 // ################################################
 // #               Property Add                    #
 // ################################################
@@ -64,7 +88,7 @@ exports.model_add = async (postData) => {
 };
 
 // ################################################
-// #               Property Update                   #
+// #               Property Update                 #
 // ################################################
 
 exports.model_update = async (postData) => {
@@ -78,9 +102,9 @@ exports.model_update = async (postData) => {
   );
 };
 
-// // ################################################
-// // #               Property delete                   #
-// // ################################################
+// ################################################
+// #               Property delete                 #
+// ################################################
 
 exports.model_delete = async (postData) => {
   return await DeleteRecordById(Property, postData.id, "PROPERTY");

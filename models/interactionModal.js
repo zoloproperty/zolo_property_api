@@ -65,15 +65,18 @@ exports.interaction_list = async (postData) => {
       { $match: query },
       {
         $group: {
-          _id: "$user",
+          _id: "$_id",
           name: { $first: "$name" },
           city: { $first: "$city" },
           number: { $first: "$number" },
+          zip_code: { $first: "$zip_code" },
           interaction: {
             $push: {
+              id: "$_id",
               ads: "$ads",
               property: "$property",
-              type: "$type"
+              type: "$type",
+              createdAt:"$createdAt",
             },
           },
         },
