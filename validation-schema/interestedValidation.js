@@ -28,9 +28,7 @@ const ValidationObj = {
   leads: Joi.boolean().default(false),
   is_fake: Joi.boolean().default(false),
   email_sent: Joi.boolean().default(false),
-  description: Joi.string().required().messages({
-    "any.required": "Description is required",
-  }),
+  description: Joi.string(),
   type: Joi.string().valid("ads", "property"),
   status: Joi.string()
     .valid("contacted", "interested", "follow-up", "not-interested")
@@ -45,9 +43,27 @@ exports.addValidation = Joi.object(ValidationObj).options({
 });
 
 exports.updateValidation = Joi.object({
-  ...ValidationObj,
-  id: Joi.string().required().messages({
-    "any.required": "Vehicle id is required.",
-    "string.base": "Vehicle id must be a string.",
-  }),
+  user: Joi.string(),
+  property: Joi.string().optional(),
+  ads: Joi.string().optional(),
+  name: Joi.string().optional(),
+  city: Joi.string().optional(),
+  number: Joi.string().optional(),
+  coordinates: Joi.array()
+    .items(Joi.number())
+    .min(2)
+    .max(2),
+  zip_code: Joi.number(),
+  call: Joi.boolean().default(false),
+  leads: Joi.boolean().default(false),
+  is_fake: Joi.boolean().default(false),
+  email_sent: Joi.boolean().default(false),
+  description: Joi.string(),
+  type: Joi.string().valid("ads", "property"),
+  status: Joi.string()
+    .valid("contacted", "interested", "follow-up", "not-interested")
+    .default("interested"),
+  is_active: Joi.boolean().default(true),
+  is_deleted: Joi.boolean().default(false),
+  id: Joi.string(),
 }).options({ abortEarly: false, allowUnknown: true });

@@ -53,7 +53,6 @@ const interestedSchema = new Schema(
     },
     description: {
       type: String,
-      required: [true, "description is required"],
     },
     type: {
       type: String,

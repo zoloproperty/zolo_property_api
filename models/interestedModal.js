@@ -53,7 +53,7 @@ exports.interested_list = async (postData) => {
 
 exports.interested_add = async (postData) => {
   const query = {
-    // $or: [{ user: postData.user }],
+    $or: [{ name: "INTERESTED12316515454", }],
   };
 
   return await AddRecord(

@@ -16,13 +16,13 @@ router.post("/add", middleware, add);
 router.put(
   "/update/:id",
   middleware,
-  isRoleIsValid(["admin", "briker"]),
+  isRoleIsValid("admin", "broker"),
   update
 );
 router.delete(
   "/delete/:id",
   middleware,
-  isRoleIsValid(["admin", "briker"]),
+  isRoleIsValid(["admin", "broker"]),
   deleteController
 );
 

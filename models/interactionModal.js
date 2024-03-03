@@ -37,7 +37,7 @@ exports.interaction_list = async (postData) => {
     if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 
     const { limit, offset, search, order, orderBy } = postData;
-    const searchQuery = search; 
+    const searchQuery = search;
     let finalSortOptions = {};
     if (orderBy) {
       finalSortOptions[orderBy] = order === "DESC" ? -1 : 1;
@@ -48,17 +48,17 @@ exports.interaction_list = async (postData) => {
     // Construct search query
     let searchCriteria = {};
     if (searchFields && searchQuery) {
-      const regex = new RegExp(searchQuery, "i"); 
+      const regex = new RegExp(searchQuery, "i");
       searchCriteria = {
-        $or: searchFields.map(field => ({ [field]: regex }))
+        $or: searchFields.map((field) => ({ [field]: regex })),
       };
     }
 
     Object.assign(query, searchCriteria);
 
     const options = {
-      limit: limit || 10, 
-      skip: offset || 0 
+      limit: limit || 10,
+      skip: offset || 0,
     };
 
     const aggregatedInteractions = await Interaction.aggregate([
@@ -73,25 +73,30 @@ exports.interaction_list = async (postData) => {
           interaction: {
             $push: {
               id: "$_id",
+              zip_code: "$zip_code",
+              user: "$user",
               ads: "$ads",
               property: "$property",
+              coordinates: "$coordinates",
               type: "$type",
-              createdAt:"$createdAt",
+              createdAt: "$createdAt",
             },
           },
         },
       },
       { $sort: finalSortOptions },
       { $limit: options.limit },
-      { $skip: options.skip }
+      { $skip: options.skip },
     ]);
 
-    const formattedInteractions = aggregatedInteractions.map(({ name, city, number, interaction }) => ({
-      name,
-      city,
-      number,
-      interaction,
-    }));
+    const formattedInteractions = aggregatedInteractions.map(
+      ({ name, city, number, interaction }) => ({
+        name,
+        city,
+        number,
+        interaction,
+      })
+    );
 
     const total = await Interaction.countDocuments(query);
 
@@ -117,8 +122,6 @@ exports.interaction_list = async (postData) => {
     };
   }
 };
-
-
 
 // ################################################
 // #               Interaction Add                      #
