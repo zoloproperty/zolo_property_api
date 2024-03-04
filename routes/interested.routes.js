@@ -22,7 +22,7 @@ router.put(
 router.delete(
   "/delete/:id",
   middleware,
-  isRoleIsValid(["admin", "broker"]),
+  isRoleIsValid("admin", "broker"),
   deleteController
 );
 

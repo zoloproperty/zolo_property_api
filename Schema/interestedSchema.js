@@ -51,7 +51,7 @@ const interestedSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    description: {
+    note: {
       type: String,
     },
     type: {

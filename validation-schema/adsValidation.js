@@ -53,4 +53,4 @@ exports.updateValidation = Joi.object({
   ...ValidationObj,
   id: Joi.string().required(),
   property_id: Joi.string().optional(),
-});
+}).options({ abortEarly: false, allowUnknown: true });

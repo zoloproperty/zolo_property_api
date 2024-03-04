@@ -28,7 +28,7 @@ const ValidationObj = {
   leads: Joi.boolean().default(false),
   is_fake: Joi.boolean().default(false),
   email_sent: Joi.boolean().default(false),
-  description: Joi.string(),
+  note: Joi.string(),
   type: Joi.string().valid("ads", "property"),
   status: Joi.string()
     .valid("contacted", "interested", "follow-up", "not-interested")
@@ -58,11 +58,10 @@ exports.updateValidation = Joi.object({
   leads: Joi.boolean().default(false),
   is_fake: Joi.boolean().default(false),
   email_sent: Joi.boolean().default(false),
-  description: Joi.string(),
+  note: Joi.string(),
   type: Joi.string().valid("ads", "property"),
   status: Joi.string()
-    .valid("contacted", "interested", "follow-up", "not-interested")
-    .default("interested"),
+    .valid("contacted", "interested", "follow-up", "not-interested"),
   is_active: Joi.boolean().default(true),
   is_deleted: Joi.boolean().default(false),
   id: Joi.string(),

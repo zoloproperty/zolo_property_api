@@ -40,4 +40,4 @@ exports.updateValidation = Joi.object({
     "any.required": "Phone id is required.",
     "string.base": "Phone id must be a string.",
   }),
-});
+}).options({ abortEarly: false, allowUnknown: true });

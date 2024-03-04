@@ -140,7 +140,6 @@ exports.addValidation = Joi.object(ValidationObj).options({
 });
 
 exports.updateValidation = Joi.object({
-  ...ValidationObj,
   id: Joi.string().required().messages({
     "any.required": "Property id is required.",
     "string.base": "Property id must be a string.",
