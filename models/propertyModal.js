@@ -6,7 +6,9 @@ const {
   ListRecordByFilter,
   AddRecord,
 } = require("../utils/utils");
-const { filterValidation } = require("../validation-schema/filterValidation");
+const {
+  filterValidationProperty,
+} = require("../validation-schema/filterValidation");
 const {
   updateValidation,
   addValidation,
@@ -20,10 +22,21 @@ const {
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["price", "city", "state"];
+  const searchFields = ["price", "city", "state", "location", "property_type"];
   const removeKey = ["host", "authorization"];
+
   removeKey.map((key) => delete postData[key]);
-  if (postData.orderBy) sortOptions["property"] = postData.orderBy;
+  if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
+  if (postData.property_for) {
+    query.$and = [{ property_for: postData.property_for }];
+  }
+  if (postData.property_type) {
+    if (query.$and) {
+      query.$and = [...query.$and, { property_type: postData.property_type }];
+    } else {
+      query.$and = [{ property_type: postData.property_type }];
+    }
+  }
 
   return await ListRecordByFilter(
     Property,
@@ -31,7 +44,7 @@ exports.model_list = async (postData) => {
     query,
     sortOptions,
     searchFields,
-    filterValidation,
+    filterValidationProperty,
     "PROPERTY",
     {}
   );
@@ -70,14 +83,30 @@ exports.model_add = async (postData) => {
   };
 
   let updateData = postData;
-
   if (postData?.files) {
-    const images = postData?.files?.map((item) => {
-      return item.path;
-    });
-    updateData = { ...postData, images };
+    console.log(postData.files);
+    if (postData?.files?.images) {
+      const images = (postData?.files?.images || []).map((item) => {
+        return item.path;
+      });
+      updateData = { ...postData, images };
+    } else if (postData?.files?.video) {
+      const video = (postData?.files?.video || [])[0]?.path;
+      console.log(video);
+      updateData = { ...postData, video };
+    }
+    if (postData?.banner) {
+      (postData?.files?.images || []).map((item) => {
+        if (item.originalname == postData?.banner) {
+          updateData.banner = item.path;
+        }
+      });
+    } else {
+      updateData.banner = (postData?.files?.images || [])[0]?.path;
+    }
     delete updateData.files;
   }
+
   return await AddRecord(
     Property,
     updateData,
@@ -94,9 +123,38 @@ exports.model_add = async (postData) => {
 exports.model_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
+  let updateData = postData;
+
+  const existing = await Property.findById(postData.id);
+  if (!existing)
+    return new Response(404, "F").custom(
+      authHandler(`${MessageKey}_NOT_EXISTS`)
+    );
+
+  // video and Image
+  if (postData?.files) {
+    if (postData?.files?.images) {
+      const images = (postData?.files?.images || []).map((item) => {
+        return item.path;
+      });
+      updateData = { ...postData, images: [...existing.images, ...images] };
+    } else if (postData?.files?.video) {
+      const video = (postData?.files?.video || [])[0]?.path;
+      updateData = { ...postData, video };
+    }
+    if (postData?.banner) {
+      (postData?.files?.images || []).map((item) => {
+        if (item.originalname == postData?.banner) {
+          updateData.banner = item.path;
+        }
+      });
+    }
+    delete updateData.files;
+  }
+
   return await UpdateRecordById(
     Property,
-    postData,
+    updateData,
     updateValidation,
     "PROPERTY"
   );

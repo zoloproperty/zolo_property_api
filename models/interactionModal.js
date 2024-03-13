@@ -21,17 +21,7 @@ exports.interaction_list = async (postData) => {
   try {
     const query = {};
     const sortOptions = { limit: 1 };
-    const searchFields = [
-      "user.name",
-      "user.last_name",
-      "user.city",
-      "user.state",
-      "user.address",
-      "user.number",
-      "vehicle.product_type",
-      "vehicle.brand.brand",
-      "vehicle.modal.modal",
-    ];
+    const searchFields = ["name", "city", "zip_code", "type", "number"];
     const removeKey = ["host", "authorization"];
     removeKey.forEach((key) => delete postData[key]);
     if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
@@ -52,6 +42,17 @@ exports.interaction_list = async (postData) => {
       searchCriteria = {
         $or: searchFields.map((field) => ({ [field]: regex })),
       };
+    }
+
+    if (postData.property_for) {
+      query.$and = [{ property_for: postData.property_for }];
+    }
+    if (postData.property_type) {
+      if (query.$and) {
+        query.$and = [...query.$and, { property_type: postData.property_type }];
+      } else {
+        query.$and = [{ property_type: postData.property_type }];
+      }
     }
 
     Object.assign(query, searchCriteria);

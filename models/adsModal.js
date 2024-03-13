@@ -21,7 +21,13 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 exports.ads_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["Ads"];
+  const searchFields = [
+    "ads_name",
+    "title",
+    "description",
+    "number",
+    "zip_code",
+  ];
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
 

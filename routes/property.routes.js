@@ -8,14 +8,26 @@ const {
   one,
 } = require("../controllers/propertyController");
 const { middleware } = require("../helper/middleware/authentication");
-const { uploadFiles } = require("../helper/third-party/multipart");
+const {
+  multipleUpload,
+} = require("../helper/third-party/multipart");
 
 router.post("/list", middleware, list);
 router.get("/:id", middleware, one);
-router.post("/add", uploadFiles("public/property").array("images", 10), add);
+router.post(
+  "/add",
+  multipleUpload.fields([
+    { name: "video", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
+  add
+);
 router.put(
   "/update/:id",
-  uploadFiles("public/property").array("images", 10),
+  multipleUpload.fields([
+    { name: "video", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
   update
 );
 router.delete("/delete/:id", deleteController);

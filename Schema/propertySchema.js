@@ -37,7 +37,7 @@ const propertySchema = new Schema(
     property_for: {
       type: String,
       enum: ["sell", "rent", "sold"],
-      default: null,
+      require: [true, "property for require"],
     },
     coordinates: {
       type: [Number],
@@ -59,19 +59,19 @@ const propertySchema = new Schema(
       ],
       default: "House",
     },
-    saleable_area: { type: String, default: null },
-    carpet_area: { type: String, default: null },
+    saleable_area: { type: String },
+    carpet_area: { type: String },
     saleable_area_size_in: {
       type: String,
       enum: ["Feet", "Meters", "Yards", "Bigha", "Acres", "Hectares"],
-      default: null,
+      default: "Feet",
     },
     carpet_area_size_in: {
       type: String,
       enum: ["Feet", "Meters", "Yards"],
-      default: null,
+      default: "Feet",
     },
-    additional_room: { type: String, default: null },
+    additional_room: [{ type: String }],
     expected_price: { type: Number, default: 0 },
     expected_price_in_sqft: { type: Number, default: 0 },
     negotiable: { type: Boolean, default: true },
@@ -79,9 +79,9 @@ const propertySchema = new Schema(
     monthly_rent: { type: Number, default: 0 },
     security_deposit: { type: String, default: 0 },
     maintance_charge: { type: Number, default: 0 },
-    available_from: { type: Date, default: null },
-    property_description: { type: String, default: null },
-    open_side: { type: String, enum: ["1", "2", "3", "4"], default: null },
+    available_from: { type: Date },
+    property_description: { type: String },
+    open_side: { type: String, enum: ["0", "1", "2", "3", "4"], default: "0" },
     facing_side: {
       type: String,
       enum: [
@@ -93,50 +93,58 @@ const propertySchema = new Schema(
         "Northwest",
         "Southwest",
         "Southeast",
+        "",
       ],
-      default: null,
     },
-    facing_road_width: { type: String, default: null },
+    facing_road_width: { type: String },
     facing_road_width_in: {
       type: String,
       enum: ["Feet", "Meters"],
-      default: null,
+      default: "Feet",
     },
-    images: [{ type: String, default: null }],
-    video: { type: String, default: null },
-    room_data: { type: String, default: null },
-    bedrooms: { type: String, default: null },
-    bathrooms: { type: Number, default: null },
-    balconies: { type: Number, default: null },
-    additional_facility: { type: String, default: null },
+    images: [{ type: String }],
+    banner: { type: String },
+    video: { type: String },
+    room_data: [
+      {
+        room_type: { type: String },
+        no_of_rooms: { type: Number },
+        price: {
+          type: String,
+        },
+      },
+    ],
+    bedrooms: { type: String },
+    bathrooms: { type: Number },
+    balconies: { type: Number },
+    additional_facility: [{ type: String }],
     property_status: {
       type: String,
       enum: ["Ready_to_shift", "Underconstruction"],
-      default: null,
+      default: "Ready_to_shift",
     },
-    property_age: { type: String, default: null },
-    possession_date: { type: Date, default: null },
-    description: { type: String, default: null },
+    property_age: { type: String },
+    possession_date: { type: Date },
+    description: { type: String },
     furnishing_status: {
       type: String,
-      enum: ["Unfurnished", "Semi_furnished", "Fully_furnished"],
-      default: null,
+      enum: ["", "Unfurnished", "Semi_furnished", "Fully_furnished"],
     },
-    wardrobe: { type: Number, default: null },
-    beds: { type: Number, default: null },
-    ac: { type: Number, default: null },
-    tv: { type: Number, default: null },
-    light: { type: String, default: null },
-    fan: { type: String, default: null },
-    exhaust_fan: { type: String, default: null },
-    boundary_wall: { type: String, default: null },
-    additional_furnishing: { type: String, default: null },
-    other_facility: { type: String, default: null },
-    car_parking_open: { type: Number, default: null },
-    car_parking_close: { type: Number, default: null },
-    floor: { type: Number, default: null },
-    total_floor: { type: Number, default: null },
-    overlooking: { type: String, default: null },
+    wardrobe: { type: Number },
+    beds: { type: Number },
+    ac: { type: Number },
+    tv: { type: Number },
+    light: { type: String },
+    fan: { type: String },
+    exhaust_fan: { type: String },
+    boundary_wall: { type: String },
+    additional_furnishing: [{ type: String }],
+    other_facility: { type: String },
+    car_parking_open: { type: Number },
+    car_parking_close: { type: Number },
+    floor: { type: Number },
+    total_floor: { type: Number },
+    overlooking: [{ type: String }],
     ownership_type: {
       type: String,
       enum: [
@@ -145,31 +153,31 @@ const propertySchema = new Schema(
         "leasehold",
         "Co_Operative_Society",
       ],
-      default: null,
+      default: "Freehold",
     },
-    living_room: { type: String, default: null },
-    kitchen: { type: String, default: null },
-    master_bedroom: { type: String, default: null },
-    bathroom: { type: String, default: null },
-    balcony: { type: String, default: null },
-    other_bedroom: { type: String, default: null },
-    preferred_tenants: { type: String, default: null },
-    gender_preference: { type: String, default: null },
-    maximum_tentants_allowed: { type: String, default: null },
-    work_preference: { type: String, default: null },
-    food_preference: { type: String, default: null },
-    expected_duration_of_stay: { type: String, default: null },
-    special_requirement: { type: String, default: null },
+    living_room: { type: String },
+    kitchen: { type: String },
+    master_bedroom: { type: String },
+    bathroom: { type: String },
+    balcony: { type: String },
+    other_bedroom: { type: String },
+    preferred_tenants: { type: String },
+    gender_preference: { type: String },
+    maximum_tentants_allowed: { type: String },
+    work_preference: { type: String },
+    food_preference: { type: String },
+    expected_duration_of_stay: { type: String },
+    special_requirement: { type: String },
     added_by_type: {
       type: String,
       enum: ["Owner", "Broker", "Admin"],
-      default: null,
+      default: "Owner",
     },
     views: { type: Number, default: 1 },
     admin_status: {
       type: String,
       enum: ["Pending", "Reject", "Approved"],
-      required: true,
+      default: "Pending",
     },
     is_active: {
       type: Boolean,
@@ -182,6 +190,44 @@ const propertySchema = new Schema(
   },
   { timestamps: true }
 );
+
+propertySchema.virtual("imageUrls").get(function () {
+  return this.images.map((image) => {
+    const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+    const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
+    if (newPath) {
+      return `${hostUrl}/${newPath}`;
+    } else {
+      return "";
+    }
+  });
+});
+
+propertySchema.virtual("videoUrl").get(function () {
+  const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+  const newPath = (this.video || "")
+    .replace(/\\/g, "/")
+    .replace(/^public\//, "");
+  if (newPath) {
+    return `${hostUrl}/${newPath}`;
+  } else {
+    return "";
+  }
+});
+
+propertySchema.virtual("bannerUrl").get(function () {
+  const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+  const newPath = (this.banner || "")
+    .replace(/\\/g, "/")
+    .replace(/^public\//, "");
+  if (newPath) {
+    return `${hostUrl}/${newPath}`;
+  } else {
+    return "";
+  }
+});
+
+propertySchema.set("toJSON", { virtuals: true });
 
 const Property = model("property", propertySchema);
 module.exports = Property;

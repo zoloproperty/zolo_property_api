@@ -81,6 +81,46 @@ exports.filterValidation = Joi.object({
   endDate: Joi.date().allow("", null).messages({
     "date.base": "End date must be a valid date or empty string.",
   }),
+
+  orderBy: Joi.string().allow("").optional().messages({
+    "string.base": "OrderBy must be a string or empty string.",
+  }),
+});
+
+exports.filterValidationProperty = Joi.object({
+  limit: Joi.number().default(5).messages({
+    "number.base": "Limit must be a number.",
+    "number.default": "Default value for limit is 5.",
+  }),
+  offset: Joi.number().default(0).messages({
+    "number.base": "Offset must be a number.",
+    "number.default": "Default value for offset is 0.",
+  }),
+  startDate: Joi.date().allow("", null).messages({
+    "date.base": "Start date must be a valid date or empty string.",
+  }),
+  search: Joi.string().allow("", null).messages({
+    "string.base": "Search must be a string.",
+  }),
+  order: Joi.string().allow("", null).messages({
+    "string.base": "order must be a string.",
+  }),
+  property_for: Joi.string().allow("", null).messages({
+    "string.base": "property_for must be a string.",
+  }),
+  property_type: Joi.string().allow("", null).messages({
+    "string.base": "property_type must be a string.",
+  }),
+  min_price: Joi.string().allow("", null).messages({
+    "number.base": "price must be a number.",
+  }),
+  max_price: Joi.string().allow("", null).messages({
+    "number.base": "price must be a number.",
+  }),
+  endDate: Joi.date().allow("", null).messages({
+    "date.base": "End date must be a valid date or empty string.",
+  }),
+
   orderBy: Joi.string().allow("").optional().messages({
     "string.base": "OrderBy must be a string or empty string.",
   }),

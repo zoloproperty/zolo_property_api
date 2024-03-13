@@ -44,6 +44,56 @@ const uploadDocument = multer({
   storage: documentStorage,
 });
 
+const multipleTypeStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const { brand, modal } = req.body;
+    const newFolder =
+      file.fieldname === "video"
+        ? `public/property/videos`
+        : `public/property/images`;
+    if (file) {
+      try {
+        if (!fs.existsSync(newFolder)) {
+          fs.mkdirSync(newFolder);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      cb(null, newFolder);
+    }
+  },
+
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+    );
+  },
+});
+
+const multipleUpload = multer({
+  storage: multipleTypeStorage,
+  fileFilter: function (req, file, cb) {
+    if (file.fieldname === "video") {
+      // Check for video file type (you can customize this based on your requirements)
+      if (file.mimetype.startsWith("video/")) {
+        cb(null, true);
+      } else {
+        cb(new Error("Only video files are allowed!"), false);
+      }
+    } else if (file.fieldname === "images") {
+      // Check for image file types (you can customize this based on your requirements)
+      if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+      } else {
+        cb(new Error("Only image files are allowed!"), false);
+      }
+    } else {
+      cb(new Error("Invalid fieldname!"), false);
+    }
+  },
+});
+
 const uploadFiles = (folder) => {
   try {
     if (!fs.existsSync(folder)) {
@@ -190,4 +240,5 @@ module.exports = {
   unlinkFile,
   unlinkFiles,
   renameFolder,
+  multipleUpload,
 };

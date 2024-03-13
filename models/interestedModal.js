@@ -21,15 +21,11 @@ exports.interested_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
   const searchFields = [
-    "user.name",
-    "user.last_name",
-    "user.city",
-    "user.state",
-    "user.address",
-    "user.number",
-    "vehicle.product_type",
-    "vehicle.brand.brand",
-    "vehicle.modal.modal",
+    "name",
+    "city",
+    "zip_code",
+    "note",
+    "status",
   ];
   const removeKey = ["host" , "authorization"];
   removeKey.map((key) => delete postData[key]);

@@ -36,7 +36,7 @@ const adsSchema = new Schema(
       required: [true, "city is required"],
     },
     zip_code: {
-      type: Number,
+      type: String,
       required: [true, "Zip code is required"],
     },
     coordinates: {

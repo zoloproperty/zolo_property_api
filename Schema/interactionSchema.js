@@ -27,7 +27,7 @@ const interactionSchema = new mongoose.Schema(
       ref: "ads",
     },
     zip_code: {
-      type: Number,
+      type: String,
       required: [true, "Zip code is required"],
     },
     coordinates: {
