@@ -4,6 +4,8 @@ const {
   interaction_update,
   interaction_delete,
   interaction_add,
+  like_check,
+  user_like_list,
 } = require("../models/interactionModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
@@ -42,6 +44,24 @@ exports.delete = async (req, res) => {
   try {
     const postData = extractRequestData(req);
     const response = await interaction_delete(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+exports.like_check = async (req, res) => {
+  try {
+    const postData = req.body;
+    const response = await like_check(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+exports.user_like_list = async (req, res) => {
+  try {
+    const postData = extractRequestData(req);
+    const response = await user_like_list(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));

@@ -33,7 +33,7 @@ const ValidationObj = {
       "array.min": "Coordinates must have at least two values.",
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
-    }),
+    }).optional(),
   state: Joi.string().required().messages({
     "any.required": "State is required.",
   }),
@@ -63,7 +63,6 @@ exports.signupValidationSchema = Joi.object(ValidationObj).options({
 delete ValidationObj.password;
 
 exports.updateValidation = Joi.object({
-  ...ValidationObj,
   id: Joi.string().required().messages({
     "any.required": "Modal id is required.",
     "string.base": "Modal id must be a string.",

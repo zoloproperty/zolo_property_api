@@ -6,19 +6,19 @@ const {
   update,
   delete: deleteController,
   one,
+  user_property
 } = require("../controllers/propertyController");
 const { middleware } = require("../helper/middleware/authentication");
-const {
-  multipleUpload,
-} = require("../helper/third-party/multipart");
+const { multipleUpload } = require("../helper/third-party/multipart");
 
 router.post("/list", middleware, list);
+router.get("/user", middleware, user_property);
 router.get("/:id", middleware, one);
 router.post(
   "/add",
   multipleUpload.fields([
     { name: "video", maxCount: 1 },
-    { name: "images", maxCount: 10 },
+    { name: "images", maxCount: 10 }
   ]),
   add
 );
@@ -26,10 +26,10 @@ router.put(
   "/update/:id",
   multipleUpload.fields([
     { name: "video", maxCount: 1 },
-    { name: "images", maxCount: 10 },
+    { name: "images", maxCount: 10 }
   ]),
   update
 );
-router.delete("/delete/:id", deleteController);
+router.delete("/delete/:id", middleware, deleteController);
 
 module.exports = router;

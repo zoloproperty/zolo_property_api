@@ -59,12 +59,13 @@ exports.user_list = async (postData) => {
 };
 
 exports.login = async (postData) => {
+  console.log(postData)
   try {
     let { email } = postData;
     let picture, name;
     const { password, authorization } = postData;
     let loggedInWith = "";
-
+    
     if (authorization) {
       try {
         const token = authorization.split(" ")[1];
@@ -78,6 +79,7 @@ exports.login = async (postData) => {
 
         loggedInWith = "google";
       } catch (error) {
+        console.log(error)
         return new Response(400, "F").custom(error.message);
       }
     } else {
@@ -126,7 +128,12 @@ exports.login = async (postData) => {
             : `http://${postData.host}/profile/${findUser.image}`
           : null,
         loggedInWith: loggedInWith,
+        first_name: findUser.first_name,
+        last_name: findUser.last_name,
+        contact_number: findUser.contact_number,
         role: findUser.role,
+        city: findUser.city,
+        zip_code: findUser.zip_code,
         local_area: findUser.local_area,
       };
       const jwtToken = await signJwt(payLoad);
@@ -213,7 +220,48 @@ exports.user_update = async (postData) => {
     updateData = { ...postData, image };
     delete updateData.files;
   }
-  return await UpdateRecordById(User, postData, updateValidation, "USER");
+
+  try {
+    delete updateData.authData;
+    const { error, value } = updateValidation.validate(updateData);
+    if (error) return handleError(400, error.details[0].message);
+    const existing = await User.findById(value.id);
+    if (!existing)
+      return new Response(404, "F").custom(
+        authHandler(`USER_NOT_EXISTS`)
+      );
+
+    Object.assign(existing, value);
+
+    if (await existing.save()) {
+
+      const payLoad = {
+        user_id: existing._id,
+        email: existing.email,
+        image: existing.image
+          ? isValidHttpUrl(existing.image)
+            ? existing.image
+            : `http://${postData.host}/profile/${existing.image}`
+          : null,
+        role: existing.role,
+        first_name: existing.first_name,
+        last_name: existing.last_name,
+        contact_number: existing.contact_number,
+        city: existing.city,
+        state: existing.state,
+        zip_code: existing.zip_code,
+        local_area: existing.local_area,
+      };
+      const jwtToken = await signJwt(payLoad);
+      return new Response(200, "T", jwtToken).custom(authHandler(`USER_UPD`));
+    } else {
+      return new Response(400, "F").custom(
+        authHandler(`USER_UPD_FAILED`)
+      );
+    }
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
 };
 
 exports.user_delete = async (postData) => {

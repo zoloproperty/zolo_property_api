@@ -27,7 +27,7 @@ const ValidationObj = {
       "array.min": "Coordinates must have at least two values.",
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
-    }),
+    }).optional(),
   is_active: Joi.boolean().default(true),
   is_deleted: Joi.boolean().default(false),
 };

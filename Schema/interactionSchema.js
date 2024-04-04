@@ -36,7 +36,7 @@ const interactionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["like", "view"],
+      enum: ["like", "view","unlike"],
     },
   },
   { timestamps: true }

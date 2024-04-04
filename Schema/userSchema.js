@@ -5,14 +5,12 @@ const userSchema = new Schema(
   {
     first_name: {
       type: String,
-      required: [true, "Name is required"],
     },
     last_name: {
       type: String,
     },
     contact_number: {
       type: String,
-      required: [true, "Number is required"],
     },
     email: {
       type: String,
@@ -21,7 +19,6 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
     role: {
       type: String,
@@ -35,15 +32,12 @@ const userSchema = new Schema(
     },
     state: {
       type: String,
-      required: [true, "State is required"],
     },
     city: {
       type: String,
-      required: [true, "city is required"],
     },
     zip_code: {
       type: String,
-      required: [true, "Zip code is required"],
     },
     local_area: [{ type: Number }],
     address: {

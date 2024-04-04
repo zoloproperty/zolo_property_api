@@ -167,3 +167,13 @@ exports.model_update = async (postData) => {
 exports.model_delete = async (postData) => {
   return await DeleteRecordById(Property, postData.id, "PROPERTY");
 };
+
+exports.user_property = async (postData)=>{
+  try {
+    let queryBuilder = Property.find({user: "65e0abcc2444a83145310949" || postData?.authData?.user_id,is_deleted:false})
+    const property = (await queryBuilder.exec()) || {};
+    return new Response(200, "T", property).custom("user prperty get successfully");
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};

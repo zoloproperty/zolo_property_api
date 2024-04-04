@@ -15,14 +15,19 @@ if (process.env.NODE_ENV !== "Development") {
 // DB CONNECTION
 require("./config/database/connection.js");
 
-const allowedOrigins = ["http://localhost:3000" , "http://localhost:5000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.1.5:5000/",
+  "http://192.168.1.5:8081/",
+  "http://localhost:8081/",
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
 };
@@ -36,18 +41,17 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
-
-const adsRouter = require("./routes/ads.routes.js")
+const adsRouter = require("./routes/ads.routes.js");
 const interestedRouter = require("./routes/interested.routes.js");
 const phoneRouter = require("./routes/phone.routes.js");
 const propertyRouter = require("./routes/property.routes.js");
 const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
-const interactionRouter = require("./routes/interaction.routes.js")
+const interactionRouter = require("./routes/interaction.routes.js");
 
-app.use("/ads" , adsRouter)
+app.use("/ads", adsRouter);
 app.use("/interested", interestedRouter);
-app.use("/interaction", interactionRouter )
+app.use("/interaction", interactionRouter);
 app.use("/phone", phoneRouter);
 app.use("/contact", contactRouter);
 app.use("/property", propertyRouter);

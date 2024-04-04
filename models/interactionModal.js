@@ -1,29 +1,34 @@
 const Interaction = require("../Schema/interactionSchema");
+const Property = require("../Schema/propertySchema");
+const Response = require("../helper/static/Response");
+const ObjectId = require("mongoose").Types.ObjectId;
 const {
   DeleteRecordById,
   UpdateRecordById,
   ListRecordByFilter,
   AddRecord,
+  handleError
 } = require("../utils/utils");
 const {
-  filterMapValidation,
+  filterMapValidation, filterValidation
 } = require("../validation-schema/filterValidation");
 const {
   updateValidation,
   addValidation,
+  likeValidation
 } = require("../validation-schema/interactionValidation");
 
 // ################################################
 // #               Interaction list                     #
 // ################################################
 
-exports.interaction_list = async (postData) => {
+exports.interaction_list = async postData => {
   try {
     const query = {};
     const sortOptions = { limit: 1 };
     const searchFields = ["name", "city", "zip_code", "type", "number"];
     const removeKey = ["host", "authorization"];
-    removeKey.forEach((key) => delete postData[key]);
+    removeKey.forEach(key => delete postData[key]);
     if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 
     const { limit, offset, search, order, orderBy } = postData;
@@ -40,7 +45,7 @@ exports.interaction_list = async (postData) => {
     if (searchFields && searchQuery) {
       const regex = new RegExp(searchQuery, "i");
       searchCriteria = {
-        $or: searchFields.map((field) => ({ [field]: regex })),
+        $or: searchFields.map(field => ({ [field]: regex }))
       };
     }
 
@@ -59,18 +64,18 @@ exports.interaction_list = async (postData) => {
 
     const options = {
       limit: limit || 10,
-      skip: offset || 0,
+      skip: offset || 0
     };
 
     const aggregatedInteractions = await Interaction.aggregate([
       { $match: query },
       {
         $group: {
-          _id: "$_id",
-          name: { $first: "$name" },
-          city: { $first: "$city" },
-          number: { $first: "$number" },
-          zip_code: { $first: "$zip_code" },
+          _id: "$user",
+          name: { $addToSet: "$name" },
+          city: { $addToSet: "$city" },
+          number: { $addToSet: "$number" },
+          zip_code: { $addToSet: "$zip_code" },
           interaction: {
             $push: {
               id: "$_id",
@@ -80,14 +85,24 @@ exports.interaction_list = async (postData) => {
               property: "$property",
               coordinates: "$coordinates",
               type: "$type",
-              createdAt: "$createdAt",
-            },
-          },
-        },
+              createdAt: "$createdAt"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          interaction: 1,
+          name: { $arrayElemAt: ["$name", 0] },
+          city: { $arrayElemAt: ["$city", 0] },
+          number: { $arrayElemAt: ["$number", 0] },
+          zip_code: { $arrayElemAt: ["$zip_code", 0] }
+        }
       },
       { $sort: finalSortOptions },
       { $limit: options.limit },
-      { $skip: options.skip },
+      { $skip: options.skip }
     ]);
 
     const formattedInteractions = aggregatedInteractions.map(
@@ -95,7 +110,7 @@ exports.interaction_list = async (postData) => {
         name,
         city,
         number,
-        interaction,
+        interaction
       })
     );
 
@@ -108,8 +123,8 @@ exports.interaction_list = async (postData) => {
       message: "Interactions retrieved successfully",
       data: {
         list: formattedInteractions,
-        pagination: { total },
-      },
+        pagination: { total }
+      }
     };
 
     return response;
@@ -119,7 +134,7 @@ exports.interaction_list = async (postData) => {
       status: 400,
       success: false,
       info: "Bad Request",
-      message: error.message || "Failed to retrieve interactions",
+      message: error.message || "Failed to retrieve interactions"
     };
   }
 };
@@ -128,9 +143,9 @@ exports.interaction_list = async (postData) => {
 // #               Interaction Add                      #
 // ################################################
 
-exports.interaction_add = async (postData) => {
+exports.interaction_add = async postData => {
   const query = {
-    // $or: [{ user: postData.user }],
+    $or: [{ interaction: "null" }]
   };
 
   return await AddRecord(
@@ -146,9 +161,9 @@ exports.interaction_add = async (postData) => {
 // #               Interested Update                   #
 // ################################################
 
-exports.interaction_update = async (postData) => {
+exports.interaction_update = async postData => {
   const removeKey = ["host"];
-  removeKey.map((key) => delete postData[key]);
+  removeKey.map(key => delete postData[key]);
   return await UpdateRecordById(
     Interaction,
     postData,
@@ -161,6 +176,63 @@ exports.interaction_update = async (postData) => {
 // // #               Interested delete                   #
 // // ################################################
 
-exports.interaction_delete = async (postData) => {
+exports.interaction_delete = async postData => {
   return await DeleteRecordById(Interaction, postData.id, "INTERACTION");
+};
+
+exports.like_check = async postData => {
+  try {
+    const { error, value } = likeValidation.validate(postData);
+    if (error) return handleError(400, error.details[0].message);
+    const { user_id, property_id } = value;
+
+    let queryBuilder = Interaction.findOne({
+      user: user_id,
+      property: property_id,
+      is_deleted: false
+    }).select("type");
+
+    const like = (await queryBuilder.exec()) || {};
+
+    return new Response(200, "T", like).custom("like get successfully");
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+exports.user_like_list = async postData => {
+  try {
+    const user_id =  postData?.authData?.user_id
+    delete postData?.authData
+    delete postData?.host
+    const { error, value } = filterValidation.validate(postData);
+    // console.log(error)
+
+    if (error) {
+      return new Response(400, "F").custom(error.details[0].message);
+    }
+
+
+      let queryBuilder = Interaction.find({ user: "65b54fe0f8eb830ec09d96e5",type:"like" }, 'property')
+      .limit(value?.limit)
+      .skip(value?.offset)
+      .populate({
+        path: 'property',
+        match: { is_deleted: false }
+      })
+
+
+    const like = (await queryBuilder.exec()) || {};
+
+    const total = await Interaction.countDocuments({ user: "65b54fe0f8eb830ec09d96e5",type:"like" });
+
+
+    return new Response(200, "T", {   
+       list: like,
+      pagination: { total }
+    }
+      ).custom("like property successfully")
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
 };

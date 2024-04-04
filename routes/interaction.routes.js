@@ -5,18 +5,21 @@ const {
   add,
   update,
   delete: deleteController,
+  like_check,
+  user_like_list
 } = require("../controllers/interactionController");
 const {
   middleware,
-  isRoleIsValid,
+  isRoleIsValid
 } = require("../helper/middleware/authentication");
 
 router.post("/list", middleware, list);
+router.post("/like", middleware , user_like_list);
 router.post("/add", middleware, add);
+router.post("/like", middleware, like_check);
 router.put(
   "/update/:id",
   middleware,
-  isRoleIsValid(["admin", "briker"]),
   update
 );
 router.delete(
@@ -25,5 +28,6 @@ router.delete(
   isRoleIsValid(["admin", "briker"]),
   deleteController
 );
+
 
 module.exports = router;

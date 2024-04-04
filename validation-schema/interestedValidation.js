@@ -20,7 +20,7 @@ const ValidationObj = {
       "array.min": "Coordinates must have at least two values.",
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
-    }),
+    }).optional(),
   zip_code: Joi.number().required().messages({
     "any.required": "zip code is required.",
   }),
@@ -52,7 +52,7 @@ exports.updateValidation = Joi.object({
   coordinates: Joi.array()
     .items(Joi.number())
     .min(2)
-    .max(2),
+    .max(2).optional(),
   zip_code: Joi.number(),
   call: Joi.boolean().default(false),
   leads: Joi.boolean().default(false),

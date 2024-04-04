@@ -1,4 +1,5 @@
 const Phone = require("../Schema/phoneSchema");
+const Response = require("../helper/static/Response");
 const {
   DeleteRecordById,
   UpdateRecordById,
@@ -11,6 +12,7 @@ const {
 const {
   updateValidation,
   addValidation,
+  OneValidation
 } = require("../validation-schema/phoneValidation");
 
 // ################################################
@@ -47,7 +49,7 @@ exports.model_add = async (postData) => {
   removeKey.map((key) => delete postData[key]);
   postData.user = postData.authData.user_id;
   const query = {
-    $or: [{ number: postData.contact_number }, { is_deleted: 1 }],
+    $or: [{ number: postData?.contact_number,zip_code: postData?.zip_code}, { is_deleted: 1 }],
   };
 
   return await AddRecord(Phone, postData, query, addValidation, "PHONE");
@@ -70,4 +72,28 @@ exports.model_update = async (postData) => {
 
 exports.model_delete = async (postData) => {
   return await DeleteRecordById(Phone, postData.id, "PHONE");
+};
+
+
+// // ################################################
+// // #              broker number                   #
+// // ################################################
+
+
+exports.model_one = async (postData) => {
+  try {
+    if (!postData?.authData?.zip_code) {
+      return new Response(400, "F").custom("please complete your profile");
+    }
+
+    let queryBuilder = Phone.findOne({zip_code: postData?.authData?.zip_code,is_deleted:false}).select(["contact_number","is_active"]);
+
+    const broker = (await queryBuilder.exec()) || {};
+
+    return new Response(200, "T", { broker }).custom(
+      "broker get successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
 };

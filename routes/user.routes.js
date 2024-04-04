@@ -19,7 +19,6 @@ router.post("/signUp", uploadFiles("public/profile").single("image"), saveUser);
 router.put(
   "/update/:id",
   middleware,
-  isRoleIsValid("admin", "broker"),
   uploadFiles("public/profile").single("image"),
   update
 );

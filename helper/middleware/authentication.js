@@ -33,7 +33,7 @@ const middleware = async (req, res, next) => {
   const todayDate = new Date().getTime();
 
   if (authData.exp < todayDate / 1000) {
-    return res.json(new Response(401).custom(authHandler("TOKEN_EXPIRED")));
+    return res.json(new Response(401,"F").custom(authHandler("TOKEN_EXPIRED")));
   }
   req.authData = authData;
   delete req?.headers?.authorization;

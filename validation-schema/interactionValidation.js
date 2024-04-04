@@ -25,9 +25,9 @@ const ValidationObj = {
       "array.min": "Coordinates must have at least two values.",
       "array.max": "Coordinates must have at most two values.",
       "number.base": "Each coordinate value must be a number.",
-    }),
-  type: Joi.string().valid("like", "view").messages({
-    "any.only": 'Type must be either "like" or "view"',
+    }).optional(),
+  type: Joi.string().valid("like", "view" , "unlike").messages({
+    "any.only": 'Type must be either "like", "unlike" or "view"',
   }),
 };
 exports.addValidation = Joi.object(ValidationObj);
@@ -35,5 +35,10 @@ exports.addValidation = Joi.object(ValidationObj);
 exports.updateValidation = Joi.object({
   ...ValidationObj,
   id: Joi.string().required(),
+  property_id: Joi.string().optional(),
+});
+
+exports.likeValidation = Joi.object({
+  user_id: Joi.string().required(),
   property_id: Joi.string().optional(),
 });
