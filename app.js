@@ -18,17 +18,19 @@ require("./config/database/connection.js");
 const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.1.5:5000/",
+  "http://192.168.1.5:5000/",
   "http://192.168.1.5:8081/",
   "http://localhost:8081/",
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+    callback(null, true);
+    // console.log(origin)
+    // if (allowedOrigins.includes(origin) || !origin) {
+    // } else {
+    //   callback(new Error("Not allowed by CORS"));
+    // }
   },
 };
 

@@ -28,7 +28,7 @@ exports.model_list = async (postData) => {
   removeKey.map((key) => delete postData[key]);
   if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
   if (postData.property_for) {
-    query.$and = [{ property_for: postData.property_for }];
+    query.$and = [{ property_for: postData.property_for, is_deleted:false }];
   }
   if (postData.property_type) {
     if (query.$and) {
@@ -137,21 +137,22 @@ exports.model_update = async (postData) => {
       const images = (postData?.files?.images || []).map((item) => {
         return item.path;
       });
-      updateData = { ...postData, images: [...existing.images, ...images] };
+      updateData = { ...postData, images: images };
     } else if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.path;
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
-      (postData?.files?.images || []).map((item) => {
-        if (item.originalname == postData?.banner) {
-          updateData.banner = item.path;
+      (postData?.files?.images || postData?.images || []).map((item) => {
+        console.log((item.originalname || item?.split('\\').pop())==postData?.banner)
+        if ((item.originalname || item?.split('\\').pop()) == postData?.banner) {
+          updateData.banner = item.path || item;
         }
       });
     }
     delete updateData.files;
   }
-
+  
   return await UpdateRecordById(
     Property,
     updateData,
@@ -170,7 +171,7 @@ exports.model_delete = async (postData) => {
 
 exports.user_property = async (postData)=>{
   try {
-    let queryBuilder = Property.find({user: "65e0abcc2444a83145310949" || postData?.authData?.user_id,is_deleted:false})
+    let queryBuilder = Property.find({user: postData?.authData?.user_id,is_deleted:false})
     const property = (await queryBuilder.exec()) || {};
     return new Response(200, "T", property).custom("user prperty get successfully");
   } catch (error) {

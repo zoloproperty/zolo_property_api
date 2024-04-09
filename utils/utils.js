@@ -118,24 +118,20 @@ exports.ListRecordByFilter = async (
 };
 
 exports.DeleteRecordById = async (Model, id, MessageKey) => {
-  try {
-    if (!id) {
-      return new Response(400, "F").custom(`${MessageKey} id is required.`);
-    }
-    const existingRecord = await Model.findById(id);
 
-    if (!existingRecord) {
-      return new Response(400, "F").custom(
+
+  try {
+
+    const existing = await Model.findById(id);
+    if (!existing)
+      return new Response(404, "F").custom(
         authHandler(`${MessageKey}_NOT_EXISTS`)
       );
-    }
 
-    const deletionResult = await existingRecord.deleteOne();
+    Object.assign(existing, {is_deleted:true});
 
-    if (deletionResult.deletedCount > 0) {
-      return new Response(200, "T").custom(
-        authHandler(`${MessageKey}_DELETED`)
-      );
+    if (await existing.save()) {
+      return new Response(200, "T").custom(authHandler(`${MessageKey}_DELETED`));
     } else {
       return new Response(400, "F").custom(
         authHandler(`FAILED_DELETE_${MessageKey}`)

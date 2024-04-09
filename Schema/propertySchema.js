@@ -59,8 +59,8 @@ const propertySchema = new Schema(
       ],
       default: "House",
     },
-    saleable_area: { type: String },
-    carpet_area: { type: String },
+    saleable_area: String,
+    carpet_area: String,
     saleable_area_size_in: {
       type: String,
       enum: ["Feet", "Meters", "Yards", "Bigha", "Acres", "Hectares"],
@@ -193,7 +193,7 @@ const propertySchema = new Schema(
 
 propertySchema.virtual("imageUrls").get(function () {
   return this.images.map((image) => {
-    const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+    const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
     const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
     if (newPath) {
       return `${hostUrl}/${newPath}`;
@@ -204,7 +204,7 @@ propertySchema.virtual("imageUrls").get(function () {
 });
 
 propertySchema.virtual("videoUrl").get(function () {
-  const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+  const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
   const newPath = (this.video || "")
     .replace(/\\/g, "/")
     .replace(/^public\//, "");
@@ -216,7 +216,7 @@ propertySchema.virtual("videoUrl").get(function () {
 });
 
 propertySchema.virtual("bannerUrl").get(function () {
-  const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+  const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
   const newPath = (this.banner || "")
     .replace(/\\/g, "/")
     .replace(/^public\//, "");

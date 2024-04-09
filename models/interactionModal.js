@@ -211,9 +211,7 @@ exports.user_like_list = async postData => {
     if (error) {
       return new Response(400, "F").custom(error.details[0].message);
     }
-
-
-      let queryBuilder = Interaction.find({ user: "65b54fe0f8eb830ec09d96e5",type:"like" }, 'property')
+      let queryBuilder = Interaction.find({ user:user_id,type:"like" }, 'property')
       .limit(value?.limit)
       .skip(value?.offset)
       .populate({
