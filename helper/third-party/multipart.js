@@ -141,11 +141,11 @@ const uploadFiles = (folder) => {
   }
 };
 
-const unlinkFile = async (folderPath, image) => {
+const unlinkFile = async (folderPath) => {
   const basePath = path.dirname(__dirname);
   const parentDir = path.dirname(basePath);
 
-  const imagePath = path.join(parentDir, `${folderPath}/${image}`);
+  const imagePath = path.join(parentDir, `${folderPath}`);
 
   try {
     if (fs.existsSync(imagePath)) {
@@ -162,12 +162,12 @@ const unlinkFile = async (folderPath, image) => {
   }
 };
 
-const unlinkFiles = async (folderPath, files) => {
+const unlinkFiles = async (files) => {
   const basePath = path.dirname(__dirname);
   const parentDir = path.dirname(basePath);
   for (const file of files) {
     try {
-      const filePath = path.join(parentDir, `${folderPath}/${file}`);
+      const filePath = path.join(parentDir, `${file}`);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
         console.log(`File ${file} deleted successfully`);

@@ -1,5 +1,6 @@
 const Ads = require("../Schema/adsSchema");
 const Response = require("../helper/static/Response");
+const {unlinkFiles} = require("../helper/third-party/multipart");
 const {
   handleError,
   buildDynamicQuery,
@@ -53,14 +54,24 @@ exports.ads_add = async (postData) => {
   };
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
-  let updateData = postData;
 
+  let updateData = postData;
   if (postData?.files) {
-    const gallery = postData?.files?.map((item) => {
-      return item.path;
-    });
-    updateData = { ...postData, gallery };
-    updateData.banner = gallery[0];
+    if (postData?.files?.images) {
+      const gallery = (postData?.files?.images || []).map((item) => {
+        return item.path;
+      });
+      updateData = { ...postData, gallery };
+    }
+    if (postData?.banner) {
+      (postData?.files?.images || []).map((item) => {
+        if (item.originalname == postData?.banner) {
+          updateData.banner = item.path;
+        }
+      });
+    } else {
+      updateData.banner = (postData?.files?.images || [])[0]?.path;
+    }
     delete updateData.files;
   }
 
@@ -74,7 +85,34 @@ exports.ads_add = async (postData) => {
 exports.ads_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
-  return await UpdateRecordById(Ads, postData, updateValidation, "ADS");
+
+  let updateData = postData;
+  if(postData?.oldImages){
+    unlinkFiles(postData?.oldImages)
+  }
+
+  if (postData?.files) {
+    if (postData?.files) {
+      const gallery = (postData?.files || []).map((item) => {
+        return item.path;
+      }); 
+      updateData = { ...postData, gallery:[...gallery,...(postData?.gallery||[])] };
+    }
+    if (postData?.banner) {
+      (postData?.files || postData?.gallery || []).map((item) => {
+        if ((item.originalname || item?.split('\\').pop()) == postData?.banner) {
+          updateData.banner = item.path || item;
+        }
+      });
+    }
+    delete updateData.files;
+  }
+  if(!postData?.files && !(postData?.gallery||[])[0]){
+    updateData.gallery = []
+  }
+
+
+  return await UpdateRecordById(Ads, updateData, updateValidation, "ADS");
 };
 
 // ################################################

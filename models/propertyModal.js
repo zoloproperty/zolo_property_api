@@ -14,7 +14,8 @@ const {
   addValidation,
   OneValidation,
 } = require("../validation-schema/propertyValidation");
-
+const { unlinkFiles } = require("../helper/third-party/multipart");
+const path = require('path');
 // ################################################
 // #               Property list                     #
 // ################################################
@@ -22,21 +23,63 @@ const {
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["price", "city", "state", "location", "property_type"];
+  const searchFields = ["unique_id","price", "city", "state", "location", "property_type"];
   const removeKey = ["host", "authorization"];
-
+  
   removeKey.map((key) => delete postData[key]);
+ 
+
   if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
   if (postData.property_for) {
     query.$and = [{ property_for: postData.property_for, is_deleted:false }];
   }
   if (postData.property_type) {
     if (query.$and) {
-      query.$and = [...query.$and, { property_type: postData.property_type }];
+      query.$and = [...query.$and, { property_type: postData.property_type,is_deleted:false }];
     } else {
-      query.$and = [{ property_type: postData.property_type }];
+      query.$and = [{ property_type: postData.property_type,is_deleted:false }];
     }
   }
+  if (query.$and) {
+    query.$and = [...query.$and, { is_deleted:false }];
+  }else{
+    query.$and = [{ is_deleted:false }];
+  }
+  
+  if(postData.property_for){
+
+  
+  if (postData?.max_price  && postData?.min_price) {
+    if(postData.property_for == 'rent'){
+      query.monthly_rent = { $gte: postData?.min_price }
+      query.monthly_rent = { $lte: postData?.max_price }
+    }else{
+      query.expected_price = { $gte: postData?.min_price }
+      query.expected_price = { $lte: postData?.max_price }
+    }
+  } else if (postData?.max_price ) {
+    if(postData.property_for == 'rent'){
+      query.monthly_rent = { $lte: postData?.max_price }
+    }else{
+      query.expected_price = { $gte: postData?.min_price }
+    }
+  } else if (postData?.min_price) {
+    if(postData.property_for == 'rent'){
+    query.monthly_rent = { $gte: postData?.min_price }
+    }else{
+      query.expected_price = { $gte: postData?.min_price }
+    }
+  }
+}
+
+let coordinatesrentArray=[],coordinatessellArray=[];
+if(postData.property_for == 'rent'){
+const rentcoordinates = await Property.find({property_for:'rent'}, { coordinates: 1, _id: 0 }).limit(500) 
+coordinatesrentArray = rentcoordinates.map(property => ({property_for:'rent',lat:property?.coordinates[0],long:property?.coordinates[1]}));
+}else{
+  const sellcoordinates = await Property.find({property_for:'sell'}, { coordinates: 1, _id: 0 }).limit(500) 
+  coordinatessellArray = sellcoordinates.map(property => ({property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
+}
 
   return await ListRecordByFilter(
     Property,
@@ -46,7 +89,8 @@ exports.model_list = async (postData) => {
     searchFields,
     filterValidationProperty,
     "PROPERTY",
-    {}
+    {coordinates:[...coordinatesrentArray,...coordinatessellArray]},
+    "user"
   );
 };
 
@@ -61,7 +105,7 @@ exports.model_one = async (postData) => {
       return new Response(400, "F").custom(error.details[0]?.message);
     }
 
-    let queryBuilder = Property.findById(postData.id);
+    let queryBuilder = Property.findById(postData.id).populate("user");
 
     const property = (await queryBuilder.exec()) || {};
 
@@ -84,7 +128,6 @@ exports.model_add = async (postData) => {
 
   let updateData = postData;
   if (postData?.files) {
-    console.log(postData.files);
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
         return item.path;
@@ -92,7 +135,6 @@ exports.model_add = async (postData) => {
       updateData = { ...postData, images };
     } else if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.path;
-      console.log(video);
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
@@ -124,7 +166,9 @@ exports.model_update = async (postData) => {
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
   let updateData = postData;
-
+  if(postData?.oldImages){
+    unlinkFiles(postData?.oldImages)
+  }
   const existing = await Property.findById(postData.id);
   if (!existing)
     return new Response(404, "F").custom(
@@ -137,22 +181,23 @@ exports.model_update = async (postData) => {
       const images = (postData?.files?.images || []).map((item) => {
         return item.path;
       });
-      updateData = { ...postData, images: images };
+      updateData = { ...postData, images: [...images,...(postData?.images||[])] };
     } else if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.path;
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || postData?.images || []).map((item) => {
-        console.log((item.originalname || item?.split('\\').pop())==postData?.banner)
-        if ((item.originalname || item?.split('\\').pop()) == postData?.banner) {
+        if ((item.originalname || path.basename(item)) == postData?.banner) {
           updateData.banner = item.path || item;
         }
       });
     }
     delete updateData.files;
   }
-  
+  if(!postData?.files && !postData?.images[0]){
+    updateData.images = []
+  }
   return await UpdateRecordById(
     Property,
     updateData,

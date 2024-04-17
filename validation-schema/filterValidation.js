@@ -111,10 +111,10 @@ exports.filterValidationProperty = Joi.object({
   property_type: Joi.string().allow("", null).messages({
     "string.base": "property_type must be a string.",
   }),
-  min_price: Joi.string().allow("", null).messages({
+  min_price: Joi.number().allow("", null).messages({
     "number.base": "price must be a number.",
   }),
-  max_price: Joi.string().allow("", null).messages({
+  max_price: Joi.number().allow("", null).messages({
     "number.base": "price must be a number.",
   }),
   endDate: Joi.date().allow("", null).messages({

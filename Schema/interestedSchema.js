@@ -7,6 +7,7 @@ const interestedSchema = new Schema(
       ref: "user",
       required: true,
     },
+    unique_id:String,
     name: {
       type: String,
       required: [true, "name is required"],
@@ -74,6 +75,17 @@ const interestedSchema = new Schema(
   },
   { timestamps: true }
 );
+
+
+
+interestedSchema.post("save", async function(savedDoc, next) {
+  if(!savedDoc?.unique_id){
+    const unique_id = (this?.property || this?.ads).toString();
+    savedDoc.unique_id = unique_id;
+    await savedDoc.save();
+  }
+  next();
+});
 
 const Interested = model("interested", interestedSchema);
 module.exports = Interested;

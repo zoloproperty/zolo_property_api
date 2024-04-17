@@ -25,6 +25,7 @@ exports.interested_list = async (postData) => {
     "city",
     "zip_code",
     "note",
+    "unique_id",
     "status",
   ];
   const removeKey = ["host" , "authorization"];

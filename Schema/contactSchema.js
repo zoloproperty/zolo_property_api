@@ -2,10 +2,6 @@ const { Schema, model } = require("mongoose");
 
 const contactSchema = new Schema(
   {
-    property_id: {
-      type: String,
-      required: [true, "Property ID is required"],
-    },
     name: {
       type: String,
       required: [true, "Name is required"],
@@ -19,26 +15,10 @@ const contactSchema = new Schema(
       unique: [true , 'Contact value already exists, please try another value.'],
       required: [true, "Contact number is required"],
     },
-    created_at: {
-      type: Date,
-      default: Date.now,
-    },
-    updated_at: {
-      type: Date,
-      default: Date.now,
-    },
     status: {
       type: String,
       default: "interested",
       enum: ["contacted", "interested", "follow-up", "not-interested"],
-    },
-    is_fake: {
-      type: Boolean,
-      default: false,
-    },
-    email_sent: {
-      type: Boolean,
-      default: false,
     },
     is_active: {
       type: Boolean,

@@ -17,9 +17,9 @@ exports.buildDynamicQuery = (searchFields, searchString, start, end) => {
   if (searchString) {
     dynamicQuery.$or = [
       ...(dynamicQuery.$or || []),
-      ...searchFields.map((field) => ({
-        [field]: { $regex: new RegExp(searchString, "i") },
-      })),
+      ...searchFields.map(field => ({
+        [field]: { $regex: new RegExp(searchString, "i") }
+      }))
     ];
   }
 
@@ -82,10 +82,10 @@ exports.ListRecordByFilter = async (
         $near: {
           $geometry: {
             type: "Point",
-            coordinates: value.coordinates,
+            coordinates: value.coordinates
           },
-          $maxDistance: value.radius,
-        },
+          $maxDistance: value.radius
+        }
       };
     }
 
@@ -96,9 +96,6 @@ exports.ListRecordByFilter = async (
       .populate(populate);
 
     // Conditionally add populate
-    // if (populate) {
-    //   queryBuilder = queryBuilder;
-    // }
 
     const list = (await queryBuilder.exec()) || [];
 
@@ -106,9 +103,8 @@ exports.ListRecordByFilter = async (
     const pagination = {
       limit,
       offset,
-      total: total.length,
+      total: total.length
     };
-
     return new Response(200, "T", { list, pagination, ...extraData }).custom(
       Message || "list get successfully"
     );
@@ -118,20 +114,48 @@ exports.ListRecordByFilter = async (
 };
 
 exports.DeleteRecordById = async (Model, id, MessageKey) => {
-
-
   try {
-
     const existing = await Model.findById(id);
     if (!existing)
       return new Response(404, "F").custom(
         authHandler(`${MessageKey}_NOT_EXISTS`)
       );
 
-    Object.assign(existing, {is_deleted:true});
+    Object.assign(existing, { is_deleted: true });
 
     if (await existing.save()) {
-      return new Response(200, "T").custom(authHandler(`${MessageKey}_DELETED`));
+      return new Response(200, "T").custom(
+        authHandler(`${MessageKey}_DELETED`)
+      );
+    } else {
+      return new Response(400, "F").custom(
+        authHandler(`FAILED_DELETE_${MessageKey}`)
+      );
+    }
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+exports.PermanentDeleteRecordById = async (Model, id, MessageKey) => {
+  try {
+    if (!id) {
+      return new Response(400, "F").custom(`${MessageKey} id is required.`);
+    }
+    const existingRecord = await Model.findById(id);
+
+    if (!existingRecord) {
+      return new Response(400, "F").custom(
+        authHandler(`${MessageKey}_NOT_EXISTS`)
+      );
+    }
+
+    const deletionResult = await existingRecord.deleteOne();
+
+    if (deletionResult.deletedCount > 0) {
+      return new Response(200, "T").custom(
+        authHandler(`${MessageKey}_DELETED`)
+      );
     } else {
       return new Response(400, "F").custom(
         authHandler(`FAILED_DELETE_${MessageKey}`)
@@ -183,6 +207,7 @@ exports.AddRecord = async (
     delete postData.authData;
     // Validate the request body
     const { error, value } = addValidation.validate(postData);
+    console.log(value);
     if (error) return this.handleError(400, error.details[0].message);
 
     // Check for duplicate records

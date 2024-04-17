@@ -43,6 +43,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const dashboardRouter = require("./routes/dashboard.routes.js");
 const adsRouter = require("./routes/ads.routes.js");
 const interestedRouter = require("./routes/interested.routes.js");
 const phoneRouter = require("./routes/phone.routes.js");
@@ -51,6 +52,7 @@ const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
 const interactionRouter = require("./routes/interaction.routes.js");
 
+app.use("/dashboard", dashboardRouter);
 app.use("/ads", adsRouter);
 app.use("/interested", interestedRouter);
 app.use("/interaction", interactionRouter);

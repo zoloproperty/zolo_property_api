@@ -187,6 +187,7 @@ const propertySchema = new Schema(
       type: Boolean,
       default: false,
     },
+    unique_id:String
   },
   { timestamps: true }
 );
@@ -228,6 +229,15 @@ propertySchema.virtual("bannerUrl").get(function () {
 });
 
 propertySchema.set("toJSON", { virtuals: true });
+
+propertySchema.post("save", async function(savedDoc, next) {
+  if(!savedDoc?.unique_id){
+    const unique_id = this?._id.toString();
+    savedDoc.unique_id = unique_id;
+    await savedDoc.save();
+  }
+  next();
+});
 
 const Property = model("property", propertySchema);
 module.exports = Property;

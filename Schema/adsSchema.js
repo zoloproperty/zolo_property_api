@@ -63,6 +63,32 @@ const adsSchema = new Schema(
   },
   { timestamps: true }
 );
+adsSchema.virtual("galleryUrls").get(function () {
+  return this.gallery.map((image) => {
+    const hostUrl = process.env.HostURL.replace(/\\/g, "/");
+    const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
+    if (newPath) {
+      return `${hostUrl}/${newPath}`;
+    } else {
+      return "";
+    }
+  });
+});
+
+
+adsSchema.virtual("bannerUrl").get(function () {
+  const hostUrl = "http://192.168.1.5:5000" ||  process.env.HostURL.replace(/\\/g, "/");
+  const newPath = (this.banner || "")
+    .replace(/\\/g, "/")
+    .replace(/^public\//, "");
+  if (newPath) {
+    return `${hostUrl}/${newPath}`;
+  } else {
+    return "";
+  }
+});
+
+adsSchema.set("toJSON", { virtuals: true });
 
 const Ads = model("ads", adsSchema);
 module.exports = Ads;

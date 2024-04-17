@@ -22,6 +22,7 @@ const {
 const { brokerControl } = require("../utils/brokerControl");
 const { filterValidation } = require("../validation-schema/filterValidation");
 const { OAuth2Client } = require("google-auth-library");
+const { unlinkFile } = require("../helper/third-party/multipart");
 const client = new OAuth2Client();
 
 exports.user_list = async (postData) => {
@@ -93,7 +94,6 @@ exports.login = async (postData) => {
     try {
       const findUser = await User.findOne({ email });
       if (!findUser || !findUser.is_active || findUser.is_deleted) {
-        console.log(findUser.is_active);
         let errorMessage = "WRONG";
         if (!findUser) {
           errorMessage = "EMAIL_NOT_EXISTS";
@@ -122,17 +122,15 @@ exports.login = async (postData) => {
       const payLoad = {
         user_id: findUser._id,
         email: findUser.email,
-        image: findUser.image
-          ? isValidHttpUrl(findUser.image)
-            ? findUser.image
-            : `http://${postData.host}/profile/${findUser.image}`
-          : null,
+        image: `http://${postData.host}/${(findUser.image||"").replace(/\\/g, "/").replace(/^public\//, '')}`,
+        oldImage: findUser.image,
         loggedInWith: loggedInWith,
         first_name: findUser.first_name,
         last_name: findUser.last_name,
         contact_number: findUser.contact_number,
         role: findUser.role,
         city: findUser.city,
+        state: findUser.state,
         zip_code: findUser.zip_code,
         local_area: findUser.local_area,
       };
@@ -211,9 +209,15 @@ exports.saveUser = async (postData) => {
   }
 };
 exports.user_update = async (postData) => {
+  const host = postData?.host
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
   let updateData = postData;
+  console.log(updateData)
+
+  if(postData?.oldImage){
+    unlinkFile(postData?.oldImage)
+  }
 
   if (postData?.file) {
     const image = postData?.file?.path;
@@ -238,11 +242,8 @@ exports.user_update = async (postData) => {
       const payLoad = {
         user_id: existing._id,
         email: existing.email,
-        image: existing.image
-          ? isValidHttpUrl(existing.image)
-            ? existing.image
-            : `http://${postData.host}/profile/${existing.image}`
-          : null,
+        image: `http://${host}/${(existing.image||"").replace(/\\/g, "/").replace(/^public\//, '')}`,
+        oldImage: existing.image,
         role: existing.role,
         first_name: existing.first_name,
         last_name: existing.last_name,

@@ -1,6 +1,7 @@
 const Interaction = require("../Schema/interactionSchema");
 const Property = require("../Schema/propertySchema");
 const Response = require("../helper/static/Response");
+const {authHandler} = require("../helper/static/messages");
 const ObjectId = require("mongoose").Types.ObjectId;
 const {
   DeleteRecordById,
@@ -26,7 +27,7 @@ exports.interaction_list = async postData => {
   try {
     const query = {};
     const sortOptions = { limit: 1 };
-    const searchFields = ["name", "city", "zip_code", "type", "number"];
+    const searchFields = ["unique_id","name", "city", "zip_code", "type", "number"];
     const removeKey = ["host", "authorization"];
     removeKey.forEach(key => delete postData[key]);
     if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
@@ -76,6 +77,7 @@ exports.interaction_list = async postData => {
           city: { $addToSet: "$city" },
           number: { $addToSet: "$number" },
           zip_code: { $addToSet: "$zip_code" },
+          is_converted: { $addToSet: "$is_converted" },
           interaction: {
             $push: {
               id: "$_id",
@@ -85,9 +87,11 @@ exports.interaction_list = async postData => {
               property: "$property",
               coordinates: "$coordinates",
               type: "$type",
-              createdAt: "$createdAt"
+              is_converted:"$is_converted",
+              unique_id:"$unique_id",
+              createdAt: "$createdAt",
             }
-          }
+          },
         }
       },
       {
@@ -97,24 +101,26 @@ exports.interaction_list = async postData => {
           name: { $arrayElemAt: ["$name", 0] },
           city: { $arrayElemAt: ["$city", 0] },
           number: { $arrayElemAt: ["$number", 0] },
-          zip_code: { $arrayElemAt: ["$zip_code", 0] }
+          zip_code: { $arrayElemAt: ["$zip_code", 0] },
+          unique_id: { $arrayElemAt: ["$unique_id", 0] },
+          is_converted: { $arrayElemAt: ["$is_converted", 0] }
         }
       },
       { $sort: finalSortOptions },
       { $limit: options.limit },
-      { $skip: options.skip }
+      { $skip: options.skip },
     ]);
 
     const formattedInteractions = aggregatedInteractions.map(
-      ({ name, city, number, interaction }) => ({
+      ({ name, city, number, interaction,is_converted }) => ({
         name,
         city,
         number,
-        interaction
+        is_converted,
+        interaction,
       })
     );
 
-    const total = await Interaction.countDocuments(query);
 
     const response = {
       status: 200,
@@ -123,7 +129,7 @@ exports.interaction_list = async postData => {
       message: "Interactions retrieved successfully",
       data: {
         list: formattedInteractions,
-        pagination: { total }
+        pagination: { total:formattedInteractions?.length||0 }
       }
     };
 
@@ -147,7 +153,16 @@ exports.interaction_add = async postData => {
   const query = {
     $or: [{ interaction: "null" }]
   };
+  if(postData?.type == 'view' && postData?.property){
+    const existing = await Property.findById(postData?.property)
+    if (!existing)
+      return new Response(404, "F").custom(
+        authHandler(`PROPERTY_NOT_EXISTS`)
+      );
 
+      Object.assign(existing,{views:existing.views + 1 });
+      await existing.save()
+  }
   return await AddRecord(
     Interaction,
     postData,
@@ -182,9 +197,11 @@ exports.interaction_delete = async postData => {
 
 exports.like_check = async postData => {
   try {
+    console.log("fjgfdlkgjflk")
     const { error, value } = likeValidation.validate(postData);
     if (error) return handleError(400, error.details[0].message);
-    const { user_id, property_id } = value;
+    const {property_id } = value;
+    const user_id =  postData?.authData?.user_id
 
     let queryBuilder = Interaction.findOne({
       user: user_id,
