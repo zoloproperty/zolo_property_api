@@ -19,12 +19,13 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 // ################################################
 
 exports.contact_list = async (postData) => {
-  const query = {};
+  const query = {$and :[{ is_deleted:false }]};
   const sortOptions = { limit: 1 };
   const searchFields = ["contact", "limit"];
   const removeKey = ["host" ,"authorization"];
   removeKey.map((key) => delete postData[key]);
 
+  
   return await ListRecordByFilter(
     Contact,
     postData,

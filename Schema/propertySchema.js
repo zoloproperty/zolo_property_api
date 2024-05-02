@@ -224,7 +224,7 @@ propertySchema.virtual("bannerUrl").get(function () {
   if (newPath) {
     return `${hostUrl}/${newPath}`;
   } else {
-    return "";
+    return "http://localhost:5000/property/videos/video-1710266151537.mp4";
   }
 });
 

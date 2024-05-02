@@ -44,10 +44,21 @@ const ValidationObj = {
     return next30Days;
   }),
 };
-exports.addValidation = Joi.object(ValidationObj);
+exports.addValidation = Joi.object(ValidationObj).options({
+  abortEarly: false,
+  allowUnknown: true,
+});;
 
 exports.updateValidation = Joi.object({
   ...ValidationObj,
   id: Joi.string().required(),
   property_id: Joi.string().optional(),
+}).options({ abortEarly: false, allowUnknown: true });
+
+
+exports.OneValidation = Joi.object({
+  id: Joi.string().required().messages({
+    "any.required": "Property id is required.",
+    "string.base": "Property id must be a string.",
+  }),
 }).options({ abortEarly: false, allowUnknown: true });

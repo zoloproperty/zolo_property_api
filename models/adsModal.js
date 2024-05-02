@@ -12,6 +12,7 @@ const {
 const {
   updateValidation,
   addValidation,
+  OneValidation,
 } = require("../validation-schema/adsValidation");
 const { filterValidation } = require("../validation-schema/filterValidation");
 
@@ -20,7 +21,7 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 // ################################################
 
 exports.ads_list = async (postData) => {
-  const query = {};
+  const query = {$and :[{ is_deleted:false }]};
   const sortOptions = { limit: 1 };
   const searchFields = [
     "ads_name",
@@ -56,7 +57,7 @@ exports.ads_add = async (postData) => {
   removeKey.map((key) => delete postData[key]);
 
   let updateData = postData;
-  if (postData?.files) {
+  if (postData?.files){
     if (postData?.files?.images) {
       const gallery = (postData?.files?.images || []).map((item) => {
         return item.path;
@@ -121,4 +122,24 @@ exports.ads_update = async (postData) => {
 
 exports.ads_delete = async (postData) => {
   return await DeleteRecordById(Ads, postData.id, "ADS");
+};
+
+
+exports.model_one = async (postData) => {
+  try {
+    const { error, value } = OneValidation.validate(postData);
+    if (error) {
+      return new Response(400, "F").custom(error.details[0]?.message);
+    }
+
+    let queryBuilder = Ads.find({_id:postData.id,is_deleted:false,expiry_date: { $lte: new Date().toISOString() }})
+
+    const ads = (await queryBuilder.exec()) || {};
+
+    return new Response(200, "T", { ads }).custom(
+      "ads get successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
 };

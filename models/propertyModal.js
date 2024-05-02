@@ -105,7 +105,7 @@ exports.model_one = async (postData) => {
       return new Response(400, "F").custom(error.details[0]?.message);
     }
 
-    let queryBuilder = Property.findById(postData.id).populate("user");
+    let queryBuilder = Property.find({_id:postData.id,is_deleted:false}).populate("user");
 
     const property = (await queryBuilder.exec()) || {};
 

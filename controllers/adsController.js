@@ -2,6 +2,7 @@ const Response = require("../helper/static/Response");
 const {
   ads_list,
   ads_update,
+  model_one,
   ads_delete,
   ads_add,
 } = require("../models/adsModal");
@@ -22,6 +23,16 @@ exports.add = async (req, res) => {
   try {
     const postData = extractRequestData(req);
     const response = await ads_add(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+
+exports.one = async (req, res) => {
+  try {
+    const postData = extractRequestData(req);
+    const response = await model_one(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));

@@ -45,7 +45,7 @@ const userSchema = new Schema(
     },
     login_type: {
       type: String,
-      enum: ["google", "credential"],
+      enum: ["", "credential"],
     },
     is_email_verified: {
       type: Boolean,
