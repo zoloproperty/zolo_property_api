@@ -38,7 +38,7 @@ function authHandler(typeProp) {
     DUPLICATE: `Duplicate entry found.`,
     DUPLICATE_EMAIL_PHONE: "Duplicate email and phone found.",
     DUPLICATE_EMAIL: "Duplicate email found.",
-    DUPLICATE_PHONE: "Duplicate phone number found.",
+    DUPLICATE_PHONE: "Duplicate  :- please check phone / Zip ",
     DUPLICATE_USER_NAME: "Duplicate user name found.",
 
     UNABLE_EMAIL: `Unable to create, duplicate email found.`,
@@ -134,7 +134,7 @@ function authHandler(typeProp) {
     PHONE_ADD_FAILED: "Phone added failed.",
     PHONE_DELETED: "Phone deleted successfully.",
     FAILED_DELETE_PHONE: "Phone deleted failed.",
-    DUPLICATE_PHONE_EXISTS: "Phone already exists.",
+    DUPLICATE_PHONE_EXISTS: "already exists :- please check phone / Zip",
     PHONE_UPD_FAILED: "Phone update failed.",
     PHONE_ACTIVATED: "Phone activated successfully.",
     PHONE_INACTIVE: "Phone deactivated successfully.",

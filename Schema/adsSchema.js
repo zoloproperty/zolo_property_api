@@ -65,7 +65,7 @@ const adsSchema = new Schema(
 );
 adsSchema.virtual("galleryUrls").get(function () {
   return this.gallery.map((image) => {
-    const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
+    const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
     const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
     if (newPath) {
       return `${hostUrl}/${newPath}`;
@@ -77,7 +77,7 @@ adsSchema.virtual("galleryUrls").get(function () {
 
 
 adsSchema.virtual("bannerUrl").get(function () {
-  const hostUrl = "http://192.168.1.5:5000" ||  process.env.HostURL.replace(/\\/g, "/");
+  const hostUrl = "http://192.168.1.7:5000" ||  process.env.HostURL.replace(/\\/g, "/");
   const newPath = (this.banner || "")
     .replace(/\\/g, "/")
     .replace(/^public\//, "");

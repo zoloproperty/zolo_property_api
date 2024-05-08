@@ -205,7 +205,7 @@ propertySchema.virtual("imageUrls").get(function () {
 });
 
 propertySchema.virtual("videoUrl").get(function () {
-  const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
+  const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
   const newPath = (this.video || "")
     .replace(/\\/g, "/")
     .replace(/^public\//, "");
@@ -217,7 +217,7 @@ propertySchema.virtual("videoUrl").get(function () {
 });
 
 propertySchema.virtual("bannerUrl").get(function () {
-  const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
+  const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
   const newPath = (this.banner || "")
     .replace(/\\/g, "/")
     .replace(/^public\//, "");

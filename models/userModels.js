@@ -60,7 +60,6 @@ exports.user_list = async (postData) => {
 };
 
 exports.login = async (postData) => {
-  console.log(postData)
   try {
     let { email } = postData;
     let picture, name;
@@ -92,7 +91,12 @@ exports.login = async (postData) => {
       loggedInWith = "username-password";
     }
     try {
-      const findUser = await User.findOne({ email });
+      let findUser = await User.findOne({ email });
+      if(!findUser){
+        const newUser = new User({email, first_name : name, last_name:""});
+        const result = await newUser.save();
+        findUser = newUser;
+      }
       if (!findUser || !findUser.is_active || findUser.is_deleted) {
         let errorMessage = "WRONG";
         if (!findUser) {

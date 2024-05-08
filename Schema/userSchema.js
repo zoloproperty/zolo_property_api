@@ -68,7 +68,7 @@ const userSchema = new Schema(
 
 userSchema.virtual("url").get(function () {
   if (this.image) {
-    const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/"); // Replace backslashes with forward slashes
+    const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/"); // Replace backslashes with forward slashes
     const newPath = this.image.replace(/\\/g, "/").replace(/^public\//, ''); // Remove "public" segment from the path
     return `${hostUrl}/${newPath}`; // Combine hostUrl and newPath using forward slashes
   }

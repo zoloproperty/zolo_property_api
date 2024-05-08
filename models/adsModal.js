@@ -57,25 +57,27 @@ exports.ads_add = async (postData) => {
   removeKey.map((key) => delete postData[key]);
 
   let updateData = postData;
-  if (postData?.files){
-    if (postData?.files?.images) {
-      const gallery = (postData?.files?.images || []).map((item) => {
+  console.log(postData,"postData")
+  if (postData?.files) {
+    if (postData?.files) {
+      const gallery = (postData?.files || []).map((item) => {
         return item.path;
       });
       updateData = { ...postData, gallery };
-    }
+    } 
     if (postData?.banner) {
-      (postData?.files?.images || []).map((item) => {
+      (postData?.files || []).map((item) => {
         if (item.originalname == postData?.banner) {
           updateData.banner = item.path;
         }
       });
     } else {
-      updateData.banner = (postData?.files?.images || [])[0]?.path;
+      updateData.banner = (postData?.files || [])[0]?.path;
     }
     delete updateData.files;
   }
 
+  console.log(updateData,"fgd")
   return await AddRecord(Ads, updateData, query, addValidation, "ADS");
 };
 

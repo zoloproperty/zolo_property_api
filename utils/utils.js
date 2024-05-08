@@ -207,12 +207,12 @@ exports.AddRecord = async (
     delete postData.authData;
     // Validate the request body
     const { error, value } = addValidation.validate(postData);
-    console.log(value);
     if (error) return this.handleError(400, error.details[0].message);
 
     // Check for duplicate records
     const existingEmi = await Model.findOne(FindQuery);
 
+    console.log(existingEmi)
     if (existingEmi) {
       return new Response(400, "F").custom(
         authHandler(`DUPLICATE_${MessageKey}_EXISTS`)
