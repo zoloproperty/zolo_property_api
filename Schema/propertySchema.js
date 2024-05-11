@@ -192,52 +192,69 @@ const propertySchema = new Schema(
   { timestamps: true }
 );
 
+// propertySchema.virtual("imageUrls").get(function () {
+//   return this.images.map((image) => {
+//     const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
+//     const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
+//     if (newPath) {
+//       return `${hostUrl}/${newPath}`;
+//     } else {
+//       return "";
+//     }
+//   });
+// });
+
+// propertySchema.virtual("videoUrl").get(function () {
+//   const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
+//   const newPath = (this.video || "")
+//     .replace(/\\/g, "/")
+//     .replace(/^public\//, "");
+//   if (newPath) {
+//     return `${hostUrl}/${newPath}`;
+//   } else {
+//     return "";
+//   }
+// });
+
+// propertySchema.virtual("bannerUrl").get(function () {
+//   const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
+//   const newPath = (this.banner || "")
+//     .replace(/\\/g, "/")
+//     .replace(/^public\//, "");
+//   if (newPath) {
+//     return `${hostUrl}/${newPath}`;
+//   } else {
+//     return "http://localhost:5000/property/videos/video-1710266151537.mp4";
+//   }
+// });
+
+
+
+
+
 propertySchema.virtual("imageUrls").get(function () {
-  return this.images.map((image) => {
-    const hostUrl = "http://192.168.1.5:5000" || process.env.HostURL.replace(/\\/g, "/");
-    const newPath = image.replace(/\\/g, "/").replace(/^public\//, "");
-    if (newPath) {
-      return `${hostUrl}/${newPath}`;
-    } else {
-      return "";
-    }
+    return this.images || []
   });
-});
-
-propertySchema.virtual("videoUrl").get(function () {
-  const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
-  const newPath = (this.video || "")
-    .replace(/\\/g, "/")
-    .replace(/^public\//, "");
-  if (newPath) {
-    return `${hostUrl}/${newPath}`;
-  } else {
-    return "";
-  }
-});
-
-propertySchema.virtual("bannerUrl").get(function () {
-  const hostUrl = "http://192.168.1.7:5000" || process.env.HostURL.replace(/\\/g, "/");
-  const newPath = (this.banner || "")
-    .replace(/\\/g, "/")
-    .replace(/^public\//, "");
-  if (newPath) {
-    return `${hostUrl}/${newPath}`;
-  } else {
-    return "http://localhost:5000/property/videos/video-1710266151537.mp4";
-  }
-});
-
-propertySchema.set("toJSON", { virtuals: true });
-
-propertySchema.post("save", async function(savedDoc, next) {
-  if(!savedDoc?.unique_id){
-    const unique_id = this?._id.toString();
-    savedDoc.unique_id = unique_id;
-    await savedDoc.save();
-  }
-  next();
-});
+  
+  propertySchema.virtual("videoUrl").get(function () {
+    return (this.video || "")
+  });
+  
+  propertySchema.virtual("bannerUrl").get(function () {
+    return (this.banner || "")
+  });
+  
+  propertySchema.set("toJSON", { virtuals: true });
+  
+  propertySchema.post("save", async function(savedDoc, next) {
+    if(!savedDoc?.unique_id){
+      const unique_id = this?._id.toString();
+      savedDoc.unique_id = unique_id;
+      await savedDoc.save();
+    }
+    next();
+  });
+  
 
 const Property = model("property", propertySchema);
 module.exports = Property;

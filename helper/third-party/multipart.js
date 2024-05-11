@@ -1,8 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const multerS3 = require("multer-s3");
 // const nodemailer = require("nodemailer");
 const Response = require("../static/Response");
+
+const aws = require("aws-sdk");
+
+// AWS.config.update({
+//   accessKeyId: 'your_access_key_id',
+//   secretAccessKey: 'your_secret_access_key',
+//   region: 'your_bucket_region',
+// });
+
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWSS3_KEY,
+  secretAccessKey: process.env.AWSS3_SECRET,
+  Bucket: process.env.BUCKESTS
+});
 /* -------------------------------------------------------------------------- */
 /*                                   Multer                                   */
 /* -------------------------------------------------------------------------- */
@@ -16,7 +31,7 @@ const storage = multer.diskStorage({
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
-  },
+  }
 });
 
 const documentStorage = multer.diskStorage({
@@ -33,15 +48,15 @@ const documentStorage = multer.diskStorage({
       null,
       `${fileNameCheck}-${Date.now()}${path.extname(file.originalname)}`
     );
-  },
+  }
 });
 
 const upload = multer({
-  storage,
+  storage
 });
 
 const uploadDocument = multer({
-  storage: documentStorage,
+  storage: documentStorage
 });
 
 const multipleTypeStorage = multer.diskStorage({
@@ -68,12 +83,29 @@ const multipleTypeStorage = multer.diskStorage({
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
-  },
+  }
 });
 
 const multipleUpload = multer({
-  storage: multipleTypeStorage,
-  fileFilter: function (req, file, cb) {
+  // storage: multipleTypeStorage,
+  storage: multerS3({
+    s3,
+    bucket: process.env.BUCKESTS,
+    key: (req, file, cb) => {
+      let filePath = file.fieldname === "video"
+      ? `public/property/videos`
+      : `public/property/images`
+      const fileName = file.originalname.replace(
+        /[-&\/\\#.,+()$~%'":*?<>{} ]/g,
+        ""
+      );
+      cb(
+        null,
+        `${filePath}/${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+      );
+    }
+  }),
+  fileFilter: function(req, file, cb) {
     if (file.fieldname === "video") {
       // Check for video file type (you can customize this based on your requirements)
       if (file.mimetype.startsWith("video/")) {
@@ -91,57 +123,83 @@ const multipleUpload = multer({
     } else {
       cb(new Error("Invalid fieldname!"), false);
     }
-  },
+  }
 });
 
-const uploadFiles = (folder) => {
-  try {
-    if (!fs.existsSync(folder)) {
-      console.log("folder", folder);
-      fs.mkdirSync(folder);
-    }
+// const uploadFiles = (folder) => {
+//   try {
+//     if (!fs.existsSync(folder)) {
+//       console.log("folder", folder);
+//       fs.mkdirSync(folder);
+//     }
 
-    const Storage = multer.diskStorage({
-      destination: (req, file, cb) => {
+//     const Storage = multer.diskStorage({
+//       destination: (req, file, cb) => {
+//         const { brand, modal } = req.body;
+//         const newFolder = brand
+//           ? modal
+//             ? `${folder}/${brand}/${modal}`
+//             : `${folder}/${brand}`
+//           : folder;
+
+//         if (file) {
+//           try {
+//             if (!fs.existsSync(newFolder)) {
+//               fs.mkdirSync(newFolder);
+//             }
+//           } catch (err) {
+//             console.error(err);
+//           }
+//           cb(null, newFolder);
+//         }
+//       },
+
+//       filename: (req, file, cb) => {
+//         if (file) {
+//           const fileNameCheck = file.originalname.replace(
+//             /[-&\/\\#.,+()$~%'":*?<>{} ]/g,
+//             ""
+//           );
+//           cb(
+//             null,
+//             `${fileNameCheck}-${Date.now()}${path.extname(file.originalname)}`
+//           );
+//         }
+//       },
+//     });
+//     return multer({ storage: Storage });
+//   } catch (error) {
+//     return new Response(500, "F").custom(error.message);
+//   }
+// };
+
+const uploadFiles = folder => {
+  const upload = multer({
+    storage: multerS3({
+      s3,
+      bucket: process.env.BUCKESTS,
+      key: (req, file, cb) => {
         const { brand, modal } = req.body;
-        const newFolder = brand
-          ? modal
-            ? `${folder}/${brand}/${modal}`
-            : `${folder}/${brand}`
-          : folder;
+        let filePath = folder;
 
-        if (file) {
-          try {
-            if (!fs.existsSync(newFolder)) {
-              fs.mkdirSync(newFolder);
-            }
-          } catch (err) {
-            console.error(err);
-          }
-          cb(null, newFolder);
-        }
-      },
+        const fileName = file.originalname.replace(
+          /[-&\/\\#.,+()$~%'":*?<>{} ]/g,
+          ""
+        );
+        cb(
+          null,
+          `${filePath}/${fileName}-${Date.now()}${path.extname(
+            file.originalname
+          )}`
+        );
+      }
+    })
+  });
 
-      filename: (req, file, cb) => {
-        if (file) {
-          const fileNameCheck = file.originalname.replace(
-            /[-&\/\\#.,+()$~%'":*?<>{} ]/g,
-            ""
-          );
-          cb(
-            null,
-            `${fileNameCheck}-${Date.now()}${path.extname(file.originalname)}`
-          );
-        }
-      },
-    });
-    return multer({ storage: Storage });
-  } catch (error) {
-    return new Response(500, "F").custom(error.message);
-  }
+  return upload;
 };
 
-const unlinkFile = async (folderPath) => {
+const unlinkFile = async folderPath => {
   const basePath = path.dirname(__dirname);
   const parentDir = path.dirname(basePath);
 
@@ -162,7 +220,7 @@ const unlinkFile = async (folderPath) => {
   }
 };
 
-const unlinkFiles = async (files) => {
+const unlinkFiles = async files => {
   const basePath = path.dirname(__dirname);
   const parentDir = path.dirname(basePath);
   for (const file of files) {
@@ -240,5 +298,5 @@ module.exports = {
   unlinkFile,
   unlinkFiles,
   renameFolder,
-  multipleUpload,
+  multipleUpload
 };

@@ -159,7 +159,7 @@ exports.saveUser = async (postData) => {
     let updateData = postData;
 
     if (postData?.file) {
-      const image = postData?.file?.path;
+      const image = postData?.file?.location;
       updateData = { ...postData, image };
       delete updateData.files;
     }
@@ -224,7 +224,7 @@ exports.user_update = async (postData) => {
   }
 
   if (postData?.file) {
-    const image = postData?.file?.path;
+    const image = postData?.file?.location;
     updateData = { ...postData, image };
     delete updateData.files;
   }

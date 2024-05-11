@@ -57,22 +57,21 @@ exports.ads_add = async (postData) => {
   removeKey.map((key) => delete postData[key]);
 
   let updateData = postData;
-  console.log(postData,"postData")
   if (postData?.files) {
     if (postData?.files) {
       const gallery = (postData?.files || []).map((item) => {
-        return item.path;
+        return item.location;
       });
       updateData = { ...postData, gallery };
     } 
     if (postData?.banner) {
       (postData?.files || []).map((item) => {
         if (item.originalname == postData?.banner) {
-          updateData.banner = item.path;
+          updateData.banner = item.location;
         }
       });
     } else {
-      updateData.banner = (postData?.files || [])[0]?.path;
+      updateData.banner = (postData?.files || [])[0]?.location;
     }
     delete updateData.files;
   }
@@ -97,14 +96,15 @@ exports.ads_update = async (postData) => {
   if (postData?.files) {
     if (postData?.files) {
       const gallery = (postData?.files || []).map((item) => {
-        return item.path;
+        return item.location;
       }); 
       updateData = { ...postData, gallery:[...gallery,...(postData?.gallery||[])] };
     }
     if (postData?.banner) {
       (postData?.files || postData?.gallery || []).map((item) => {
+        console.log(item)
         if ((item.originalname || item?.split('\\').pop()) == postData?.banner) {
-          updateData.banner = item.path || item;
+          updateData.banner = item.location || item;
         }
       });
     }
@@ -114,6 +114,7 @@ exports.ads_update = async (postData) => {
     updateData.gallery = []
   }
 
+  console.log(updateData)
 
   return await UpdateRecordById(Ads, updateData, updateValidation, "ADS");
 };

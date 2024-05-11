@@ -130,21 +130,21 @@ exports.model_add = async (postData) => {
   if (postData?.files) {
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
-        return item.path;
+        return item.location;
       });
       updateData = { ...postData, images };
     } else if (postData?.files?.video) {
-      const video = (postData?.files?.video || [])[0]?.path;
+      const video = (postData?.files?.video || [])[0]?.location;
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || []).map((item) => {
         if (item.originalname == postData?.banner) {
-          updateData.banner = item.path;
+          updateData.banner = item.location;
         }
       });
     } else {
-      updateData.banner = (postData?.files?.images || [])[0]?.path;
+      updateData.banner = (postData?.files?.images || [])[0]?.location;
     }
     delete updateData.files;
   }
@@ -179,17 +179,17 @@ exports.model_update = async (postData) => {
   if (postData?.files) {
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
-        return item.path;
+        return item.location;
       });
       updateData = { ...postData, images: [...images,...(postData?.images||[])] };
     } else if (postData?.files?.video) {
-      const video = (postData?.files?.video || [])[0]?.path;
+      const video = (postData?.files?.video || [])[0]?.location;
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || postData?.images || []).map((item) => {
-        if ((item.originalname || path.basename(item)) == postData?.banner) {
-          updateData.banner = item.path || item;
+        if ((item.originalname || location.basename(item)) == postData?.banner) {
+          updateData.banner = item.location || item;
         }
       });
     }

@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const { configDotenv } = require("dotenv");
 const app = express();
+const aws = require('aws-sdk');
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
@@ -34,6 +35,8 @@ const corsOptions = {
   },
 };
 
+
+
 app.use(cors(corsOptions));
 // MIDDLEWARE
 app.use(express.json());
@@ -42,6 +45,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public/dashboard")));
 
 const dashboardRouter = require("./routes/dashboard.routes.js");
 const adsRouter = require("./routes/ads.routes.js");
@@ -60,6 +64,10 @@ app.use("/phone", phoneRouter);
 app.use("/contact", contactRouter);
 app.use("/property", propertyRouter);
 app.use("/user", userRouter);
+
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./public/dashboard"));
+});
 
 app.get("*", (req, res) => {
   res.status(404).json({

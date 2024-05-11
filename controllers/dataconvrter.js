@@ -55,7 +55,7 @@ exports.convert = async (req, res) => {
       email:inputData?.email||"",
       password:inputData?.password||"",
       role:"user",
-      image:inputData?.image?"public\\old\\"+inputData?.image:"",
+      image:inputData?.image?"https://zoloproperty.s3.ap-south-1.amazonaws.com/public/old/"+inputData?.image:"",
       state:"Mp",
       city:"chhindwara",
       zip_code:"480001",
@@ -101,11 +101,11 @@ exports.convert = async (req, res) => {
         facing_side: inputData?.facing_side || '',
         facing_road_width: parseFloat(inputData?.facing_road_width)||'',
         facing_road_width_in: inputData?.facing_road_width_in || 'Feet',
-        images: inputData?.images?(JSON.parse(inputData?.images)||[]).map(item=>item.images?"public\\old\\"+item.images:''):[],
+        images: inputData?.images?(JSON.parse(inputData?.images)||[]).map(item=>item.images?"https://zoloproperty.s3.ap-south-1.amazonaws.com/public/old/public/old/"+item.images:''):[],
         banner: inputData?.images?
         (JSON.parse(inputData?.images)||[]).filter(item=>item.make_display_image !== null)[0]?.images
-        ?"public\\old\\"+(JSON.parse(inputData?.images)||[]).filter(item=>item.make_display_image !== null)[0]?.images
-        :"public\\old\\"+(JSON.parse(inputData?.images)||[])[0]?.images:"",
+        ?"https://zoloproperty.s3.ap-south-1.amazonaws.com/public/old/"+(JSON.parse(inputData?.images)||[]).filter(item=>item.make_display_image !== null)[0]?.images
+        :"https://zoloproperty.s3.ap-south-1.amazonaws.com/public/old/"+(JSON.parse(inputData?.images)||[])[0]?.images:"",
         video: inputData?.video || "",
         // room_data: inputData?.room_data?JSON.parse(inputData?.room_data):[],
         bedrooms: parseInt(inputData?.bedrooms) || '',
