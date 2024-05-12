@@ -16,7 +16,7 @@ const aws = require("aws-sdk");
 const s3 = new aws.S3({
   accessKeyId: process.env.AWSS3_KEY,
   secretAccessKey: process.env.AWSS3_SECRET,
-  Bucket: process.env.BUCKESTS
+  Bucket: process.env.BUCKETS
 });
 /* -------------------------------------------------------------------------- */
 /*                                   Multer                                   */
@@ -90,7 +90,7 @@ const multipleUpload = multer({
   // storage: multipleTypeStorage,
   storage: multerS3({
     s3,
-    bucket: process.env.BUCKESTS,
+    bucket: process.env.BUCKETS,
     key: (req, file, cb) => {
       let filePath = file.fieldname === "video"
       ? `public/property/videos`
@@ -177,7 +177,7 @@ const uploadFiles = folder => {
   const upload = multer({
     storage: multerS3({
       s3,
-      bucket: process.env.BUCKESTS,
+      bucket: process.env.BUCKETS,
       key: (req, file, cb) => {
         const { brand, modal } = req.body;
         let filePath = folder;

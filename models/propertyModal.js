@@ -179,16 +179,18 @@ exports.model_update = async (postData) => {
   if (postData?.files) {
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
+        console.log(item.location,"sgfdgh fdgh fjg")
         return item.location;
       });
       updateData = { ...postData, images: [...images,...(postData?.images||[])] };
-    } else if (postData?.files?.video) {
+    } 
+    if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.location;
       updateData = { ...postData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || postData?.images || []).map((item) => {
-        if ((item.originalname || location.basename(item)) == postData?.banner) {
+        if ((item.originalname || path.basename(item)) == postData?.banner) {
           updateData.banner = item.location || item;
         }
       });
