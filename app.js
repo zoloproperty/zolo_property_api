@@ -18,20 +18,16 @@ require("./config/database/connection.js");
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://192.168.1.5:5000/",
-  "http://192.168.1.5:5000/",
-  "http://192.168.1.5:8081/",
-  "http://localhost:8081/"
+  "https://demo.gpropertypay.com"
 ];
 
 const corsOptions = {
   origin: function(origin, callback) {
     callback(null, true);
-    console.log(origin);
-    // if (allowedOrigins.includes(origin) || !origin) {
-    // } else {
-    //   callback(new Error("Not allowed by CORS"));
-    // }
+    if (allowedOrigins.includes(origin) || !origin) {
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
   }
 };
 
@@ -45,7 +41,6 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'",
         "https://maps.googleapis.com",
         "https://accounts.google.com",
         "https://demo.gpropertypay.com"
@@ -58,6 +53,7 @@ app.use(
     }
   })
 );
+
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
