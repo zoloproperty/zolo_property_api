@@ -45,11 +45,7 @@ app.use(
         "https://accounts.google.com",
         "https://demo.gpropertypay.com"
       ],
-      imgSrc: [
-        "'self'",
-        "https://zoloproperty.s3.amazonaws.com",
-        "https://gprop-demo-server.s3.amazonaws.com"
-      ]
+      imgSrc: ["'self'", "'unsafe-inline'"]
     }
   })
 );
