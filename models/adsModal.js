@@ -33,6 +33,14 @@ exports.ads_list = async (postData) => {
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
 
+  const userData = postData.authData;
+  if (userData) {
+      if (userData?.role == "user") {
+        query?.$and = [...query?.$and,{zip_code: userData?.zip_code}]
+      }
+    }
+
+
   return await ListRecordByFilter(
     Ads,
     postData,

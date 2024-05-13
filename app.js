@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const { configDotenv } = require("dotenv");
 const app = express();
-const aws = require('aws-sdk');
+const aws = require("aws-sdk");
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
@@ -21,27 +21,43 @@ const allowedOrigins = [
   "http://192.168.1.5:5000/",
   "http://192.168.1.5:5000/",
   "http://192.168.1.5:8081/",
-  "http://localhost:8081/",
+  "http://localhost:8081/"
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: function(origin, callback) {
     callback(null, true);
-    console.log(origin) 
+    console.log(origin);
     // if (allowedOrigins.includes(origin) || !origin) {
     // } else {
     //   callback(new Error("Not allowed by CORS"));
     // }
-  },
+  }
 };
-
-
 
 app.use(cors(corsOptions));
 // MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://maps.googleapis.com",
+        "https://accounts.google.com",
+        "https://demo.gpropertypay.com"
+      ],
+      imgSrc: [
+        "'self'",
+        "https://zoloproperty.s3.amazonaws.com",
+        "https://gprop-demo-server.s3.amazonaws.com"
+      ]
+    }
+  })
+);
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -74,7 +90,7 @@ app.get("*", (req, res) => {
     code: 404,
     info: "Not Found.",
     status: true,
-    message: "The resource you looking for needs an valid end point.",
+    message: "The resource you looking for needs an valid end point."
   });
 });
 
