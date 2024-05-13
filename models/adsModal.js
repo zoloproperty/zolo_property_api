@@ -36,7 +36,9 @@ exports.ads_list = async (postData) => {
   const userData = postData.authData;
   if (userData) {
       if (userData?.role == "user") {
-        query?.$and = [...query?.$and,{zip_code: userData?.zip_code}]
+        if(query?.$and){
+          query.$and = [...query?.$and,{zip_code: userData?.zip_code}]
+        }
       }
     }
 
