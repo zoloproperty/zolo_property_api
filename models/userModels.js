@@ -26,7 +26,7 @@ const { unlinkFile } = require("../helper/third-party/multipart");
 const client = new OAuth2Client();
 
 exports.user_list = async (postData) => {
-  const query = {};
+  const query = {$and :[{ is_deleted:false }]};
   const sortOptions = {};
   const searchFields = [
     "first_name",
@@ -79,7 +79,6 @@ exports.login = async (postData) => {
 
         loggedInWith = "google";
       } catch (error) {
-        console.log(error)
         return new Response(400, "F").custom(error.message);
       }
     } else {
@@ -126,7 +125,7 @@ exports.login = async (postData) => {
       const payLoad = {
         user_id: findUser._id,
         email: findUser.email,
-        image: `http://${postData.host}/${(findUser.image||"").replace(/\\/g, "/").replace(/^public\//, '')}`,
+        image: findUser.image || "/assets/logo.png",
         oldImage: findUser.image,
         loggedInWith: loggedInWith,
         first_name: findUser.first_name,
@@ -176,7 +175,7 @@ exports.saveUser = async (postData) => {
     delete value.oldImage;
 
     if (postData?.user_id) {
-      const findUser = await User.findOne({ user_id: postData?.user_id });
+      const findUser = await User.findOne({ user_id: postData?.user_id, is_deleted:false  });
       if (!findUser) {
         return handleError(400, "USER_NOT_EXISTS");
       }
@@ -196,6 +195,7 @@ exports.saveUser = async (postData) => {
         is_deleted: false,
       });
 
+
       if (findUser) {
         return handleError(400, "DUPLICATE_EMAIL");
       }
@@ -212,12 +212,13 @@ exports.saveUser = async (postData) => {
     return handleError(500, error.message);
   }
 };
+
+
 exports.user_update = async (postData) => {
   const host = postData?.host
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
   let updateData = postData;
-  console.log(updateData)
 
   if(postData?.oldImage){
     unlinkFile(postData?.oldImage)
@@ -246,7 +247,7 @@ exports.user_update = async (postData) => {
       const payLoad = {
         user_id: existing._id,
         email: existing.email,
-        image: `http://${host}/${(existing.image||"").replace(/\\/g, "/").replace(/^public\//, '')}`,
+        image: existing.image || "/assets/logo.png",
         oldImage: existing.image,
         role: existing.role,
         first_name: existing.first_name,

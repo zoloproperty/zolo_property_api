@@ -12,7 +12,6 @@ const contactSchema = new Schema(
     },
     contact_number: {
       type: String,
-      unique: [true , 'Contact value already exists, please try another value.'],
       required: [true, "Contact number is required"],
     },
     status: {

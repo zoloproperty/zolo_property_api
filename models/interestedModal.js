@@ -18,7 +18,7 @@ const {
 // ################################################
 
 exports.interested_list = async (postData) => {
-  const query = {};
+  const query = {$and :[{ is_deleted:false }]};
   const sortOptions = { limit: 1 };
   const searchFields = [
     "name",

@@ -8,13 +8,14 @@ const {
   one,
   user_property
 } = require("../controllers/propertyController");
+const { convert } = require("../controllers/dataconvrter");
 const {
-  convert
-} = require("../controllers/dataconvrter");
-const { middleware } = require("../helper/middleware/authentication");
+  middleware,
+  isRoleIsValid
+} = require("../helper/middleware/authentication");
 const { multipleUpload } = require("../helper/third-party/multipart");
 
-router.get("/convert", convert);
+router.get("/convert", middleware, isRoleIsValid("admin"), convert);
 router.post("/list", middleware, list);
 router.get("/user", middleware, user_property);
 router.get("/:id", middleware, one);

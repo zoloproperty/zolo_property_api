@@ -2,6 +2,7 @@ const Interaction = require("../Schema/interactionSchema");
 const Property = require("../Schema/propertySchema");
 const Response = require("../helper/static/Response");
 const {authHandler} = require("../helper/static/messages");
+const {brokerControl} = require("../utils/brokerControl");
 const ObjectId = require("mongoose").Types.ObjectId;
 const {
   DeleteRecordById,
@@ -29,6 +30,10 @@ exports.interaction_list = async postData => {
     const sortOptions = { limit: 1 };
     const searchFields = ["unique_id","name", "city", "zip_code", "type", "number"];
     const removeKey = ["host", "authorization"];
+    const userData = postData.authData;
+    if (userData) {
+      brokerControl(query, userData.role, userData.local_area);
+    }
     removeKey.forEach(key => delete postData[key]);
     if (postData.orderBy) sortOptions["createAt"] = postData.orderBy;
 
@@ -197,7 +202,6 @@ exports.interaction_delete = async postData => {
 
 exports.like_check = async postData => {
   try {
-    console.log("fjgfdlkgjflk")
     const { error, value } = likeValidation.validate(postData);
     if (error) return handleError(400, error.details[0].message);
     const {property_id } = value;
@@ -223,7 +227,6 @@ exports.user_like_list = async postData => {
     delete postData?.authData
     delete postData?.host
     const { error, value } = filterValidation.validate(postData);
-    // console.log(error)
 
     if (error) {
       return new Response(400, "F").custom(error.details[0].message);

@@ -179,7 +179,6 @@ exports.model_update = async (postData) => {
   if (postData?.files) {
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
-        console.log(item.location,"sgfdgh fdgh fjg")
         return item.location;
       });
       updateData = { ...postData, images: [...images,...(postData?.images||[])] };

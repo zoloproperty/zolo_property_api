@@ -76,7 +76,6 @@ exports.ads_add = async (postData) => {
     delete updateData.files;
   }
 
-  console.log(updateData,"fgd")
   return await AddRecord(Ads, updateData, query, addValidation, "ADS");
 };
 
@@ -102,7 +101,6 @@ exports.ads_update = async (postData) => {
     }
     if (postData?.banner) {
       (postData?.files || postData?.gallery || []).map((item) => {
-        console.log(item)
         if ((item.originalname || item?.split('\\').pop()) == postData?.banner) {
           updateData.banner = item.location || item;
         }
@@ -114,7 +112,6 @@ exports.ads_update = async (postData) => {
     updateData.gallery = []
   }
 
-  console.log(updateData)
 
   return await UpdateRecordById(Ads, updateData, updateValidation, "ADS");
 };

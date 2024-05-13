@@ -5,6 +5,7 @@ const Interested = require("../Schema/interestedSchema");
 const Interaction = require("../Schema/interactionSchema");
 
 const Response = require("../helper/static/Response");
+const {brokerControl} = require("../utils/brokerControl");
 
 // ################################################
 // #               Ads list                       #
@@ -14,6 +15,7 @@ exports.dashboard_list = async postData => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
+  const query = {$and :[{ is_deleted:false }]};
 
   // Get the first day of the current month
   const firstDayOfMonth = new Date(
@@ -34,40 +36,52 @@ exports.dashboard_list = async postData => {
   );
 
   // Query the database to count interested people within the current month
+  const userData = postData.authData;
+  if (userData) {
+    brokerControl(query, userData.role, userData.local_area);
+  }
 
   try {
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments(query);
     const totalUsersThisMonth = await User.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }
     });
 
-    const totalProperties = await Property.countDocuments();
+    const totalProperties = await Property.countDocuments(query);
     const soldProperties = await Property.countDocuments({
+      ...query,
       property_for: "sold"
     });
     const soldPropertiesThisMonth = await Property.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       property_for: "sold"
     });
     const totalPropertiesThisMonth = await Property.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }
     });
 
-    const totalInterested = await Interested.countDocuments();
+    const totalInterested = await Interested.countDocuments(query);
     const totalInterestedPeopleThisMonth = await Interested.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }
     });
 
     const totalLeadThisMonth = await Interested.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       leads: true
     });
 
     const totalLikeThisMonth = await Interaction.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "like"
     });
     const totalViewThisMonth = await Interaction.countDocuments({
+      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "view"
     });
@@ -88,13 +102,16 @@ exports.dashboard_list = async postData => {
       );
 
       const interestedPeopleCount = await Interested.countDocuments({
+        ...query,
         createdAt: { $gte: startOfDay, $lte: endOfDay }
       });
       const totalUsersThisMonth = await User.countDocuments({
+        ...query,
         createdAt: { $gte: startOfDay, $lte: endOfDay }
       });
 
       const totalPropertiesThisMonth = await Property.countDocuments({
+        ...query,
         createdAt: { $gte: startOfDay, $lte: endOfDay }
       });
       const options = {
