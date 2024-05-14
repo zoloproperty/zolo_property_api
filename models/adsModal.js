@@ -34,13 +34,13 @@ exports.ads_list = async (postData) => {
   removeKey.map((key) => delete postData[key]);
 
   const userData = postData.authData;
-  if (userData) {
-      if (userData?.role == "user") {
-        if(query?.$and){
-          query.$and = [...query?.$and,{zip_code: userData?.zip_code}]
-        }
-      }
-    }
+  // if (userData) {
+  //     if (userData?.role == "user") {
+  //       if(query?.$and){
+  //         query.$and = [...query?.$and,{zip_code: userData?.zip_code}]
+  //       }
+  //     }
+  //   }
 
 
   return await ListRecordByFilter(

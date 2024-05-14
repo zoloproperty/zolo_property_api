@@ -4,6 +4,7 @@ const {
   contact_update,
   contact_delete,
   contact_add,
+  model_one,
 } = require("../models/contactModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
@@ -20,8 +21,18 @@ exports.list = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await contact_add(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+
+exports.one = async (req, res) => {
+  try {
+    const postData = extractRequestData(req);
+    const response = await model_one(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));
