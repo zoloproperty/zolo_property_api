@@ -1,13 +1,11 @@
-const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const morgan = require("morgan");
-const helmet = require("helmet");
+// const morgan = require("morgan");
+// const helmet = require("helmet");
 const { configDotenv } = require("dotenv");
 const app = express();
-const aws = require("aws-sdk");
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
@@ -35,23 +33,9 @@ app.use(cors(corsOptions));
 // MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        "https://maps.googleapis.com",
-        "https://accounts.google.com",
-        "https://demo.gpropertypay.com"
-      ],
-      imgSrc: ["'self'", "'unsafe-inline'"]
-    }
-  })
-);
 
 app.use(cookieParser());
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public/dashboard")));
 
