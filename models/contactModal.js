@@ -66,7 +66,7 @@ exports.contact_add = async (postData) => {
 
      const data = {
         name:userData?.first_name + " " + userData?.last_name,
-        address:userData?.contact_number,
+        address:userData?.city || "",
         contact_number:userData?.contact_number
       }
 
