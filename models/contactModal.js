@@ -43,7 +43,7 @@ exports.model_one = async (postData) => {
   try {
     const userData = postData.authData;
 
-    let queryBuilder = Property.find({contact_number: userData?.contact_number, is_deleted:false})
+    let queryBuilder = Contact.find({contact_number: userData?.contact_number, is_deleted:false})
 
     const user = (await queryBuilder.exec()) || {};
 
@@ -59,7 +59,6 @@ exports.model_one = async (postData) => {
 // ################################################
 
 exports.contact_add = async (postData) => {
-  console.log(postData)
   const userData = postData.authData;
     const query = {
         $or: [{ contact_number: userData?.contact_number }],
@@ -70,7 +69,6 @@ exports.contact_add = async (postData) => {
         address:userData?.city || "",
         contact_number: postData?.contact_number || userData?.contact_number || "111111111"
       }
-      console.log(data)
 
   return await AddRecord(Contact, data, query, addValidation, "CONTACT");
 };

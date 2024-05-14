@@ -14,7 +14,7 @@ const {
 
 router.post("/list", middleware, isRoleIsValid("admin"), list);
 router.post("/add", middleware, add);
-router.get("/:id", middleware, one);
+router.get("/join", middleware, one);
 router.put("/update/:id", middleware, isRoleIsValid("admin"), update);
 router.delete(
   "/delete/:id",
