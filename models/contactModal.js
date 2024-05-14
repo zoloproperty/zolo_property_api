@@ -59,6 +59,7 @@ exports.model_one = async (postData) => {
 // ################################################
 
 exports.contact_add = async (postData) => {
+  console.log(postData)
   const userData = postData.authData;
     const query = {
         $or: [{ contact_number: userData?.contact_number }],
@@ -67,8 +68,9 @@ exports.contact_add = async (postData) => {
      const data = {
         name:userData?.first_name + " " + userData?.last_name,
         address:userData?.city || "",
-        contact_number:userData?.contact_number
+        contact_number: postData?.contact_number || userData?.contact_number || "111111111"
       }
+      console.log(data)
 
   return await AddRecord(Contact, data, query, addValidation, "CONTACT");
 };

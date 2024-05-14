@@ -7,12 +7,20 @@ const {
   delete: deleteController,
   one
 } = require("../controllers/contactController");
-const { middleware } = require("../helper/middleware/authentication");
+const {
+  middleware,
+  isRoleIsValid
+} = require("../helper/middleware/authentication");
 
-router.post("/list", list);
-router.post("/add", add);
+router.post("/list", middleware, isRoleIsValid("admin"), list);
+router.post("/add", middleware, add);
 router.get("/:id", middleware, one);
-router.put("/update/:id", update);
-router.delete("/delete/:id", deleteController);
+router.put("/update/:id", middleware, isRoleIsValid("admin"), update);
+router.delete(
+  "/delete/:id",
+  middleware,
+  isRoleIsValid("admin"),
+  deleteController
+);
 
 module.exports = router;
