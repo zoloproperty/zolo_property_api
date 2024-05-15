@@ -240,6 +240,10 @@ exports.user_update = async (postData) => {
         authHandler(`USER_NOT_EXISTS`)
       );
 
+      if (value.password) {
+        const { hash } = await hashAndSalt(value.password);
+        value.password = hash;
+      }
     Object.assign(existing, value);
 
     if (await existing.save()) {
