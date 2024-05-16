@@ -211,7 +211,8 @@ exports.like_check = async postData => {
 
     let queryBuilder = Interaction.findOne({
       user: user_id,
-      property: property_id
+      property: property_id,
+      type:'like'
     }).select("type");
 
     const like = (await queryBuilder.exec()) || {};
