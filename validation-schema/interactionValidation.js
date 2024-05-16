@@ -41,6 +41,5 @@ exports.updateValidation = Joi.object({
 });
 
 exports.likeValidation = Joi.object({
-  user_id: Joi.string().required(),
   property_id: Joi.string().optional()
 });

@@ -16,7 +16,7 @@ const {
 router.post("/list", middleware, list);
 router.post("/like", middleware , user_like_list);
 router.post("/add", middleware, add);
-router.post("/like", middleware, like_check);
+router.post("/check_like", middleware, like_check);
 router.put(
   "/update/:id",
   middleware,

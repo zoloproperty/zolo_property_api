@@ -51,12 +51,10 @@ exports.delete = async (req, res) => {
 };
 exports.like_check = async (req, res) => {
   try {
-    const postData = req.body;
+    const postData = extractRequestData(req);
     const response = await like_check(postData);
-    console.log(response)
     return res.status(response.status).json(response);
   } catch (error) {
-    console.log(error)
     return res.json(new Response(500, "F").custom(error.message));
   }
 };

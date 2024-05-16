@@ -34,13 +34,14 @@ exports.ads_list = async (postData) => {
   removeKey.map((key) => delete postData[key]);
 
   const userData = postData.authData;
-  // if (userData) {
-  //     if (userData?.role == "user") {
+  if (userData) {
+      if (userData?.role == "user") {
+        query.expiry_date = { $lte: new Date().toISOString() }
   //       if(query?.$and){
   //         query.$and = [...query?.$and,{zip_code: userData?.zip_code}]
   //       }
-  //     }
-  //   }
+      }
+    }
 
 
   return await ListRecordByFilter(
@@ -142,7 +143,7 @@ exports.model_one = async (postData) => {
       return new Response(400, "F").custom(error.details[0]?.message);
     }
 
-    let queryBuilder = Ads.find({_id:postData.id,is_deleted:false,expiry_date: { $lte: new Date().toISOString() }})
+    let queryBuilder = Ads.findById(value.id)
 
     const ads = (await queryBuilder.exec()) || {};
 

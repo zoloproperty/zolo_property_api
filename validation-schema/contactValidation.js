@@ -18,6 +18,5 @@ const ValidationObj = {
 exports.addValidation = Joi.object(ValidationObj);
 
 exports.updateValidation = Joi.object({
-  ...ValidationObj,
   id: Joi.string().required(),
-});
+}).options({ abortEarly: false, allowUnknown: true });

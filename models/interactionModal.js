@@ -202,15 +202,16 @@ exports.interaction_delete = async postData => {
 
 exports.like_check = async postData => {
   try {
+    const user_id =  postData?.authData?.user_id
+    const removeKey = ["host","authData"];
+  removeKey.map(key => delete postData[key]);
     const { error, value } = likeValidation.validate(postData);
     if (error) return handleError(400, error.details[0].message);
     const {property_id } = value;
-    const user_id =  postData?.authData?.user_id
 
     let queryBuilder = Interaction.findOne({
       user: user_id,
-      property: property_id,
-      is_deleted: false
+      property: property_id
     }).select("type");
 
     const like = (await queryBuilder.exec()) || {};
