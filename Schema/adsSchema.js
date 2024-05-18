@@ -4,52 +4,52 @@ const adsSchema = new Schema(
   {
     ads_name: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "name is required"]
     },
     title: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "name is required"]
     },
     description: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "name is required"]
     },
     banner: {
       type: String,
-      required: [true, "Ads main Image is required"],
+      required: [true, "Ads main Image is required"]
     },
     gallery: [{ type: String, default: null }],
     show_number: {
       type: Boolean,
-      default: true,
+      default: true
     },
     show_map: {
       type: Boolean,
-      default: true,
+      default: true
     },
     number: {
       type: String,
-      required: [true, "number is required"],
+      required: [true, "number is required"]
     },
     city: {
       type: String,
-      required: [true, "city is required"],
+      required: [true, "city is required"]
     },
     zip_code: {
       type: String,
-      required: [true, "Zip code is required"],
+      required: [true, "Zip code is required"]
     },
     coordinates: {
       type: [Number],
-      index: "2dsphere",
+      index: "2dsphere"
     },
     is_active: {
       type: Boolean,
-      default: true,
+      default: true
     },
     is_deleted: {
       type: Boolean,
-      default: false,
+      default: false
     },
     expiry_date: {
       type: Date,
@@ -58,12 +58,11 @@ const adsSchema = new Schema(
         const next30Days = new Date(currentDate);
         next30Days.setDate(currentDate.getDate() + 30);
         return next30Days;
-      },
-    },
+      }
+    }
   },
   { timestamps: true }
 );
-
 
 // adsSchema.virtual("galleryUrls").get(function () {
 //   return this.gallery.map((image) => {
@@ -77,7 +76,6 @@ const adsSchema = new Schema(
 //   });
 // });
 
-
 // adsSchema.virtual("bannerUrl").get(function () {
 //   const hostUrl = "http://192.168.1.7:5000" ||  process.env.HostURL.replace(/\\/g, "/");
 //   const newPath = (this.banner || "")
@@ -90,18 +88,19 @@ const adsSchema = new Schema(
 //   }
 // });
 
+adsSchema.virtual("galleryUrls").get(function() {
+  return this.gallery;
+});
 
-adsSchema.virtual("galleryUrls").get(function () {
-  return this.gallery
-  });
-
-
-adsSchema.virtual("bannerUrl").get(function () {
-  return (this.banner || "https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/assets/logo.png")
+adsSchema.virtual("bannerUrl").get(function() {
+  if (this.banner && this.banner.includes("http")) {
+    return this.banner
+  }else{
+    return `https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/ads/${this.banner}` ||  "https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/assets/logo.png"
+  }
 });
 
 adsSchema.set("toJSON", { virtuals: true });
 
 const Ads = model("ads", adsSchema);
 module.exports = Ads;
-
