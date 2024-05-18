@@ -97,10 +97,11 @@ adsSchema.virtual("galleryUrls").get(function () {
 
 
 adsSchema.virtual("bannerUrl").get(function () {
-  return (this.banner || "")
+  return (this.banner || "https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/assets/logo.png")
 });
 
 adsSchema.set("toJSON", { virtuals: true });
 
 const Ads = model("ads", adsSchema);
 module.exports = Ads;
+

@@ -23,7 +23,7 @@ const path = require('path');
 exports.model_list = async (postData) => {
   const query = {};
   const sortOptions = { limit: 1 };
-  const searchFields = ["unique_id","price", "city", "state", "location", "property_type"];
+  const searchFields = ["unique_id","price", "city", "state", "location", "property_type","admin_status"];
   const removeKey = ["host", "authorization"];
   
   removeKey.map((key) => delete postData[key]);
@@ -45,6 +45,24 @@ exports.model_list = async (postData) => {
   }else{
     query.$and = [{ is_deleted:false }];
   }
+
+  let coordinatesrentArray=[],coordinatessellArray=[];
+  const userData = postData.authData;
+  if (userData) {
+    if (userData?.role == "user") {
+        query.admin_status = 'Pending'           
+
+        if(postData.property_for == 'rent'){
+        const rentcoordinates = await Property.find({property_for:'rent'}, { coordinates: 1, _id: 0 },{is_deleted:false,admin_status :'Approved'}).limit(500) 
+        coordinatesrentArray = rentcoordinates.map(property => ({property_for:'rent',lat:property?.coordinates[0],long:property?.coordinates[1]}));
+        }else{
+          const sellcoordinates = await Property.find({property_for:'sell'}, { coordinates: 1, _id: 0 },{is_deleted:false,admin_status :'Approved'}).limit(500) 
+          coordinatessellArray = sellcoordinates.map(property => ({property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
+        }
+
+
+      }
+    }
   
   if(postData.property_for){
 
@@ -72,14 +90,7 @@ exports.model_list = async (postData) => {
   }
 }
 
-let coordinatesrentArray=[],coordinatessellArray=[];
-if(postData.property_for == 'rent'){
-const rentcoordinates = await Property.find({property_for:'rent'}, { coordinates: 1, _id: 0 }).limit(500) 
-coordinatesrentArray = rentcoordinates.map(property => ({property_for:'rent',lat:property?.coordinates[0],long:property?.coordinates[1]}));
-}else{
-  const sellcoordinates = await Property.find({property_for:'sell'}, { coordinates: 1, _id: 0 }).limit(500) 
-  coordinatessellArray = sellcoordinates.map(property => ({property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
-}
+
 
   return await ListRecordByFilter(
     Property,

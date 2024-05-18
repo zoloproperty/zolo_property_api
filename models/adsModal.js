@@ -36,10 +36,8 @@ exports.ads_list = async (postData) => {
   const userData = postData.authData;
   if (userData) {
       if (userData?.role == "user") {
-        query.expiry_date = { $lte: new Date().toISOString() }
-  //       if(query?.$and){
-  //         query.$and = [...query?.$and,{zip_code: userData?.zip_code}]
-  //       }
+        query.expiry_date = { $gt: new Date() }
+          query.zip_code = userData?.zip_code
       }
     }
 

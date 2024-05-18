@@ -81,7 +81,7 @@ userSchema.virtual("url").get(function () {
   } else if (this.image) {
     return `http://${this.image}`;
   } else {
-    return "";
+    return "https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/assets/logo.png";
   }
 });
 

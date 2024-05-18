@@ -233,7 +233,7 @@ const propertySchema = new Schema(
 
 
 propertySchema.virtual("imageUrls").get(function () {
-    return this.images || []
+    return this.images || ['https://gprop-demo-server.s3.ap-south-1.amazonaws.com/public/assets/logo.png']
   });
   
   propertySchema.virtual("videoUrl").get(function () {

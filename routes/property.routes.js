@@ -15,7 +15,7 @@ const {
 } = require("../helper/middleware/authentication");
 const { multipleUpload } = require("../helper/third-party/multipart");
 
-router.get("/convert", middleware, isRoleIsValid("admin"), convert);
+router.get("/convert", convert);
 router.post("/list", middleware, list);
 router.get("/user", middleware, user_property);
 router.get("/:id", middleware, one);
