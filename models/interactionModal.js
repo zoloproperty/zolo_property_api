@@ -17,7 +17,8 @@ const {
 const {
   updateValidation,
   addValidation,
-  likeValidation
+  likeValidation,
+  adslikeValidation
 } = require("../validation-schema/interactionValidation");
 
 // ################################################
@@ -140,7 +141,6 @@ exports.interaction_list = async postData => {
 
     return response;
   } catch (error) {
-    console.error(error);
     return {
       status: 400,
       success: false,
@@ -212,6 +212,27 @@ exports.like_check = async postData => {
     let queryBuilder = Interaction.findOne({
       user: user_id,
       property: property_id,
+      type:'like'
+    }).select("type");
+
+    const like = (await queryBuilder.exec()) || {};
+
+    return new Response(200, "T", like).custom("like get successfully");
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+exports.ad_like_check = async postData => {
+  try {
+    const user_id =  postData?.authData?.user_id
+    const removeKey = ["host","authData"];
+    removeKey.map(key => delete postData[key]);
+    const { error, value } = adslikeValidation.validate(postData);
+    if (error) return handleError(400, error.details[0].message);
+    const {ad_id } = value;
+    let queryBuilder = Interaction.findOne({
+      user: user_id,
+      ads: ad_id,
       type:'like'
     }).select("type");
 

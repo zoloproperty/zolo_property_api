@@ -50,7 +50,7 @@ exports.model_list = async (postData) => {
   const userData = postData.authData;
   if (userData) {
     if (userData?.role == "user") {
-        query.admin_status = 'Pending'           
+        query.admin_status = 'Approved'           
 
         if(postData.property_for == 'rent'){
         const rentcoordinates = await Property.find({property_for:'rent'}, { coordinates: 1, _id: 0 },{is_deleted:false,admin_status :'Approved'}).limit(500) 
@@ -59,8 +59,6 @@ exports.model_list = async (postData) => {
           const sellcoordinates = await Property.find({property_for:'sell'}, { coordinates: 1, _id: 0 },{is_deleted:false,admin_status :'Approved'}).limit(500) 
           coordinatessellArray = sellcoordinates.map(property => ({property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
         }
-
-
       }
     }
   
@@ -174,12 +172,14 @@ exports.model_add = async (postData) => {
 // ################################################
 
 exports.model_update = async (postData) => {
+  console.log(postData)
   const removeKey = ["host"];
   removeKey.map((key) => delete postData[key]);
   let updateData = postData;
   if(postData?.oldImages){
     unlinkFiles(postData?.oldImages)
   }
+
   const existing = await Property.findById(postData.id);
   if (!existing)
     return new Response(404, "F").custom(
@@ -192,6 +192,7 @@ exports.model_update = async (postData) => {
       const images = (postData?.files?.images || []).map((item) => {
         return item.location;
       });
+      console.log(images)
       updateData = { ...postData, images: [...images,...(postData?.images||[])] };
     } 
     if (postData?.files?.video) {
@@ -207,7 +208,7 @@ exports.model_update = async (postData) => {
     }
     delete updateData.files;
   }
-  if(!postData?.files && !postData?.images[0]){
+  if(!postData?.files && !(postData?.images||[])[0]){
     updateData.images = []
   }
   return await UpdateRecordById(

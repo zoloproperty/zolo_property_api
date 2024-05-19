@@ -43,3 +43,6 @@ exports.updateValidation = Joi.object({
 exports.likeValidation = Joi.object({
   property_id: Joi.string().optional()
 });
+exports.adslikeValidation = Joi.object({
+  ad_id: Joi.string().optional()
+});
