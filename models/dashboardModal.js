@@ -15,7 +15,7 @@ exports.dashboard_list = async postData => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
-  const query = {$and :[{ is_deleted:false }]};
+  const query = { is_deleted:false };
 
   // Get the first day of the current month
   const firstDayOfMonth = new Date(
@@ -75,13 +75,12 @@ exports.dashboard_list = async postData => {
       leads: true
     });
 
+
     const totalLikeThisMonth = await Interaction.countDocuments({
-      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "like"
     });
     const totalViewThisMonth = await Interaction.countDocuments({
-      ...query,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "view"
     });

@@ -36,7 +36,6 @@ exports.convert = async (req, res) => {
         }
         else{
 
-          console.log({ message: "existingUser" });
         }
       }
 

@@ -89,12 +89,13 @@ exports.ListRecordByFilter = async (
       };
     }
 
-    let queryBuilder = Model.find(query)
-      .limit(limit)
-      .skip(offset)
-      .sort(sortOptions)
-      .populate(populate);
 
+    let queryBuilder = Model.find(query)
+    .limit(limit)
+    .skip(offset)
+    .sort(sortOptions)
+    .populate(populate);
+    
     // Conditionally add populate
 
     const list = (await queryBuilder.exec()) || [];
@@ -212,7 +213,6 @@ exports.AddRecord = async (
     // Check for duplicate records
     const existingEmi = await Model.findOne(FindQuery);
 
-    console.log(existingEmi)
     if (existingEmi) {
       return new Response(400, "F").custom(
         authHandler(`DUPLICATE_${MessageKey}_EXISTS`)

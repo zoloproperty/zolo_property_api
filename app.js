@@ -15,16 +15,17 @@ if (process.env.NODE_ENV !== "Development") {
 require("./config/database/connection.js");
 
 const allowedOrigins = [
+  "http://localhost:3000/",
   "https://demo.gpropertypay.com"
 ];
 
 const corsOptions = {
   origin: function(origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+    callback(null, true);
+    // if (allowedOrigins.includes(origin) || !origin) {
+    // } else {
+    //   callback(new Error("Not allowed by CORS"));
+    // }
   }
 };
 
