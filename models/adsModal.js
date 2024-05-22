@@ -37,7 +37,8 @@ exports.ads_list = async (postData) => {
   if (userData) {
       if (userData?.role == "user") {
         query.expiry_date = { $gt: new Date() }
-          query.zip_code = userData?.zip_code
+        query.is_active= true;
+        query.zip_code = userData?.zip_code
       }
     }
 
