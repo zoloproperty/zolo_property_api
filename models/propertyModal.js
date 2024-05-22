@@ -144,14 +144,17 @@ exports.model_add = async (postData) => {
 
   let updateData = postData;
   if (postData?.files) {
+    console.log(postData?.files?.images)
     if (postData?.files?.images) {
       const images = (postData?.files?.images || []).map((item) => {
         return item.location;
       });
-      updateData = { ...postData, images };
-    } else if (postData?.files?.video) {
+      updateData = { ...updateData, images:images };
+      
+    } 
+    if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.location;
-      updateData = { ...postData, video };
+      updateData = { ...updateData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || []).map((item) => {
@@ -164,6 +167,8 @@ exports.model_add = async (postData) => {
     }
     delete updateData.files;
   }
+
+  console.log(updateData)
 
   return await AddRecord(
     Property,
@@ -198,11 +203,11 @@ exports.model_update = async (postData) => {
       const images = (postData?.files?.images || []).map((item) => {
         return item.location;
       });
-      updateData = { ...postData, images: [...images,...(postData?.images||[])] };
+      updateData = { ...updateData, images: [...images,...(postData?.images||[])] };
     } 
     if (postData?.files?.video) {
       const video = (postData?.files?.video || [])[0]?.location;
-      updateData = { ...postData, video };
+      updateData = { ...updateData, video };
     }
     if (postData?.banner) {
       (postData?.files?.images || postData?.images || []).map((item) => {

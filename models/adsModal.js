@@ -72,7 +72,7 @@ exports.ads_add = async (postData) => {
       const gallery = (postData?.files || []).map((item) => {
         return item.location;
       });
-      updateData = { ...postData, gallery };
+      updateData = { ...updateData, gallery };
     } 
     if (postData?.banner) {
       (postData?.files || []).map((item) => {
@@ -107,7 +107,7 @@ exports.ads_update = async (postData) => {
       const gallery = (postData?.files || []).map((item) => {
         return item.location;
       }); 
-      updateData = { ...postData, gallery:[...gallery,...(postData?.gallery||[])] };
+      updateData = { ...updateData, gallery:[...gallery,...(postData?.gallery||[])] };
     }
     if (postData?.banner) {
       (postData?.files || postData?.gallery || []).map((item) => {
