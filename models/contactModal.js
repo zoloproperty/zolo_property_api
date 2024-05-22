@@ -62,6 +62,7 @@ exports.contact_add = async (postData) => {
   const userData = postData.authData;
     const query = {
         $or: [{ contact_number: userData?.contact_number }],
+        is_deleted:false
       };
 
      const data = {
