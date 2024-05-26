@@ -10,7 +10,7 @@ console.log(URL);
 const connectDB = async () => {
   try {
     await mongoose.connect(URL, {
-      useNewUrlParser: true,
+      // useNewUrlParser: true,
       // useUnifiedTopology: true,
     });
     console.log(`Connected\nDB: ${DB_USERNAME}`);
