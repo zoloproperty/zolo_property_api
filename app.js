@@ -16,7 +16,7 @@ require("./config/database/connection.js");
 
 const allowedOrigins = [
   "http://localhost:3000/",
-  "https://demo.gpropertypay.com"
+  "https://portal.zoloproperty.in/"
 ];
 
 const corsOptions = {
