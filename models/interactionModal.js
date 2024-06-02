@@ -113,8 +113,49 @@ exports.interaction_list = async postData => {
         }
       },
       { $sort: finalSortOptions },
-      { $limit: options.limit },
       { $skip: options.skip },
+      { $limit: options.limit },
+    ]);
+
+    const aggregatedInteractionsTotal = await Interaction.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: "$user",
+          name: { $addToSet: "$name" },
+          city: { $addToSet: "$city" },
+          number: { $addToSet: "$number" },
+          zip_code: { $addToSet: "$zip_code" },
+          is_converted: { $addToSet: "$is_converted" },
+          interaction: {
+            $push: {
+              id: "$_id",
+              zip_code: "$zip_code",
+              user: "$user",
+              ads: "$ads",
+              property: "$property",
+              coordinates: "$coordinates",
+              type: "$type",
+              is_converted:"$is_converted",
+              unique_id:"$unique_id",
+              createdAt: "$createdAt",
+            }
+          },
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          interaction: 1,
+          name: { $arrayElemAt: ["$name", 0] },
+          city: { $arrayElemAt: ["$city", 0] },
+          number: { $arrayElemAt: ["$number", 0] },
+          zip_code: { $arrayElemAt: ["$zip_code", 0] },
+          unique_id: { $arrayElemAt: ["$unique_id", 0] },
+          is_converted: { $arrayElemAt: ["$is_converted", 0] }
+        }
+      },
+      { $sort: finalSortOptions },
     ]);
 
     const formattedInteractions = aggregatedInteractions.map(
@@ -126,6 +167,11 @@ exports.interaction_list = async postData => {
         interaction,
       })
     );
+    const formattedInteractionsTotal = aggregatedInteractionsTotal.map(
+      (item) => ({
+       total :1
+      })
+    );
 
 
     const response = {
@@ -135,7 +181,7 @@ exports.interaction_list = async postData => {
       message: "Interactions retrieved successfully",
       data: {
         list: formattedInteractions,
-        pagination: { total:formattedInteractions?.length||0 }
+        pagination: { total:formattedInteractionsTotal?.length||0 }
       }
     };
 
@@ -151,7 +197,7 @@ exports.interaction_list = async postData => {
 };
 
 // ################################################
-// #               Interaction Add                      #
+// #               Interaction Add                #
 // ################################################
 
 exports.interaction_add = async postData => {
