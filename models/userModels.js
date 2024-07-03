@@ -135,6 +135,7 @@ exports.login = async (postData) => {
         city: findUser.city,
         state: findUser.state,
         zip_code: findUser.zip_code,
+        is_active: findUser.is_active,
         local_area: findUser.local_area,
       };
       const jwtToken = await signJwt(payLoad);
@@ -260,6 +261,7 @@ exports.user_update = async (postData) => {
         city: existing.city,
         state: existing.state,
         zip_code: existing.zip_code,
+        is_active: existing.is_active,
         local_area: existing.local_area,
       };
       const jwtToken = await signJwt(payLoad);

@@ -2,7 +2,6 @@ const Interaction = require("../Schema/interactionSchema");
 const Property = require("../Schema/propertySchema");
 const Response = require("../helper/static/Response");
 const {authHandler} = require("../helper/static/messages");
-const {brokerControl} = require("../utils/brokerControl");
 const ObjectId = require("mongoose").Types.ObjectId;
 const {
   DeleteRecordById,
@@ -20,10 +19,23 @@ const {
   likeValidation,
   adslikeValidation
 } = require("../validation-schema/interactionValidation");
+const ZIP_ROLE = "broker";
 
 // ################################################
 // #               Interaction list                     #
 // ################################################
+
+
+brokerControl = (query, role = "user", zipCode = []) => {
+  if (role == ZIP_ROLE && zipCode) {
+    query.$or = [
+      ...(query.$or || []),
+      ...zipCode.map(zip => ({
+        zip_code: (zip || "").toString() || 480001
+      }))
+    ];
+  }
+};
 
 exports.interaction_list = async postData => {
   try {
@@ -73,7 +85,6 @@ exports.interaction_list = async postData => {
       limit: limit || 10,
       skip: offset || 0
     };
-
     const aggregatedInteractions = await Interaction.aggregate([
       { $match: query },
       {

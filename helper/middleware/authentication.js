@@ -35,6 +35,10 @@ const middleware = async (req, res, next) => {
   if (authData.exp < todayDate / 1000) {
     return res.json(new Response(401,"F").custom(authHandler("TOKEN_EXPIRED")));
   }
+  
+  if (!authData.is_active) {
+    return res.json(new Response(401,"F").custom(authHandler("TOKEN_EXPIRED")));
+  }
   req.authData = authData;
   delete req?.headers?.authorization;
   next();
@@ -46,9 +50,15 @@ const signJwt = async (payloadData) => {
   const tokenData = { ...payloadData };
 
   // JWT token with Payload and secret.
-  tokenData.token = JWT.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_TIMEOUT_DURATION,
-  });
+  if(tokenData.role == "admin" || tokenData.role == "broker"){
+      tokenData.token = JWT.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_TIMEOUT_DURATION,
+      });
+  }else{
+    tokenData.token = JWT.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "350d",
+    });
+  }
 
   const refresh_token = JWT.sign(jwtPayload, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: process.env.REFRESH_TOKEN_TIMEOUT_DURATION,
@@ -56,6 +66,7 @@ const signJwt = async (payloadData) => {
 
   return tokenData;
 };
+
 const isRoleIsValid =
   (...role) =>
   (req, res, next) => {

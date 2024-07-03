@@ -4,7 +4,7 @@ exports.brokerControl = (query, role = "user", zipCode = []) => {
     query.$or = [
       ...(query.$or || []),
       ...zipCode.map(zip => ({
-        zip_code: zip || 480001
+        zip_code: (zip || "").toString() || 480001
       }))
     ];
   }

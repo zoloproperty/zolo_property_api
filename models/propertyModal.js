@@ -69,6 +69,7 @@ const userData = postData.authData;
 if (userData) {
   if (userData?.role == "user") {
       query.admin_status = 'Approved'       
+      query.is_active = true
       const copyQuery = query;
       let searchFieldsQuery = buildDynamicQuery(
         searchFields,
@@ -93,6 +94,7 @@ if (userData) {
           coordinatessellArray = sellcoordinates.map(property => ({id:property?._id,property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
    
       }
+
     }
   }
 

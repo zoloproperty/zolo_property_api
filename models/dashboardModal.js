@@ -40,6 +40,10 @@ exports.dashboard_list = async postData => {
   if (userData) {
     brokerControl(query, userData.role, userData.local_area);
   }
+  let likeQuery = {}
+  if (userData) {
+    brokerControl(likeQuery, userData.role, userData.local_area);
+  }
 
   try {
     const totalUsers = await User.countDocuments(query);
@@ -77,10 +81,12 @@ exports.dashboard_list = async postData => {
 
 
     const totalLikeThisMonth = await Interaction.countDocuments({
+      ...likeQuery,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "like"
     });
     const totalViewThisMonth = await Interaction.countDocuments({
+      ...likeQuery,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
       type: "view"
     });
