@@ -49,7 +49,7 @@ const signJwt = async (payloadData) => {
 
   const tokenData = { ...payloadData };
 
-  // JWT token with Payload and secret..
+  // JWT token with Payload and secret.
   if(tokenData.role == "admin" || tokenData.role == "broker"){
       tokenData.token = JWT.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: process.env.ACCESS_TOKEN_TIMEOUT_DURATION,
