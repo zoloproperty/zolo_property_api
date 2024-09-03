@@ -13,29 +13,17 @@ const {brokerControl} = require("../utils/brokerControl");
 
 exports.dashboard_list = async postData => {
   const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-  const query = { is_deleted:false };
+  const currentYear = postData.year || currentDate.getFullYear();
+  const currentMonth = postData.month !== undefined ? postData.month - 1 : currentDate.getMonth(); // month is zero-based in JS Date
+  const query = { is_deleted: false };
 
-  // Get the first day of the current month
-  const firstDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1
-  );
+  // Get the first day of the selected month
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
 
-  // Get the last day of the current month
-  const lastDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0,
-    23,
-    59,
-    59,
-    999
-  );
+  // Get the last day of the selected month
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
 
-  // Query the database to count interested people within the current month
+  // Query the database to count interested people within the selected month
   const userData = postData.authData;
   if (userData) {
     brokerControl(query, userData.role, userData.local_area);
@@ -79,7 +67,6 @@ exports.dashboard_list = async postData => {
       leads: true
     });
 
-
     const totalLikeThisMonth = await Interaction.countDocuments({
       ...likeQuery,
       createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
@@ -93,18 +80,9 @@ exports.dashboard_list = async postData => {
 
     const dailyData = { date: [], interested: [], user: [], properties: [] };
 
-    for (let day = 1; day <= currentDate.getDate(); day++) {
+    for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
       const startOfDay = new Date(currentYear, currentMonth, day, 0, 0, 0);
-
-      const endOfDay = new Date(
-        currentYear,
-        currentMonth,
-        day,
-        23,
-        59,
-        59,
-        999
-      );
+      const endOfDay = new Date(currentYear, currentMonth, day, 23, 59, 59, 999);
 
       const interestedPeopleCount = await Interested.countDocuments({
         ...query,
@@ -119,18 +97,9 @@ exports.dashboard_list = async postData => {
         ...query,
         createdAt: { $gte: startOfDay, $lte: endOfDay }
       });
-      const options = {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour12: true
-      };
-      dailyData.date.push(
-        new Date(currentYear, currentMonth, day).toLocaleString(
-          "en-US",
-          options
-        )
-      );
+
+      const options = { day: "2-digit", month: "2-digit", year: "numeric", hour12: true };
+      dailyData.date.push(new Date(currentYear, currentMonth, day).toLocaleString("en-US", options));
       dailyData.interested.push(interestedPeopleCount);
       dailyData.user.push(totalUsersThisMonth);
       dailyData.properties.push(totalPropertiesThisMonth);
@@ -154,3 +123,4 @@ exports.dashboard_list = async postData => {
     return new Response(400, "F").custom(error.message);
   }
 };
+
