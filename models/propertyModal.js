@@ -81,16 +81,16 @@ if (userData) {
 
       if(postData.property_for){
           if(postData.property_for == 'rent'){
-            const rentcoordinates = await Property.find({...copyQuery,property_for:'rent' ,is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(500) 
+            const rentcoordinates = await Property.find({...copyQuery,property_for:'rent' ,is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(200) 
             coordinatesrentArray = rentcoordinates.map(property => ({id:property?._id,property_for:'rent',lat:property?.coordinates[0],long:property?.coordinates[1]}));
           }else{
-            const sellcoordinates = await Property.find({...copyQuery,property_for:'sell', is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(500) 
+            const sellcoordinates = await Property.find({...copyQuery,property_for:'sell', is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(200) 
             coordinatessellArray = sellcoordinates.map(property => ({id:property?._id,property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
           }
       }else{
-          const rentcoordinates = await Property.find({...copyQuery,property_for:'rent' ,is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(200) 
+          const rentcoordinates = await Property.find({...copyQuery,property_for:'rent' ,is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(150) 
           coordinatesrentArray = rentcoordinates.map(property => ({id:property?._id,property_for:'rent',lat:property?.coordinates[0],long:property?.coordinates[1]}));
-          const sellcoordinates = await Property.find({...copyQuery,property_for:'sell', is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(200) 
+          const sellcoordinates = await Property.find({...copyQuery,property_for:'sell', is_deleted:false,admin_status :'Approved'}, { coordinates: 1, _id: 1 }).limit(150) 
           coordinatessellArray = sellcoordinates.map(property => ({id:property?._id,property_for:'sell',lat:property?.coordinates[0],long:property?.coordinates[1]}));
    
       }
