@@ -153,3 +153,25 @@ exports.model_one = async (postData) => {
     return new Response(400, "F").custom(error.message);
   }
 };
+
+
+
+exports.model_list_all_by_Time = async (date) => {
+ 
+  const allActiveProperty =  await Ads.aggregate(
+    [{ $match: 
+      { is_deleted: false, is_active: true, 
+       admin_status: "Approved",
+       updatedAt: {$gte: date }
+      }
+       },
+      { $sort : { updatedAt : -1 } }
+      ])
+
+    const response = allActiveProperty.map(x => x)
+  
+
+    return new Response(200, "T", response).custom(
+      "Count successful"
+    );
+};

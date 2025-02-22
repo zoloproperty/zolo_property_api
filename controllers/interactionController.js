@@ -7,6 +7,7 @@ const {
   like_check,
   user_like_list,
   ad_like_check,
+  user_like_list_ids,
 } = require("../models/interactionModal");
 
 const { extractRequestData } = require("../helper/static/request-response");
@@ -73,6 +74,17 @@ exports.user_like_list = async (req, res) => {
   try {
     const postData = extractRequestData(req);
     const response = await user_like_list(postData);
+    return res.status(response.status).json(response);
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
+
+
+exports.getMyInteractions = async (req, res) => {
+  try {
+    const postData = extractRequestData(req);
+    const response = await user_like_list_ids(postData);
     return res.status(response.status).json(response);
   } catch (error) {
     return res.json(new Response(500, "F").custom(error.message));

@@ -2,17 +2,21 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-// const morgan = require("morgan");
-// const helmet = require("helmet");
 const { configDotenv } = require("dotenv");
 const app = express();
+const http =require('http') ;
+const { registerIO } = require("./websocket-manager.js");
+const { Server } = require("socket.io");
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
 }
 
+
+
 // DB CONNECTION
 require("./config/database/connection.js");
+
 
 const allowedOrigins = [
   "http://localhost:3000/",
@@ -20,14 +24,10 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: function(origin, callback) {
-    callback(null, true);
-    // if (allowedOrigins.includes(origin) || !origin) {
-    // } else {
-    //   callback(new Error("Not allowed by CORS"));
-    // }
+    origin: "http://localhost:3000",
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }
-};
 
 app.use(cors(corsOptions));
 // MIDDLEWARE
@@ -47,6 +47,7 @@ const propertyRouter = require("./routes/property.routes.js");
 const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
 const interactionRouter = require("./routes/interaction.routes.js");
+const mobileAppRouter = require("./routes/mobile-app.routes.js");
 
 app.use("/dashboard", dashboardRouter);
 app.use("/ads", adsRouter);
@@ -56,6 +57,7 @@ app.use("/phone", phoneRouter);
 app.use("/contact", contactRouter);
 app.use("/property", propertyRouter);
 app.use("/user", userRouter);
+app.use("/mobile", mobileAppRouter);
 
 app.get("/", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./public/dashboard"));

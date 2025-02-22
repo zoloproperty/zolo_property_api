@@ -16,7 +16,7 @@ const {
 const { multipleUpload } = require("../helper/third-party/multipart");
 
 // router.get("/convert", convert);
-router.post("/list", middleware, list);
+router.post("/list", list);
 router.get("/user", middleware, user_property);
 router.get("/:id", middleware, one);
 router.post(

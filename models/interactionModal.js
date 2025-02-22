@@ -334,3 +334,27 @@ exports.user_like_list = async postData => {
     return new Response(400, "F").custom(error.message);
   }
 };
+
+
+
+exports.user_like_list_ids = async postData => {
+  try {
+    const user_id =  postData?.authData?.user_id
+    delete postData?.authData
+    delete postData?.host
+    const { error, value } = filterValidation.validate(postData);
+
+    if (error) {
+      return new Response(400, "F").custom(error.details[0].message);
+    }
+    let queryBuilder = Interaction.find({ user:user_id, type:"like" }, 'property')
+    const like = (await queryBuilder.exec()) || [];
+
+    return new Response(200, "T", {   
+       list: like.map(x => x.property),
+    }
+      ).custom("like property successfully")
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
