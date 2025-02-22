@@ -5,8 +5,7 @@ const cors = require("cors");
 const { configDotenv } = require("dotenv");
 const app = express();
 const http =require('http') ;
-const { registerIO } = require("./websocket-manager.js");
-const { Server } = require("socket.io");
+
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
