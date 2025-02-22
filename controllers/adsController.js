@@ -72,17 +72,3 @@ exports.getAdsByTime = async (req, res) => {
   }
 };
 
-
-// Controller agrees to implement the function called "respond"
-exports.broadcast = function(socket_io){
-  // this function expects a socket_io connection as argument
-
-  // now we can do whatever we want:
-  socket_io.on('ads',function(ads){
-
-      // as is proper, protocol logic like
-      // this belongs in a controller:
-
-      socket.broadcast.emit(ads);
-  });
-}
