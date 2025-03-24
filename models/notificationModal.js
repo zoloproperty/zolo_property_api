@@ -47,8 +47,12 @@ exports.notification_upsert = async (postData) => {
             if (device.deviceId) {
               const message = {
                 notification: {
-                  title: "New Notification",
+                  title: "New Property Notification",
                   body: `A new update is available for property in ${property.city}.`,
+                  image: `https://portal.zoloproperty.in/dashboard/assets/${property_for}.png`
+                },
+                data: {
+                  propertyId: postData.id
                 },
                 token: device.deviceId, // User's Firebase token
               };
