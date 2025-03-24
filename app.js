@@ -47,6 +47,8 @@ const userRouter = require("./routes/user.routes.js");
 const contactRouter = require("./routes/contact.routes.js");
 const interactionRouter = require("./routes/interaction.routes.js");
 const mobileAppRouter = require("./routes/mobile-app.routes.js");
+const deviceRouter = require("./routes/device.routes.js");
+const notificationRouter = require("./routes/notification.routes.js");
 
 app.use("/dashboard", dashboardRouter);
 app.use("/ads", adsRouter);
@@ -57,6 +59,8 @@ app.use("/contact", contactRouter);
 app.use("/property", propertyRouter);
 app.use("/user", userRouter);
 app.use("/mobile", mobileAppRouter);
+app.use("/device", deviceRouter);
+app.use("/notifications", notificationRouter);
 
 app.get("/", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./public/dashboard"));

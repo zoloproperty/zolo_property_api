@@ -4,9 +4,9 @@ const Joi = require("joi");
 const ValidationObj = {
   deviceId: Joi.string().required().messages({
     "any.required": "deviceId  is required",
+  }),
+  name: Joi.string().required().messages({
+    "any.required": "deviceId  is required",
   })
 };
-exports.addValidation = Joi.object(ValidationObj).options({
-  abortEarly: false,
-  allowUnknown: true,
-});;
+exports.addValidation = Joi.object(ValidationObj).options({ abortEarly: false, allowUnknown: true });;

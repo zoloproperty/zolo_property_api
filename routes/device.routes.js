@@ -1,19 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const {
-  list,
-  add,
-  one,
-  update,
-  delete: deleteController,
-} = require("../controllers/adsController");
+deleteOne,
+deleteByUser,
+getByUser,
+list,
+upsert
+} = require("../controllers/deviceController");
 const { middleware } = require("../helper/middleware/authentication");
-const { uploadFiles } = require("../helper/third-party/multipart");
 
-router.post("/list", middleware, list);
-router.get("/:id", middleware, one);
-router.post("/add", middleware, uploadFiles("public/ads").array("images", 10) ,add);
-router.put("/update/:id",  middleware, uploadFiles("public/ads").array("images", 10) ,update);
-router.delete("/delete/:id",middleware, deleteController);
+router.get("/list", middleware, list);
+router.get("/my", middleware, getByUser);
+router.delete("/remove", middleware, deleteByUser);
+router.post("/upsert", middleware, upsert);
+router.delete("/delete/:id", middleware, deleteOne);
 
 module.exports = router;

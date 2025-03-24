@@ -1,60 +1,106 @@
 const Device = require("../Schema/deviceSchema");
 const Response = require("../helper/static/Response");
 const {
-
-  DeleteRecordById,
   UpdateRecordById,
-  AddRecord,
-  ListRecordByFilter,
+  AddRecord
+
 } = require("../utils/utils");
 const {
   addValidation
 } = require("../validation-schema/deviceValidation");
-const { filterValidation } = require("../validation-schema/filterValidation");
 
 // ################################################
 // #               Ads Add                        #
 // ################################################
 
-exports.device_add = async (postData) => {
-  const query = {
-    $or: [{ ads_name: postData.ads_name }],
-  };
+exports.device_upsert = async (postData) => {
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
+  const userData = postData.authData;
 
-  let updateData = postData;
-  if (postData?.files) {
-    if (postData?.files) {
-      const gallery = (postData?.files || []).map((item) => {
-        return item.location;
-      });
-      updateData = { ...updateData, gallery };
-    } 
-    if (postData?.banner) {
-      (postData?.files || []).map((item) => {
-        if (item.originalname == postData?.banner) {
-          updateData.banner = item.location;
-        }
-      });
+  if (postData.id) {
+    const existing = await Device.findById(postData.id);
+    if (!existing) {
+      return new Response(404, "F").custom(
+        `DEVICE_NOT_EXISTS`);
     } else {
-      updateData.banner = (postData?.files || [])[0]?.location;
-    }
-    delete updateData.files;
+      existing.deviceId = atob(postData.deviceId)
+      existing.name = postData.name
+      existing.is_active = postData.is_active ?? true
+      existing.user =  new mongoose.Types.ObjectId(userData.user_id)
+        // update
+        return await UpdateRecordById(Device, existing, addValidation, "DEVICE_UPDATED");
+      }
+  } else {
+    const newId = {}
+    newId.deviceId = atob(postData.deviceId)
+    newId.name = postData.name
+    newId.is_active = postData.is_active ?? true
+    newId.user =  new mongoose.Types.ObjectId(userData.user_id)
+    return await AddRecord(Device, newId, undefined, addValidation, "DEVICE_ADDED");
   }
-
-  return await AddRecord(Device, updateData, query, addValidation, "ADS");
 };
 
-exports.model_one = async (postData) => {
+exports.allForAUser= async (postData) => {
+  try {
+    const removeKey = ["host", "authorization"];
+    removeKey.map((key) => delete postData[key]);
+    const userData = postData.authData;
+
+    const devices = await Device.find({ user: userData.user_id }).select("name"); // Find all devices for the user
+
+    return new Response(200, "T", { devices }).custom(
+      "found one device successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+
+exports.deleteForAllUser = async (postData) => {
+  try {
+    const removeKey = ["host", "authorization"];
+    removeKey.map((key) => delete postData[key]);
+    const userData = postData.authData;
+
+    const result = await Device.deleteMany({ user: userData.user_id }); // Delete all devices for the user
+
+    return new Response(200, "T",  { deletedCount: result.deletedCount }).custom(
+      "Deleted all devices for the user successfully"
+        );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+
+exports.deleteOne = async (postData) => {
   try {
 
-    let queryBuilder = Device.findOne({ deviceId: postData.uniqueId })
+    let queryBuilder = Device.findByIdAndDelete(postData.id)
 
-    const ads = (await queryBuilder.exec()) || {};
+    const removed = (await queryBuilder.exec()) || {};
 
-    return new Response(200, "T", { ads }).custom(
-      "registered successfully"
+    return new Response(200, "T", { name: removed.name }).custom(
+      "deleted device successfully"
+    );
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+exports.list = async (postData) => {
+  try {
+
+    const removeKey = ["host", "authorization"];
+    removeKey.map((key) => delete postData[key]);
+
+
+    const list = await Device.find().select("name");
+
+    return new Response(200, "T", { list }).custom(
+      "device list successfully"
     );
   } catch (error) {
     return new Response(400, "F").custom(error.message);
