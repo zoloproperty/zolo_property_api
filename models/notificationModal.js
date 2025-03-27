@@ -26,8 +26,7 @@ if (!admin.apps.length) {
 exports.notification_upsert = async (postData) => {
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
-  const userData = postData.authData;
-
+  
   if (postData.id) {
     const property = await Property.findOne({ _id: new mongoose.Types.ObjectId(postData.id) });
 
@@ -39,8 +38,6 @@ exports.notification_upsert = async (postData) => {
 
         for (const user of users) {
           // Find devices for the user
-          console.log('user', user.id )
-          const d =  await Device.find();
           const devices = await Device.find({ user: new mongoose.Types.ObjectId(user.id) });
 
           for (const device of devices) {
@@ -49,13 +46,15 @@ exports.notification_upsert = async (postData) => {
                 notification: {
                   title: "New Property Notification",
                   body: `A new update is available for property in ${property.city}.`,
-                  image: `https://portal.zoloproperty.in/dashboard/assets/${property_for}.png`
+                  image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`
                 },
                 data: {
-                  propertyId: postData.id
+                  propertyId: property.id
                 },
                 token: device.deviceId, // User's Firebase token
               };
+
+              console.log(message);
 
               // Send Firebase notification
               try {

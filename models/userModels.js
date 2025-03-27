@@ -24,8 +24,7 @@ const { filterValidation } = require("../validation-schema/filterValidation");
 const { OAuth2Client } = require("google-auth-library");
 const { unlinkFile } = require("../helper/third-party/multipart");
 const client = new OAuth2Client({
-  clientId: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  clientId: process.env.GOOGLE_CLIENT_ID
 });
 
 exports.user_list = async (postData) => {
