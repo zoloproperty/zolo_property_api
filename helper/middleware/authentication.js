@@ -1,6 +1,7 @@
 const { authHandler } = require("../static/messages");
 const Response = require("../static/Response");
 const JWT = require("jsonwebtoken");
+const User = require("../models/user.model");
 
 /* -------------------------------------------------------------------------- */
 /*                                 JWT Auth Verify                            */
@@ -29,6 +30,9 @@ const middleware = async (req, res, next) => {
   const authData = await JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, {
     ignoreExpiration: true,
   });
+
+  const user = await User.findOne({_id: authData.user_id, is_active: true, is_deleted: false});
+  authData.zip_code = user.zip_code;
 
   const todayDate = new Date().getTime();
 

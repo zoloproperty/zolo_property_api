@@ -4,29 +4,30 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { configDotenv } = require("dotenv");
 const app = express();
-const http =require('http') ;
-
+const http = require("http");
 
 if (process.env.NODE_ENV !== "Development") {
   configDotenv({ path: ".env" });
 }
 
-
-
 // DB CONNECTION
 require("./config/database/connection.js");
 
-
-const allowedOrigins = [
-  "http://localhost:3000/",
-  "https://portal.zoloproperty.in/"
-];
+const allowedOrigins = ["https://localhost", "https://portal.zoloproperty.in/"];
 
 const corsOptions = {
-    origin: "http://localhost:3000",
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  }
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
 
 app.use(cors(corsOptions));
 // MIDDLEWARE
@@ -71,7 +72,7 @@ app.get("*", (req, res) => {
     code: 404,
     info: "Not Found.",
     status: true,
-    message: "The resource you looking for needs an valid end point."
+    message: "The resource you looking for needs an valid end point.",
   });
 });
 
