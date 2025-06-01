@@ -1,7 +1,7 @@
 const { authHandler } = require("../static/messages");
 const Response = require("../static/Response");
 const JWT = require("jsonwebtoken");
-const User = require("../models/user.model");
+const User = require("../../Schema/userSchema");
 
 /* -------------------------------------------------------------------------- */
 /*                                 JWT Auth Verify                            */
