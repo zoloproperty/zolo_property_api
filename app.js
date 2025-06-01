@@ -13,7 +13,7 @@ if (process.env.NODE_ENV !== "Development") {
 // DB CONNECTION
 require("./config/database/connection.js");
 
-const allowedOrigins = ["https://localhost", "https://portal.zoloproperty.in/"];
+const allowedOrigins = ["https://localhost", "https://portal.zoloproperty.in"];
 
 const corsOptions = {
   origin: function (origin, callback) {
