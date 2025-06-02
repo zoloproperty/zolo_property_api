@@ -32,7 +32,11 @@ const middleware = async (req, res, next) => {
   });
 
   const user = await User.findOne({_id: authData.user_id, is_active: true, is_deleted: false});
-  authData.zip_code = user.zip_code;
+  
+  if (user) {
+    authData.zip_code = user.zip_code;
+  }
+  
 
   const todayDate = new Date().getTime();
 
