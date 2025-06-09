@@ -37,7 +37,7 @@ const interactionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["like", "view", "unlike"]
+      enum: ["like", "view", "unlike", 'call']
     },
     is_converted: {
       type: Boolean,

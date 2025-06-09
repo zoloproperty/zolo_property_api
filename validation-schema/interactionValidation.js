@@ -27,8 +27,8 @@ const ValidationObj = {
       "number.base": "Each coordinate value must be a number."
     })
     .optional(),
-  type: Joi.string().valid("like", "view", "unlike").messages({
-    "any.only": 'Type must be either "like", "unlike" or "view"'
+  type: Joi.string().valid("like", "view", "unlike", "call").messages({
+    "any.only": 'Type must be either "like", "unlike", "view" or "call"'
   }),
   is_converted: Joi.boolean().default(false)
 };
