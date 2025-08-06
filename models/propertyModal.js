@@ -231,7 +231,6 @@ exports.model_add = async (postData) => {
     delete updateData.files;
   }
 
-
   return await AddRecord(
     Property,
     updateData,
@@ -325,53 +324,65 @@ exports.user_property = async (postData) => {
 // ################################################
 
 exports.model_count_total = async () => {
- const totalActiveProperty =  await Property.aggregate([
+  const totalActiveProperty = await Property.aggregate([
     {
       $match: { is_deleted: false, is_active: true, admin_status: "Approved" },
     },
     { $count: "properties" },
   ]);
 
-  return new Response(200, "T", totalActiveProperty?.[0]?.properties || 0)
+  return new Response(200, "T", totalActiveProperty?.[0]?.properties || 0);
 };
 
 exports.model_list_all = async () => {
- 
-  const allActiveProperty =  await Property.aggregate(
-  [{ $match: 
+  const allActiveProperty = await Property.aggregate([{ $match: 
     { is_deleted: false, is_active: true, admin_status: "Approved"
     }
      },
-    { $sort : { updatedAt : -1 } }
-    ])
+    { $sort : { updatedAt : -1 } },
+ {
+    $lookup: {
+      from: "users",
+      localField: "user", // assuming Property.user stores the user's ObjectId
+      foreignField: "_id",
+      as: "userDetails"
+    }
+  },
+ { $addFields: { contact_number: { $arrayElemAt: ["$userDetails.contact_number", 0] }} },
+  {
+    $project: {
+      userDetails: 0 // Exclude the 'property' field from the result
+    }
+  }
+    ]);
 
-    const response = allActiveProperty.map(x => ({id: btoa(x.unique_id), details:  Buffer.from(JSON.stringify(x)).toString("base64")}))
-    
+  const response = allActiveProperty.map((x) => ({
+    id: btoa(x.unique_id),
+    details: Buffer.from(JSON.stringify(x)).toString("base64"),
+  }));
 
-    return new Response(200, "T", response).custom(
-      "Count successful"
-    );
+  return new Response(200, "T", response).custom("Count successful");
 };
 
-
 exports.model_list_all_by_Time = async (date) => {
- 
-  const allActiveProperty =  await Property.aggregate(
-    [{ $match: 
-      { is_deleted: false, is_active: true, 
-       admin_status: "Approved",
-       updatedAt: {$gte: date}
-      }
-       },
-      { $sort : { updatedAt : -1 } }
-      ])
+  const allActiveProperty = await Property.aggregate([
+    {
+      $match: {
+        is_deleted: false,
+        is_active: true,
+        admin_status: "Approved",
+        updatedAt: { $gte: date },
+      },
+    },
+    { $sort: { updatedAt: -1 } },
+  ]);
 
-    const response = allActiveProperty.map(x => ({id: btoa(x.unique_id), details:  Buffer.from(JSON.stringify(x)).toString("base64")}))
-    
+  const response = allActiveProperty.map((x) => ({
+    id: btoa(x.unique_id),
+    details: Buffer.from(JSON.stringify(x)).toString("base64"),
+  }));
 
-    return new Response(200, "T", response).custom(
-      "Count successful"
-    );
+  return new Response(200, "T", response).custom("Count successful");
 };
 
 exports.model_list_ids = async (postData) => {
@@ -453,4 +464,4 @@ exports.model_list_ids = async (postData) => {
     [],
     "user"
   );
-}
+};
