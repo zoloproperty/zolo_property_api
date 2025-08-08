@@ -3,14 +3,22 @@ const Property = require("../Schema/propertySchema");
 const User = require("../Schema/userSchema");
 const Notification = require("../Schema/notificationSchema");
 const Response = require("../helper/static/Response");
-const mongoose = require('mongoose');
-const CryptoJS = require('crypto-js');
+const mongoose = require("mongoose");
+const CryptoJS = require("crypto-js");
+
+const key = "6Le0DgMTAAAAANokdEEial"; //length=22
+const iv = "mHGFxENnZLbienLyANoi.e123"; //length=25
+
+const key1 = CryptoJS.enc.Base64.parse(key); // length=16 bytes
+//key is now e8b7b40e031300000000da247441226a5d, length=32 (hex encoded)
+const iv1 = CryptoJS.enc.Base64.parse(iv); // length=16 bytes
+//iv is now 987185c4436764b6e27a72f2fffffffd, length=32 (hex encoded)
 
 const {
-  addValidation
+  addValidation,
 } = require("../validation-schema/notificationValidation");
 
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -27,64 +35,74 @@ if (!admin.apps.length) {
 exports.notification_upsert = async (postData) => {
   const removeKey = ["host", "authorization"];
   removeKey.map((key) => delete postData[key]);
-  
+
   if (postData.id) {
-    const property = await Property.findOne({ _id: new mongoose.Types.ObjectId(postData.id) });
+    const property = await Property.findOne({
+      _id: new mongoose.Types.ObjectId(postData.id),
+    });
 
     if (property) {
-      const users = await User.find({ city: property.city });
+      const users = await User.find({ city: property.city.trim() });
 
       if (users.length) {
         const notifications = [];
+        // Find devices for the user
+        const devices = await Device.find({
+          user: { $in: users.map((user) => user.id) },
+        });
 
-        for (const user of users) {
-          // Find devices for the user
-          const devices = await Device.find({ user: new mongoose.Types.ObjectId(user.id) });
+        for (const device of devices) {
+          if (device.deviceId) {
+            const decrypted = device.deviceId;
+            if (decrypted) {
+              // Prepare the notification message
+            const message = {
+              notification: {
+                title: "New Property Notification",
+                body: `A new update is available for property in ${property.city}.`,
+                image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`,
+              },
+              data: {
+                propertyId: property.id,
+                property_for: property.property_for,
+              },
+              token: decrypted, // User's Firebase token
+            };
 
-          for (const device of devices) {
-            if (device.deviceId) {
-              const decrypted = CryptoJS.AES.decrypt(device.deviceId, TOKEN_SECRET);
-              const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
-
-              const message = {
-                notification: {
-                  title: "New Property Notification",
-                  body: `A new update is available for property in ${property.city}.`,
-                  image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`
-                },
-                data: {
-                  propertyId: property.id,
-                  property_for: property.property_for
-                },
-                token: plaintext, // User's Firebase token
-              };
-
-              // Send Firebase notification
-              try {
-                const message1 = await admin.messaging().send(message);
-                notifications.push({ user: new mongoose.Types.ObjectId(user._id) , property:  new mongoose.Types.ObjectId(postData.id), is_send: true });
-              } catch (error) {
-                console.error("Error sending notification:", error);
-                notifications.push({ user: new mongoose.Types.ObjectId(user._id) , property:  new mongoose.Types.ObjectId(postData.id), is_send: false });
-              }
+            // Send Firebase notification
+            try {
+              const message1 = await admin.messaging().send(message);
+              notifications.push({
+                user: new mongoose.Types.ObjectId(user._id),
+                property: new mongoose.Types.ObjectId(postData.id),
+                is_send: true,
+              });
+            } catch (error) {
+              console.error("Error sending notification:", error);
+              notifications.push({
+                user: new mongoose.Types.ObjectId(user._id),
+                property: new mongoose.Types.ObjectId(postData.id),
+                is_send: false,
+              });
             }
           }
+          }
         }
-
-        if (notifications?.length) {
-          // Save notifications to the database
-          await Notification.insertMany(notifications);
-        }
-
-        return new Response(200, "T").custom("Notifications sent successfully");
       }
-    } else {
-      return new Response(404, "F").custom("Property not found");
+
+      if (notifications?.length) {
+        // Save notifications to the database
+        await Notification.insertMany(notifications);
+      }
+
+      return new Response(200, "T").custom("Notifications sent successfully");
     }
+  } else {
+    return new Response(404, "F").custom("Property not found");
   }
 };
 
-exports.allForAProperty= async (postData) => {
+exports.allForAProperty = async (postData) => {
   try {
     const groupedNotifications = await Notification.aggregate([
       {
@@ -93,10 +111,8 @@ exports.allForAProperty= async (postData) => {
            * query: The query in MQL.
            */
           {
-            property:  new mongoose.Types.ObjectId(
-              postData.id
-            )
-          }
+            property: new mongoose.Types.ObjectId(postData.id),
+          },
       },
       {
         $lookup:
@@ -115,8 +131,8 @@ exports.allForAProperty= async (postData) => {
             // The field in Notification referencing the User
             foreignField: "_id",
             // The field in User that matches the reference
-            as: "userDetails" // The name of the field to store the loaded User objects
-          }
+            as: "userDetails", // The name of the field to store the loaded User objects
+          },
       },
       {
         $project:
@@ -132,8 +148,8 @@ exports.allForAProperty= async (postData) => {
             "userDetails.first_name": 1,
             // Include the property ID
             "userDetails.last_name": 1,
-            sent: 1
-          }
+            sent: 1,
+          },
       },
       {
         $group:
@@ -144,13 +160,13 @@ exports.allForAProperty= async (postData) => {
           {
             _id: "$userId",
             count: {
-              $sum: 1
+              $sum: 1,
             },
             user: {
-              $first: "$userDetails"
-            }
-          }
-      }
+              $first: "$userDetails",
+            },
+          },
+      },
     ]);
 
     return new Response(200, "T", { groupedNotifications }).custom(
@@ -161,10 +177,8 @@ exports.allForAProperty= async (postData) => {
   }
 };
 
-
-exports.getMyNotification= async (postData) => {
+exports.getMyNotification = async (postData) => {
   try {
-
     const groupedNotifications = await Notification.aggregate([
       {
         $match: { "user.id": postData.id }, // Match notifications for the specific property
@@ -186,10 +200,11 @@ exports.getMyNotification= async (postData) => {
   }
 };
 
-
 exports.deleteAllForAProperty = async (postData) => {
   try {
-    const result = await Notification.deleteMany({ "property.id": postData.propertyId }); // Delete notifications for the specific property
+    const result = await Notification.deleteMany({
+      "property.id": postData.propertyId,
+    }); // Delete notifications for the specific property
 
     return new Response(200, "T", { deletedCount: result.deletedCount }).custom(
       "Deleted all notifications for the property successfully"

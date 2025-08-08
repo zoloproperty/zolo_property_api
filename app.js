@@ -13,17 +13,19 @@ if (process.env.NODE_ENV !== "Development") {
 // DB CONNECTION
 require("./config/database/connection.js");
 
-const allowedOrigins = ["https://localhost", "https://portal.zoloproperty.in"];
+const allowedOrigins = ["http://localhost:[*]", "https://portal.zoloproperty.in"];
 
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.some(allowed => origin.indexOf(allowed) > -1)) {
+    // if (!origin) return callback(null, true);
+    // if (allowedOrigins.some(allowed => origin.indexOf(allowed) > -1)) {
+    //   return callback(null, true);
+    // } else {
+    //   return callback(new Error("Not allowed by CORS"));
+    // }
+
       return callback(null, true);
-    } else {
-      return callback(new Error("Not allowed by CORS"));
-    }
   },
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE"],
