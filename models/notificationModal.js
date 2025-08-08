@@ -73,7 +73,7 @@ exports.notification_upsert = async (postData) => {
             try {
               const message1 = await admin.messaging().send(message);
               notifications.push({
-                user: new mongoose.Types.ObjectId(user._id),
+                user: new mongoose.Types.ObjectId(device.user),
                 property: new mongoose.Types.ObjectId(postData.id),
                 is_send: true,
               });
