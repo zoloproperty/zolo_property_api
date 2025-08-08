@@ -25,7 +25,7 @@ exports.device_upsert = async (postData) => {
       return new Response(404, "F").custom(
         `DEVICE_NOT_EXISTS`);
     } else {
-      existing.deviceId = atob(postData.deviceId)
+      existing.deviceId = postData.deviceId
       existing.name = postData.name
       existing.is_active = postData.is_active ?? true
       existing.user =  new mongoose.Types.ObjectId(userData.user_id)
@@ -34,7 +34,7 @@ exports.device_upsert = async (postData) => {
       }
   } else {
     const newId = {}
-    newId.deviceId = atob(postData.deviceId)
+    newId.deviceId = postData.deviceId
     newId.name = postData.name
     newId.is_active = postData.is_active ?? true
     newId.user =  new mongoose.Types.ObjectId(userData.user_id)

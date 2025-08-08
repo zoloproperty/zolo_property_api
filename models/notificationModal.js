@@ -4,6 +4,7 @@ const User = require("../Schema/userSchema");
 const Notification = require("../Schema/notificationSchema");
 const Response = require("../helper/static/Response");
 const mongoose = require('mongoose');
+const CryptoJS = require('crypto-js');
 
 const {
   addValidation
@@ -42,6 +43,9 @@ exports.notification_upsert = async (postData) => {
 
           for (const device of devices) {
             if (device.deviceId) {
+              const decrypted = CryptoJS.AES.decrypt(device.deviceId, TOKEN_SECRET);
+              const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+
               const message = {
                 notification: {
                   title: "New Property Notification",
@@ -51,10 +55,8 @@ exports.notification_upsert = async (postData) => {
                 data: {
                   propertyId: property.id
                 },
-                token: device.deviceId, // User's Firebase token
+                token: plaintext, // User's Firebase token
               };
-
-              console.log(message);
 
               // Send Firebase notification
               try {
