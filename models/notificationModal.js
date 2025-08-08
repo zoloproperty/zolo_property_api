@@ -53,7 +53,8 @@ exports.notification_upsert = async (postData) => {
                   image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`
                 },
                 data: {
-                  propertyId: property.id
+                  propertyId: property.id,
+                  property_for: property.property_for
                 },
                 token: plaintext, // User's Firebase token
               };

@@ -6,7 +6,7 @@ const ValidationObj = {
     "any.required": "deviceId  is required",
   }),
   name: Joi.string().required().messages({
-    "any.required": "deviceId  is required",
+    "any.required": "name  is required",
   })
 };
 exports.addValidation = Joi.object(ValidationObj).options({ abortEarly: false, allowUnknown: true });;
