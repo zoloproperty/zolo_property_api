@@ -58,7 +58,7 @@ exports.notification_upsert = async (postData) => {
               // Prepare the notification message
             const message = {
               notification: {
-                title: "New Property Notification",
+                title: "Zolo Property Notification",
                 body: `A new update is available for property in ${property.city}.`,
                 image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`,
               },
