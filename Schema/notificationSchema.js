@@ -12,10 +12,10 @@ const notificationSchema = new Schema(
       ref: "user",
       required: true,
     },
-    sent: {
-      type: Boolean,
-      default: true,
-    }
+    is_send: { type: Boolean, default: false }, // Indicates if notification was sent
+    messageId: { type: String }, // Firebase message ID
+    error: { type: String }, // Error message if sending failed
+
   },
   { timestamps: true }
 );

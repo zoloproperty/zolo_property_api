@@ -5,7 +5,8 @@ const {
   getAll,
   getAllByTime,
   getMyPropertyIds,
-  getAllRecommendation
+  getAllRecommendation,
+  getAppVersion
 } = require("../controllers/mobileapp/propertyController");
 
 const {
@@ -29,6 +30,7 @@ router.get("/properties/recommendation",  middleware, getAllRecommendation);
 router.get("/properties/:time", middleware,  getAllByTime);
 router.get("/ads/:time", middleware, getAdsByTime);
 router.get("/myinteractions", middleware, getMyInteractions);
+router.get("/app-version", middleware, getAppVersion);
 
 
 module.exports = router;
