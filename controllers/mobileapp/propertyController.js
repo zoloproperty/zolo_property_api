@@ -60,7 +60,13 @@ exports.getMyPropertyIds = async (req, res) => {
 };
 
 
-
-
-
+exports.getAppVersion =  async (req, res) => {
+  try {
+    return new Response(200, "T", {version: process.env.APP_VERSION}).custom(
+      "App version get successfully"
+    );
+  } catch (error) {
+    return res.json(new Response(500, "F").custom(error.message));
+  }
+};
 

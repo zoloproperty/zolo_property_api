@@ -56,45 +56,54 @@ exports.notification_upsert = async (postData) => {
             const decrypted = device.deviceId;
             if (decrypted) {
               // Prepare the notification message
-            const message = {
-              notification: {
-                title: "Zolo Property Notification",
-                body: `A new update is available for property in ${property.city}.`,
-                image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`,
-              },
-              data: {
-                propertyId: property.id,
-                property_for: property.property_for,
-              },
-              token: decrypted, // User's Firebase token
-            };
+              const message = {
+                notification: {
+                  title: "Zolo Property Notification",
+                  body: `A new update is available for property in ${property.city}.`,
+                  image: `https://portal.zoloproperty.in/dashboard/assets/${property.property_for}.png`,
+                },
+                data: {
+                  propertyId: property.id,
+                  property_for: property.property_for,
+                },
+                token: decrypted, // User's Firebase token
+              };
 
-            // Send Firebase notification
-            try {
-              const message1 = await admin.messaging().send(message);
-              notifications.push({
-                user: new mongoose.Types.ObjectId(device.user),
-                property: new mongoose.Types.ObjectId(postData.id),
-                is_send: true,
-              });
-            } catch (error) {
-              console.error("Error sending notification:", error);
-              notifications.push({
-                user: new mongoose.Types.ObjectId(user._id),
-                property: new mongoose.Types.ObjectId(postData.id),
-                is_send: false,
-              });
+              // Send Firebase notification
+              try {
+                const message1 = await admin.messaging().send(message);
+                notifications.push({
+                  user: new mongoose.Types.ObjectId(device.user),
+                  property: new mongoose.Types.ObjectId(postData.id),
+                  is_send: true,
+                  messageId: message1
+                });
+              } catch (error) {
+                if (error.code === 'messaging/registration-token-not-registered') {
+                  console.error("Registration token not registered. Removing device:", device._id);
+                  // Optionally, remove or mark the device as inactive in DB here
+                  await Device.deleteOne({ _id: device._id.toString() });
+
+                } else {
+                  console.error("Error sending notification:", error);
+                }
+                notifications.push({
+                  user: new mongoose.Types.ObjectId(device.user),
+                  property: new mongoose.Types.ObjectId(postData.id),
+                  error: error.message,
+                  is_send: false,
+                });
+              }
             }
           }
-          }
+        }
+
+
+        if (notifications?.length) {
+          // Save notifications to the database
+          await Notification.insertMany(notifications);
         }
       }
-
-      if (notifications?.length) {
-        // Save notifications to the database
-        await Notification.insertMany(notifications);
-      }
-
       return new Response(200, "T").custom("Notifications sent successfully");
     }
   } else {
@@ -104,70 +113,54 @@ exports.notification_upsert = async (postData) => {
 
 exports.allForAProperty = async (postData) => {
   try {
-    const groupedNotifications = await Notification.aggregate([
-      {
-        $match:
-          /**
-           * query: The query in MQL.
-           */
-          {
-            property: new mongoose.Types.ObjectId(postData.id),
+    const groupedNotifications = await Notification.aggregate(
+      [
+        {
+          $match: {
+            property: new mongoose.Types.ObjectId(postData.id), // Filter by property id
           },
-      },
-      {
-        $lookup:
-          /**
-           * from: The target collection.
-           * localField: The local join field.
-           * foreignField: The target join field.
-           * as: The name for the results.
-           * pipeline: Optional pipeline to run on the foreign collection.
-           * let: Optional variables to use in the pipeline field stages.
-           */
-          {
+        },
+        {
+          $group: {
+            _id: "$user", // Group by user ObjectId
+            notifications: { $push: "$$ROOT" }, // All notifications for the user
+            count: { $sum: 1 }, // Number of notifications
+          },
+        },
+        {
+          $lookup: {
             from: "users",
-            // The name of the User collection
-            localField: "user",
-            // The field in Notification referencing the User
+            localField: "_id",
             foreignField: "_id",
-            // The field in User that matches the reference
-            as: "userDetails", // The name of the field to store the loaded User objects
+            as: "userDetails",
           },
-      },
-      {
-        $project:
-          /**
-           * _id: The id of the group.
-           * fieldN: The first field name.
-           */
-          {
-            "userDetails.name": 1,
-            // Include only the name field from userDetails
-            "userDetails.contact_number": 1,
-            // Include only the contact_number field from userDetails
-            "userDetails.first_name": 1,
-            // Include the property ID
-            "userDetails.last_name": 1,
-            sent: 1,
-          },
-      },
-      {
-        $group:
-          /**
-           * _id: The id of the group.
-           * fieldN: The first field name.
-           */
-          {
-            _id: "$userId",
-            count: {
-              $sum: 1,
+        },
+        {
+          $project: {
+            notifications: {
+              $arrayElemAt: ["$notifications", 0], // Flatten userDetails array
             },
-            user: {
-              $first: "$userDetails",
+            count: 1,
+            userDetails: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: "$userDetails",
+                    as: "user",
+                    in: {
+                      first_name: "$$user.first_name",
+                      last_name: "$$user.last_name",
+                      contact_number: "$$user.contact_number",
+                    },
+                  },
+                },
+                0,
+              ],
             },
           },
-      },
-    ]);
+        },
+      ]
+    );
 
     return new Response(200, "T", { groupedNotifications }).custom(
       "found one device successfully"
