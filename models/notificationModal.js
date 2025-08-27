@@ -43,12 +43,13 @@ exports.notification_upsert = async (postData) => {
 
     if (property) {
       const users = await User.find({ city: property.city.trim() });
-
+      
       if (users.length) {
         const notifications = [];
         // Find devices for the user
+        // users.map((user) => user.id)
         const devices = await Device.find({
-          user: { $in: users.map((user) => user.id) },
+          user: { $in:  users.map((user) => user.id)},
         });
 
         for (const device of devices) {
@@ -64,7 +65,7 @@ exports.notification_upsert = async (postData) => {
                 },
                 data: {
                   propertyId: property.id,
-                  property_for: property.property_for,
+                  property_for: property.property_for + 's',
                 },
                 token: decrypted, // User's Firebase token
               };
@@ -84,6 +85,10 @@ exports.notification_upsert = async (postData) => {
                   // Optionally, remove or mark the device as inactive in DB here
                   await Device.deleteOne({ _id: device._id.toString() });
 
+                } else if (error.code === 'messaging/invalid-argument') {
+                  console.error("Invalid registration token. Removing device:", device._id);
+                  // Optionally, remove or mark the device as inactive in DB here
+                  await Device.deleteOne({ _id: device._id.toString() });
                 } else {
                   console.error("Error sending notification:", error);
                 }
@@ -137,9 +142,7 @@ exports.allForAProperty = async (postData) => {
         },
         {
           $project: {
-            notifications: {
-              $arrayElemAt: ["$notifications", 0], // Flatten userDetails array
-            },
+            notifications: 1,
             count: 1,
             userDetails: {
               $arrayElemAt: [
