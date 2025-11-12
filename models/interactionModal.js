@@ -87,6 +87,9 @@ exports.interaction_list = async postData => {
     };
     const aggregatedInteractions = await Interaction.aggregate([
       { $match: query },
+      { $sort: finalSortOptions },
+      { $skip: options.skip },
+      { $limit: options.limit },
       {
         $group: {
           _id: "$user",
@@ -122,10 +125,7 @@ exports.interaction_list = async postData => {
           unique_id: { $arrayElemAt: ["$unique_id", 0] },
           is_converted: { $arrayElemAt: ["$is_converted", 0] }
         }
-      },
-      { $sort: finalSortOptions },
-      { $skip: options.skip },
-      { $limit: options.limit },
+      }
     ]);
 
     const aggregatedInteractionsTotal = await Interaction.aggregate([
