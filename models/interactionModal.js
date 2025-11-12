@@ -85,19 +85,29 @@ exports.interaction_list = async postData => {
       limit: limit || 10,
       skip: offset || 0
     };
-    const aggregatedInteractions = await Interaction.aggregate([
+    // Optimized aggregation: pre-sort, group using $first, and paginate + count with $facet
+    // Pre-sort interactions so $first picks the latest interaction values per user
+    const preSort = { createdAt: -1 };
+
+    // Map finalSortOptions so we can sort grouped results by latestInteractionDate if needed
+    const groupSort = { ...finalSortOptions };
+    if (groupSort.createdAt !== undefined) {
+      groupSort.latestInteractionDate = groupSort.createdAt;
+      delete groupSort.createdAt;
+    }
+
+    const pipeline = [
       { $match: query },
-      { $sort: finalSortOptions },
-      { $skip: options.skip },
-      { $limit: options.limit },
+      { $sort: preSort },
       {
         $group: {
           _id: "$user",
-          name: { $addToSet: "$name" },
-          city: { $addToSet: "$city" },
-          number: { $addToSet: "$number" },
-          zip_code: { $addToSet: "$zip_code" },
-          is_converted: { $addToSet: "$is_converted" },
+          name: { $first: "$name" },
+          city: { $first: "$city" },
+          number: { $first: "$number" },
+          zip_code: { $first: "$zip_code" },
+          unique_id: { $first: "$unique_id" },
+          is_converted: { $first: "$is_converted" },
           interaction: {
             $push: {
               id: "$_id",
@@ -107,34 +117,43 @@ exports.interaction_list = async postData => {
               property: "$property",
               coordinates: "$coordinates",
               type: "$type",
-              is_converted:"$is_converted",
-              unique_id:"$unique_id",
+              is_converted: "$is_converted",
+              unique_id: "$unique_id",
               createdAt: "$createdAt",
             }
-          },
+          }
         }
       },
       {
         $project: {
           _id: 1,
+          name: 1,
+          city: 1,
+          number: 1,
+          zip_code: 1,
+          unique_id: 1,
+          is_converted: 1,
           interaction: 1,
-          name: { $arrayElemAt: ["$name", 0] },
-          city: { $arrayElemAt: ["$city", 0] },
-          number: { $arrayElemAt: ["$number", 0] },
-          zip_code: { $arrayElemAt: ["$zip_code", 0] },
-          unique_id: { $arrayElemAt: ["$unique_id", 0] },
-          is_converted: { $arrayElemAt: ["$is_converted", 0] }
+          latestInteractionDate: { $arrayElemAt: [ { $map: { input: "$interaction", as: "i", in: "$$i.createdAt" } }, 0 ] }
+        }
+      },
+      {
+        $sort: Object.keys(groupSort).length > 0 ? groupSort : { latestInteractionDate: -1 }
+      },
+      {
+        $facet: {
+          metadata: [ { $count: "total" } ],
+          data: [ { $skip: options.skip || 0 }, { $limit: options.limit || 10 } ]
         }
       }
-    ]);
+    ];
 
-       // get total distinct users matching the same query (no skip/limit)
-    const totalResult = await Interaction.aggregate([
-      { $match: query },
-      { $group: { _id: "$user" } },
-      { $count: "total" }
-    ]);
-    const total = (totalResult[0] && totalResult[0].total) || 0;
+    const aggResult = (await Interaction.aggregate(pipeline)) || [];
+    const metadata = aggResult[0]?.metadata?.[0] || { total: 0 };
+    const aggregatedInteractions = aggResult[0]?.data || [];
+    const total = metadata.total || 0;
+
+    // total is retrieved from the aggregation metadata above
 
 
     const formattedInteractions = aggregatedInteractions.map(
