@@ -7,7 +7,8 @@ const {
   delete: deleteController,
   like_check,
   user_like_list,
-  ad_like_check
+  ad_like_check,
+  user_interactions
 } = require("../controllers/interactionController");
 const {
   middleware,
@@ -19,6 +20,7 @@ router.post("/like", middleware , user_like_list);
 router.post("/add", middleware, add);
 router.post("/check_like", middleware, like_check);
 router.post("/ad_check_like", middleware, ad_like_check);
+router.get("/user/:user_id/interactions", middleware, user_interactions);
 router.put(
   "/update/:id",
   middleware,

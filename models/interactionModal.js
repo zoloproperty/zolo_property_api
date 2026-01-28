@@ -108,20 +108,7 @@ exports.interaction_list = async postData => {
           zip_code: { $first: "$zip_code" },
           unique_id: { $first: "$unique_id" },
           is_converted: { $first: "$is_converted" },
-          interaction: {
-            $push: {
-              id: "$_id",
-              zip_code: "$zip_code",
-              user: "$user",
-              ads: "$ads",
-              property: "$property",
-              coordinates: "$coordinates",
-              type: "$type",
-              is_converted: "$is_converted",
-              unique_id: "$unique_id",
-              createdAt: "$createdAt",
-            }
-          }
+          latestInteractionDate: { $max: "$createdAt" }
         }
       },
       {
@@ -133,8 +120,7 @@ exports.interaction_list = async postData => {
           zip_code: 1,
           unique_id: 1,
           is_converted: 1,
-          interaction: 1,
-          latestInteractionDate: { $arrayElemAt: [ { $map: { input: "$interaction", as: "i", in: "$$i.createdAt" } }, 0 ] }
+          latestInteractionDate: 1
         }
       },
       {
@@ -157,12 +143,13 @@ exports.interaction_list = async postData => {
 
 
     const formattedInteractions = aggregatedInteractions.map(
-      ({ name, city, number, interaction,is_converted }) => ({
+      ({ _id, name, city, number, is_converted, latestInteractionDate }) => ({
+        user_id: _id,
         name,
         city,
         number,
         is_converted,
-        interaction,
+        latestInteractionDate
       })
     );
   
@@ -337,6 +324,45 @@ exports.user_like_list_ids = async postData => {
        list: like.map(x => x.property),
     }
       ).custom("like property successfully")
+  } catch (error) {
+    return new Response(400, "F").custom(error.message);
+  }
+};
+
+// ################################################
+// #        Get interactions for a specific user  #
+// ################################################
+
+exports.user_interactions = async postData => {
+  try {
+    const user_id = postData?.user_id;
+    if (!user_id) return new Response(400, "F").custom("User id is required");
+
+    delete postData?.authData;
+    delete postData?.host;
+
+    const query = { user: user_id };
+
+    const queryBuilder = Interaction.find(query)
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .skip(0)
+      .populate({ path: "property", match: { is_deleted: false }, select: "_id" })
+      .populate({ path: "ads", select: "_id" });
+
+    let list = (await queryBuilder.exec()) || [];
+    // map populated docs to id values for property and ads
+    list = list.map(item => {
+      const obj = typeof item.toObject === 'function' ? item.toObject() : item;
+      return {
+        ...obj,
+        property: obj.property?._id || obj.property,
+        ads: obj.ads?._id || obj.ads
+      };
+    });
+
+
+    return new Response(200, "T", { list }).custom("user interactions retrieved");
   } catch (error) {
     return new Response(400, "F").custom(error.message);
   }
